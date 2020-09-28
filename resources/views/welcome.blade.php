@@ -93,7 +93,7 @@
                     @endif
 
                     <input type="file" name="file">
-                    <button>Importar excel</button>
+                    <button>Importar </button>
 
                 </form>
 
