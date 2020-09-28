@@ -10,6 +10,7 @@ use App\Exports\UsersExport;
 use App\Imports\UsersImport;
 
 use App\User;
+use App\Director;
 
 class PersonController extends Controller
 {
@@ -27,8 +28,6 @@ class PersonController extends Controller
 
     public function importExcel(Request $request)
     {
-
-
 
     	$file = $request->file('file');
         
@@ -70,34 +69,45 @@ class PersonController extends Controller
         }
         #QUITAMOS EL HEADER, YA NO ES NECESARIO        
         unset($array[0][2]);
+        $error = false;
 
         foreach ($array[0] as $key => $row) {
 
             $array[0][$key]['cod_reg'] = $row[0];
-            $array[0][$key]['cod_reg_err'] = '';
+            $array[0][$key]['cod_reg_err'] = ( (int)$row[0] > 0 ? 0 : 1 );
 
             $array[0][$key]['cod_mod8'] = $row[1] . $row[2];
-            $array[0][$key]['cod_mod8_err'] = '';
+            $array[0][$key]['cod_mod8_err'] = ( is_numeric($row[1] . $row[2]) && strlen($row[1] . $row[2])==8 ? 0 : 1 );
             
             $array[0][$key]['dni'] = $row[5];
-            $array[0][$key]['dni_err'] = '';
+            $array[0][$key]['dni_err'] = ( is_numeric($row[5]) && strlen($row[5])==8 ? 0 : 1 );
             
             $array[0][$key]['apellido_p'] = $row[6];
-            $array[0][$key]['apellido_p_err'] = '';
+            $array[0][$key]['apellido_p_err'] = ( $row[6] ? 0 : 1);
             
             $array[0][$key]['apellido_m'] = $row[7];
-            
+
             $array[0][$key]['nombres'] = $row[8];
-            $array[0][$key]['nombres_err'] = '';
+            $array[0][$key]['nombres_err'] = ( $row[8] ? 0 : 1);
 
             $array[0][$key]['email'] = $row[9];
-            $array[0][$key]['email_err'] = '';
+            $array[0][$key]['email_err'] = ( $row[9] ? 0 : 1);
 
             $array[0][$key]['telefono1'] = $row[10];
-            $array[0][$key]['telefono1_err'] = '';
+            $array[0][$key]['telefono1_err'] = ( is_numeric($row[10]) && strlen($row[10])==9 ? 0 : 1 );
             
             $array[0][$key]['telefono2'] = $row[11];
             $array[0][$key]['telefono2_err'] = '';
+
+            if ( $error === false )
+            {
+
+                if ( $array[0][$key]['cod_reg_err'] || $array[0][$key]['dni_err'] || $array[0][$key]['nombres_err'] || $array[0][$key]['email_err'] || $array[0][$key]['telefono1_err'] || $array[0][$key]['telefono2_err'] )
+                {
+                    $error = true;
+                }
+
+            }
 
             unset(
                     $array[0][$key][0],
@@ -117,10 +127,31 @@ class PersonController extends Controller
 
         }
 
+        if ( $error )
+        {
+
+            $row = '';
+
+            foreach ($array[0] as $key => $val) 
+            {
+                
+                $row .= '<tr>'.
+                            '<td>' . $val['cod_reg'] . '</td>'.
+                        '</tr>';
+
+            }
+
+            return back()->with('message' , '<table>'.$row.'</table>' );
+        }
+
+        // $query_compare = Director::all();
         // $cod_mon = array_column($array[0],0);
-
+        // foreach ($query_compare as $key => $value) {
+        //     # code...
+        //     echo $value->Ie_CodigoModular.'<br>';
+        // }
         // var_dump( $cod_mon );
-
+        // dd($query_compare->verifyData());
         dd($array[0]);
 
         //return back()->with('message', 'Importacion de usuario completada');
