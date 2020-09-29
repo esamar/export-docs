@@ -8,6 +8,8 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+		
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
         <!-- Styles -->
         <style>
@@ -62,47 +64,57 @@
                 margin-bottom: 30px;
             }
         </style>
+
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
+    	<?php if ( $state_error ): ?>
 
-            <div class="content">
+	    	<div class="alert alert-danger" role="alert">
 
-                <!-- <p>Click <a href="{{ route('users.pdf')}}">aqui</a> para descargar en PDF a los usuarios </p> -->
+	            <?= $message ?>
 
-                <!-- <p>Click <a href="{{ route('users.excel')}}">aqui</a> para descargar en EXCEL a los usuarios </p> -->
+			</div>
 
-                <form action="{{ route('import.directory.excel') }}" method="post" enctype="multipart/form-data">
-                    
-                    @csrf
-                    @if (Session::has("message") )
-                        <p>{{ Session::get("message")}}</p>
-                    @endif
+		<?php else: ?>
 
-                    <input type="file" name="file">
-                    <button>Importar </button>
+			<div class="alert alert-info" role="alert">
+
+	            <?= $message ?>
+
+			</div>
+
+			<div>
+				<button> Continuar </button>
+			</div><br>
+
+		<?php endif; ?>
 
 
-                    @if (Session::has("table") )
-                        <p>{{ Session::get("table")}}</p>
-                    @endif
+    	<table class="table table-sm table-hover">
+    		<thead>
+    			<tr>	
+	    			<th scope="col">FILA </th>
+	    			<th scope="col">COD_MONITOR</th>
+	    			<th scope="col">COD_MOD8</th>
+	    			<th scope="col">DNI</th>
+	    			<th scope="col">APELLIDO PATERNO</th>
+	    			<th scope="col">APELLIDO MATERNO</th>
+	    			<th scope="col">NOMBRES</th>
+	    			<th scope="col">EMAIL_DIRECTOR</th>
+	    			<th scope="col">TELEFONO 1</th>
+	    			<th scope="col">TELEFONO 2</th>
+	    			<th scope="col">RESUMEN</th>
+    			</tr>
+    		</thead>
+        
+        	<tbody>
+        	
+		        <?= $resumeTable?>
+        
+        	</tbody>
 
-                </form>
+    	</table>
 
-            </div>
-        </div>
     </body>
 </html>
