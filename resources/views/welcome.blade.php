@@ -8,6 +8,7 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
         <!-- Styles -->
         <style>
@@ -88,13 +89,47 @@
                 <form action="{{ route('import.directory.excel') }}" method="post" enctype="multipart/form-data">
                     
                     @csrf
-                    @if (Session::has("message") )
-                        <p>{{ Session::get("message")}}</p>
-                    @endif
 
-                    <input type="file" name="file">
-                    <button>Importar </button>
 
+                    <?php if ( isset( $state ) ):?>
+
+                        <?php if ( $state ): ?>
+
+                            <div class="alert alert-success" role="alert">
+
+                                <?= $message ?>
+
+                            </div>
+
+                        <?php else: ?>
+
+                            <div class="alert alert-danger" role="alert">
+
+                                <?= $message ?>
+
+                            </div>
+
+                            <div>
+                                <a href="{{ route('import-to-director' , $id_temporal )}}" class="btn btn-success">Continuar</a>
+                            </div><br>
+
+                        <?php endif; ?>
+
+                    <?php endif; ?>
+
+                    <!-- <input type="file" name="file"> -->
+
+                    <div class="custom-file">
+
+                      <input type="file" class="custom-file-input" name="file" id="customFileLang" lang="es">
+                      <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+
+                    </div>
+
+<br>
+<br>
+
+                    <button class="btn btn-primary">Importar </button>
 
                     @if (Session::has("table") )
                         <p>{{ Session::get("table")}}</p>

@@ -85,7 +85,7 @@
 			</div>
 
 			<div>
-				<button> Continuar </button>
+				<a href="{{ route('import-to-director' , $id_temporal )}}" class="btn btn-success">Continuar</a>
 			</div><br>
 
 		<?php endif; ?>

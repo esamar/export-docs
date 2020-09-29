@@ -324,7 +324,7 @@ class PersonController extends Controller
 
             }
 
-            return view('error')->with('resumeTable' , $row )->with('message' , $message )->with('state_error', $error );
+            return view('error')->with('resumeTable' , $row )->with('message' , $message )->with('state_error', $error )->with('id_temporal', $id_temporal);
         }
 
 
@@ -347,4 +347,35 @@ class PersonController extends Controller
     {
     	return Excel::download(new UsersExport, 'user-list.xlsx');
     }
+
+    public function importTableDirector( $id_temporal )
+    {
+
+
+
+        $resp = DB::insert('INSERT INTO tb_dir_contacto 
+                                ( Ie_CodigoModular, CDIR_TIPO_DOC, CDIR_DOCUMENTO, CDIR_NOMBRE, CDIR_APELLIDO_P, CDIR_APELLIDO_M, CDIR_EMAIL, CDIR_TELEFONO, CDIR_TELEFONO2, CDIR_ACTIVO) 
+                    SELECT cod_mod , 1 , dni, nombres, ape_p, ape_m, email, telefono1, telefono2 , 1 
+                    FROM  import_tables 
+                    WHERE id_temp = "' . $id_temporal. '";');
+
+        DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
+
+        if ( $resp )
+        {
+        
+            $message = 'Se ha importado los datos correctamente.';
+
+        }
+        else
+        {
+            
+            $message = 'No se ha podido importar los datos.';
+
+        }
+
+        return view('welcome')->with('message' , $message )->with('state', $resp );
+
+    }
+
 }

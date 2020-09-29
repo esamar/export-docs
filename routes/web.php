@@ -24,3 +24,7 @@ Route::post('import-directory-excel' , 'PersonController@importExcel')->name('im
 Route::get('user-list-pdf' , 'PersonController@ExportPdf')->name('users.pdf');
 
 Route::get('user-list-excel' , 'PersonController@ExportExcel')->name('users.excel');
+
+// Route::get('import-to-director' , 'PersonController@importTableDirector')->name('import.director');
+
+Route::get('import-to-director/{id_temporal}', array('as' => 'import-to-director', 'uses' => 'PersonController@importTableDirector'));
