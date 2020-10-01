@@ -27,6 +27,8 @@ class ImportTable extends Migration
             $table->string('email');
             $table->string('telefono1');
             $table->string('telefono2');
+            $table->string('state');
+            $table->tinyInteger('created_by')->unsigned();
             $table->timestamp('created_at');
 
         });

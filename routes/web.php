@@ -11,9 +11,15 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function ( ) {
     return view('welcome');
 });
+
+Route::get('inicio/{id_especialista}', function ( $id_especialista ) {
+
+    return view('welcome')->with('id_especialista' , $id_especialista );
+
+})->name('inicio');
 
 Route::get('/import', function() {
 	return view('import');
@@ -27,4 +33,4 @@ Route::get('user-list-excel' , 'PersonController@ExportExcel')->name('users.exce
 
 // Route::get('import-to-director' , 'PersonController@importTableDirector')->name('import.director');
 
-Route::get('import-to-director/{id_temporal}', array('as' => 'import-to-director', 'uses' => 'PersonController@importTableDirector'));
+Route::get('import-to-director/{id_temporal}/{id_especialista}', array('as' => 'import-to-director', 'uses' => 'PersonController@importTableDirector'));

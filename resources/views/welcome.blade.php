@@ -10,6 +10,23 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+        <script type="text/javascript">
+            
+            $( document ).ready(() => {
+                $("input[type=file]").change(function(){
+                       var fieldVal = $(this).val();
+                       if (fieldVal != undefined || fieldVal != "") {   
+                           $(this).next(".custom-file-label").html( fieldVal.split("\\").pop() );
+                       }
+                });
+
+            })
+
+        </script>
         <!-- Styles -->
         <style>
             html, body {
@@ -90,8 +107,17 @@
                     
                     @csrf
 
+                    <?php 
+                    
+                        session_start();
+                    
+                        $_SESSION['ID_ESPECIALISTA'] = $id_especialista;
 
-                    <?php if ( isset( $state ) ):?>
+                    ?>
+
+                    <?php 
+
+                    if ( isset( $state ) ):?>
 
                         <?php if ( $state ): ?>
 
@@ -117,19 +143,15 @@
 
                     <?php endif; ?>
 
-                    <!-- <input type="file" name="file"> -->
-
-                    <div class="custom-file">
-
-                      <input type="file" class="custom-file-input" name="file" id="customFileLang" lang="es">
-                      <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
-
-                    </div>
-
-<br>
-<br>
-
-                    <button class="btn btn-primary">Importar </button>
+                      <div class="input-group is-invalid">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="validatedInputGroupCustomFile" name="file" lang="es" required>
+                          <label class="custom-file-label" for="validatedInputGroupCustomFile">Seleccione el archivo...</label>
+                        </div>
+                        <div class="input-group-append">
+                           <button class="btn btn-outline-secondary">Importar</button>
+                        </div>
+                      </div>
 
                     @if (Session::has("table") )
                         <p>{{ Session::get("table")}}</p>

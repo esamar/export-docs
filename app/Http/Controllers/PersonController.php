@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -16,7 +17,6 @@ use App\ImportTable;
 
 class PersonController extends Controller
 {
-    //
 
     public function exportPdf()
     {
@@ -30,6 +30,8 @@ class PersonController extends Controller
 
     public function importExcel(Request $request)
     {
+
+        session_start();
 
     	$file = $request->file('file');
         
@@ -196,7 +198,11 @@ class PersonController extends Controller
 
             }
 
-            return view('error')->with('resumeTable' , $row )->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')->with('state_error', true );
+            return view('error')
+                        ->with('resumeTable' , $row )
+                        ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
+                        ->with('state_error', true )
+                        ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
         }
 
 
@@ -218,6 +224,8 @@ class PersonController extends Controller
             $temp_table->email = $val['email'];
             $temp_table->telefono1 = $val['telefono1'];
             $temp_table->telefono2 = $val['telefono2'];
+            $temp_table->state = 0;
+            $temp_table->created_by = $_SESSION['ID_ESPECIALISTA'];
             $temp_table->save();
         
         }
@@ -320,11 +328,19 @@ class PersonController extends Controller
 
                     $message = 'Atención: Se va a registrar la siguiente información. Presione el boton "Continuar" para proceder con el registro.';
 
+                    \Storage::disk('local')->put( $id_temporal . '-' . $file->getClientOriginalName(),  \File::get($file));
+
                 }
 
             }
 
-            return view('error')->with('resumeTable' , $row )->with('message' , $message )->with('state_error', $error )->with('id_temporal', $id_temporal);
+            return view('error')
+                    ->with('resumeTable' , $row )
+                    ->with('message' , $message )
+                    ->with('state_error', $error )
+                    ->with('id_temporal', $id_temporal)
+                    ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
+                    
         }
 
 
@@ -348,18 +364,16 @@ class PersonController extends Controller
     	return Excel::download(new UsersExport, 'user-list.xlsx');
     }
 
-    public function importTableDirector( $id_temporal )
+    public function importTableDirector( $id_temporal , $id_especialista )
     {
 
-
-
         $resp = DB::insert('INSERT INTO tb_dir_contacto 
-                                ( Ie_CodigoModular, CDIR_TIPO_DOC, CDIR_DOCUMENTO, CDIR_NOMBRE, CDIR_APELLIDO_P, CDIR_APELLIDO_M, CDIR_EMAIL, CDIR_TELEFONO, CDIR_TELEFONO2, CDIR_ACTIVO) 
-                    SELECT cod_mod , 1 , dni, nombres, ape_p, ape_m, email, telefono1, telefono2 , 1 
+                                ( Ie_CodigoModular, CDIR_TIPO_DOC, CDIR_DOCUMENTO, CDIR_NOMBRE, CDIR_APELLIDO_P, CDIR_APELLIDO_M, CDIR_EMAIL, CDIR_TELEFONO, CDIR_TELEFONO2, CDIR_ACTIVO, id_seed) 
+                    SELECT cod_mod , 1 , dni, nombres, ape_p, ape_m, email, telefono1, telefono2 , 1 , id 
                     FROM  import_tables 
                     WHERE id_temp = "' . $id_temporal. '";');
 
-        DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
+        DB::delete('UPDATE import_tables SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
         if ( $resp )
         {
@@ -374,7 +388,10 @@ class PersonController extends Controller
 
         }
 
-        return view('welcome')->with('message' , $message )->with('state', $resp );
+        return view('welcome')
+                ->with('message' , $message )
+                ->with('state', $resp )
+                ->with('id_especialista' , $id_especialista );
 
     }
 
