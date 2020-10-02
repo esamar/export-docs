@@ -78,31 +78,182 @@ class PersonController extends Controller
 
         foreach ($array[0] as $key => $row) {
 
-            $array[0][$key]['cod_reg'] = $row[0];
-            $array[0][$key]['cod_reg_err'] = ( (int)$row[0] > 0 ? 0 : 1 );
+            $array[0][$key]['cod_reg'] = trim($row[0]);
 
-            $array[0][$key]['cod_mod8'] = $row[1] . $row[2];
-            $array[0][$key]['cod_mod8_err'] = ( is_numeric($row[1] . $row[2]) && strlen($row[1] . $row[2])==8 ? 0 : 1 );
+            $e_cod_reg = 0;
+
+            if ( !is_numeric( $row[0] ) )
+            {
+                $e_cod_reg = 1;
+            }
+            else
+            {
+
+                if ( (int) $row[0] > 255 || (int) $row[0] < 1 )
+                {
+                    $e_cod_reg = 1;
+                }
+
+            }
+
+            $array[0][$key]['cod_reg_err'] = $e_cod_reg;
+            #----------------------------------------------
+
+            $array[0][$key]['cod_mod8'] = trim($row[1] . $row[2]);
+
+            if ( is_numeric($row[1] . $row[2]) && strlen($row[1] . $row[2])==8 )
+            {
+
+                $e_cod_mor = 0;
+
+            } 
+            else
+            {
+                $e_cod_mor = 1;
+            }
+
+            $array[0][$key]['cod_mod8_err'] = $e_cod_mor;
+
+            #----------------------------------------------
             
-            $array[0][$key]['dni'] = $row[5];
-            $array[0][$key]['dni_err'] = ( $row[5] ? ( is_numeric($row[5]) && strlen($row[5])==8 ? 0 : 1 ) : 0 ); 
+            $array[0][$key]['dni'] = trim($row[5]);
             
-            $array[0][$key]['apellido_p'] = $row[6];
+            if ( $row[5] )
+            {
+                if ( is_numeric($row[5]) && strlen($row[5])==8 )
+                {
+                    $e_dni = 0;
+                }
+                else
+                {
+                    $e_dni = 1;
+                }
+            }
+            else
+            {
+                $e_dni = 0;
+            }
+
+            $array[0][$key]['dni_err'] = $e_dni; 
+            
+            $array[0][$key]['apellido_p'] = trim($row[6]);
             $array[0][$key]['apellido_p_err'] = ( $row[6] ? 0 : 1);
             
-            $array[0][$key]['apellido_m'] = $row[7];
+            $array[0][$key]['apellido_m'] = trim($row[7]);
 
-            $array[0][$key]['nombres'] = $row[8];
+            $array[0][$key]['nombres'] = trim($row[8]);
             $array[0][$key]['nombres_err'] = ( $row[8] ? 0 : 1);
 
-            $array[0][$key]['email'] = $row[9];
-            $array[0][$key]['email_err'] = 0; #( $row[9] ? 0 : 1);
+            $array[0][$key]['email'] = trim($row[9]);
 
-            $array[0][$key]['telefono1'] = $row[10];
-            $array[0][$key]['telefono1_err'] = ( is_numeric($row[10]) && strlen($row[10])==9 ? 0 : 1 );
+            $e_email = 0;
+
+            if ( $row[9] )
+            {
+
+                if ( filter_var( $row[9] , FILTER_VALIDATE_EMAIL) )
+                {
+
+                    $e_email = 0;
+
+                }
+                else
+                {
+
+                    $e_email = 1;
+
+                }
+
+            }
+
+            $array[0][$key]['email_err'] = trim($e_email);
+
+            $array[0][$key]['telefono1'] = trim($row[10]);
+
+            $e_telefono1 = 0;
+
+            if ( !strlen($row[10])==9 ) 
+            {
+
+                $e_telefono1 = 1;
+
+            }
+            else
+            {
+
+                if ( is_numeric( $row[10] ) )
+                {
+
+                    if ( substr( $row[10] , 0 , 1 ) == '9' || substr( $row[10] , 0 , 1 ) === '0' )
+                    {
+                        
+                        $e_telefono1 = 0;
+
+                    }
+                    else
+                    {
+
+                        $e_telefono1 = 1;
+
+                    }
+
+                }
+                else
+                {
+
+                    $e_telefono1 = 1;
+
+                }
+
+            }
+
+            $array[0][$key]['telefono1_err'] = $e_telefono1;
             
-            $array[0][$key]['telefono2'] = $row[11];
-            $array[0][$key]['telefono2_err'] = '';
+            $array[0][$key]['telefono2'] = trim($row[11]);
+
+            $e_telefono2 = 0;
+
+            if ( $row[11] )
+            {
+
+                if ( !strlen($row[11])==9 ) 
+                {
+
+                    $e_telefono2 = 1;
+
+                }
+                else
+                {
+
+                    if ( is_numeric( $row[11] ) )
+                    {
+
+                        if ( substr( $row[11] , 0 , 1 ) == '9' || substr( $row[11] , 0 , 1 ) === '0' )
+                        {
+                            
+                            $e_telefono2 = 0;
+
+                        }
+                        else
+                        {
+
+                            $e_telefono2 = 1;
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        $e_telefono2 = 1;
+
+                    }
+
+                }
+
+            }
+
+            $array[0][$key]['telefono2_err'] = $e_telefono2;
 
             if ( $error === false )
             {
@@ -214,10 +365,10 @@ class PersonController extends Controller
             $temp_table = new ImportTable;
             
             $temp_table->id_temp = $id_temporal;
-            $temp_table->id_fila = $key;
+            $temp_table->id_fila = $key + 1;
             $temp_table->cod_reg = $val['cod_reg'];
             $temp_table->cod_mod = $val['cod_mod8'];
-            $temp_table->dni = $val['dni'];
+            $temp_table->dni = ( $val['dni'] ? $val['dni'] : NULL );
             $temp_table->ape_p = $val['apellido_p'];
             $temp_table->ape_m = $val['apellido_m'];
             $temp_table->nombres = $val['nombres'];
@@ -225,43 +376,38 @@ class PersonController extends Controller
             $temp_table->telefono1 = $val['telefono1'];
             $temp_table->telefono2 = $val['telefono2'];
             $temp_table->state = 0;
+            $temp_table->info_error = '';
             $temp_table->created_by = $_SESSION['ID_ESPECIALISTA'];
             $temp_table->save();
         
         }
 
-        $integrity_table = DB::select('SELECT 
-                                            id_fila,
-                                            cod_mod,
-                                            CASE WHEN ISNULL(B.Ie_CodigoModular) THEN
-                                                1
-                                                ELSE
-                                                0
-                                            END COD_MOD_ERR,
-                                            cod_reg,
-                                            CASE WHEN ISNULL( B.Age_Codigo) THEN
-                                                1
-                                            ELSE
-                                                0
-                                            END COD_REG_ERR,
-                                            dni,
-                                            CASE WHEN ( dni = CDIR_DOCUMENTO ) THEN
-                                                1
-                                            ELSE
-                                                0
-                                            END DNI_ERR,
-                                            ape_p,
-                                            ape_m,
-                                            nombres,
-                                            email,
-                                            telefono1,
-                                            telefono2
+        $integrity_table = DB::select('SELECT
+                                        id,
+                                        id_fila,
+                                        cod_mod,
+                                        cod_reg,
+                                        IF( ISNULL( B.Age_Codigo ) , 1 , 0 ) COD_REG_ERR, /*#No existe codigo registrador*/ 
+                                        IF( cod_mod = C.Ie_CodigoModular , 0 , 1 ) COD_MOD_ERR , /*#Codigo modular no existe*/ 
+                                        IF( cod_reg = C.Age_Codigo , 0 , 1 ) COD_REG_COD_MOD_ERR, /*#El codigo de registrador no está asociado al codigo modular*/
+                                        IF( ISNULL( CDIR_CODIGO ) , 0, 1 ) COD_CONTACTO_EX, /*#La ie ya tiene un director asignado*/ 
+                                        IF( ISNULL( E.CDIR_DOCUMENTO ) , 0 , 1 ) COD_DNI_EX, /*#El dni se ha registrado anteriormente*/
+                                        dni,
+                                        ape_p,
+                                        ape_m,
+                                        nombres,
+                                        email,
+                                        telefono1,
+                                        telefono2
                                         FROM import_tables A 
-                                        LEFT JOIN tb_registro B 
-                                        ON ( Ie_CodigoModular = cod_mod AND cod_reg = Age_Codigo )
-                                        LEFT JOIN tb_dir_contacto C 
-                                        ON ( B.Ie_CodigoModular = C.Ie_CodigoModular 
-                                        AND dni = CDIR_DOCUMENTO AND CDIR_ACTIVO = 1)
+                                        LEFT JOIN tb_agente B ON (B.Age_Codigo = A.cod_reg)
+                                        LEFT JOIN tb_registro C ON (C.Ie_CodigoModular = A.cod_mod AND REG_TIPO = 1)
+                                        LEFT JOIN tb_dir_contacto D ON (C.Ie_CodigoModular = D.Ie_CodigoModular AND CDIR_ACTIVO = 1)
+                                        LEFT JOIN ( SELECT 
+                                                        CDIR_DOCUMENTO 
+                                                    FROM tb_dir_contacto 
+                                                    WHERE NOT ISNULL(CDIR_DOCUMENTO) AND NOT CDIR_DOCUMENTO = "" ) E 
+                                                    ON (E.CDIR_DOCUMENTO = A.dni)
                                         WHERE id_temp = "' . $id_temporal. '";');
 
         
@@ -271,6 +417,8 @@ class PersonController extends Controller
             $row = '';
 
             $error = false;
+
+            $error_update = [];
 
             foreach ($integrity_table as $key => $val) 
             {
@@ -284,6 +432,13 @@ class PersonController extends Controller
                     $error = true;
 
                 }
+                if ( $val->COD_CONTACTO_EX )
+                {
+                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "La IE ya tiene asignado un director";
+                
+                    $error = true;
+                
+                }
                 if ( $val->COD_REG_ERR )
                 {
                     $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código de monitor no existe";
@@ -291,19 +446,39 @@ class PersonController extends Controller
                     $error = true;
                 
                 }
-                if ( $val->DNI_ERR )
+                if ( $val->COD_REG_COD_MOD_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El dni ya se encuentra registrado";
+                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El código de registrador no está asociado al código modular";
+                 
+                    $error = true;
+                
+                }
+                if ( $val->COD_DNI_EX )
+                {
+                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El dni se ha registrado anteriormente";
                 
                     $error = true;
                 
                 }
 
+                if ( $resumen )
+                {
+
+                    array_push($error_update, 
+                                            [ 
+                                                'id' => $val->id , 
+                                                'info_error' => $resumen 
+                                            ]);
+
+                }
+
+
                 $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : '' ) . '>'.
                             '<th scope="row">' . $val->id_fila . '</td>'.
-                            '<td ' . ( $val->COD_REG_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
-                            '<td ' . ( $val->COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
-                            '<td ' . ( $val->DNI_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
+                            '<td>' . $val->id . '</td>'.
+                            '<td ' . ( $val->COD_REG_ERR || $val->COD_REG_COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
+                            '<td ' . ( $val->COD_MOD_ERR || $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
+                            '<td ' . ( $val->COD_DNI_EX || $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
                             '<td>' . $val->ape_p . '</td>'.
                             '<td>' . $val->ape_m . '</td>'.
                             '<td>' . $val->nombres . '</td>'.
@@ -313,24 +488,45 @@ class PersonController extends Controller
                             '<td>' . $resumen . '</td>'.
                         '</tr>';
 
-                $message = '';
+            }
 
-                if ( $error )
+            $message = '';
+
+            if ( $error )
+            {
+
+                $message = 'Se ha detectado errores de integridad. No se puede registrar.';
+
+                // dd($error_update);
+
+                // DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
+
+                foreach ($error_update as $key => $val) 
                 {
 
-                    $message = 'Se ha detectado errores de integridad. No se puede registrar.';
+                    DB::table('import_tables')->where("id", $val['id'])->update(["info_error" => $val['info_error'] ]);
 
-                    DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
+                    // $temp_table = new ImportTable;
 
+                    // $temp_table->exists = true;
+
+                    // $temp_table->id = $val['id'];
+
+                    // $temp_table->info_error = $val['info_error'];
+
+                    // $temp_table->save();
+                
                 }
-                else
-                {
 
-                    $message = 'Atención: Se va a registrar la siguiente información. Presione el boton "Continuar" para proceder con el registro.';
+                DB::update('UPDATE import_tables SET state = 2 WHERE id_temp = "' . $id_temporal. '";');
 
-                    \Storage::disk('local')->put( $id_temporal . '-' . $file->getClientOriginalName(),  \File::get($file));
+            }
+            else
+            {
 
-                }
+                $message = 'Atención: Se va a registrar la siguiente información. Presione el boton "Continuar" para proceder con el registro.';
+
+                \Storage::disk('local')->put( $id_temporal . '-' . $file->getClientOriginalName(),  \File::get($file));
 
             }
 
@@ -373,7 +569,7 @@ class PersonController extends Controller
                     FROM  import_tables 
                     WHERE id_temp = "' . $id_temporal. '";');
 
-        DB::delete('UPDATE import_tables SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
+        DB::update('UPDATE import_tables SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
         if ( $resp )
         {

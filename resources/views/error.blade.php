@@ -71,75 +71,79 @@
 
         <div class="content">
 
-            <div class="card text-center">
-              <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                  <li class="nav-item">
-                    <a class="nav-link active" href="#">Administrar</a>
-                  </li>
-                </ul>
-              </div>
-              <div class="card-body">
-                <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
-                <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
+            <div class="row">
 
-            <?php if ( $state_error ): ?>
+                <div class="col-xs-6"> 
 
-                <div class="alert alert-danger" role="alert">
+                    <div class="card text-center">
+                      <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                          <li class="nav-item">
+                            <a class="nav-link active" href="#">Administrar</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
+                        <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
 
-                    <?= $message ?>
+                        <?php if ( $state_error ): ?>
 
-                    <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
+                            <div class="alert alert-danger" role="alert">
 
-                </div>
+                                <?= $message ?>
 
+                                <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
 
-            <?php else: ?>
-
-                <div class="alert alert-info" role="alert">
-
-                    <?= $message ?>
-
-                </div>
-
-                <div>
-                    <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
-                </div><br>
-
-            <?php endif; ?>
-
-            <table class="table table-sm table-hover">
-                <thead>
-                    <tr>    
-                        <th scope="col">FILA </th>
-                        <th scope="col">COD_MONITOR</th>
-                        <th scope="col">COD_MOD8</th>
-                        <th scope="col">DNI</th>
-                        <th scope="col">APELLIDO PATERNO</th>
-                        <th scope="col">APELLIDO MATERNO</th>
-                        <th scope="col">NOMBRES</th>
-                        <th scope="col">EMAIL_DIRECTOR</th>
-                        <th scope="col">TELEFONO 1</th>
-                        <th scope="col">TELEFONO 2</th>
-                        <th scope="col">RESUMEN</th>
-                    </tr>
-                </thead>
-            
-                <tbody>
-                
-                    <?= $resumeTable?>
-            
-                </tbody>
-
-            </table>
+                            </div>
 
 
+                        <?php else: ?>
 
+                            <div class="alert alert-info" role="alert">
 
+                                <?= $message ?>
 
+                            </div>
 
-              </div>
-            </div>
+                            <div>
+                                <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+                            </div><br>
+
+                        <?php endif; ?>
+
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>    
+                                    <th scope="col">FILA</th>
+                                    <th scope="col">COD_MONITOR</th>
+                                    <th scope="col">COD_MOD8</th>
+                                    <th scope="col">DNI</th>
+                                    <th scope="col">APELLIDO PATERNO</th>
+                                    <th scope="col">APELLIDO MATERNO</th>
+                                    <th scope="col">NOMBRES</th>
+                                    <th scope="col">EMAIL_DIRECTOR</th>
+                                    <th scope="col">TELEFONO 1</th>
+                                    <th scope="col">TELEFONO 2</th>
+                                    <th scope="col">RESUMEN</th>
+                                </tr>
+                            </thead>
+                        
+                            <tbody>
+                            
+                                <?= $resumeTable?>
+                        
+                            </tbody>
+
+                        </table>
+
+                      </div>
+
+                    </div>
+
+                </div> 
+
+            </div>  
 
         </div>
 

@@ -103,61 +103,82 @@
 
                 <!-- <p>Click <a href="{{ route('users.excel')}}">aqui</a> para descargar en EXCEL a los usuarios </p> -->
 
-                <form action="{{ route('import.directory.excel') }}" method="post" enctype="multipart/form-data">
-                    
-                    @csrf
+                <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
 
-                    <?php 
-                    
-                        session_start();
-                    
-                        $_SESSION['ID_ESPECIALISTA'] = $id_especialista;
+                <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
 
-                    ?>
 
-                    <?php 
 
-                    if ( isset( $state ) ):?>
+                <div class="card">
 
-                        <?php if ( $state ): ?>
+                  <div class="card-header">
 
-                            <div class="alert alert-success" role="alert">
+                    Importar datos de director
 
-                                <?= $message ?>
+                  </div>
 
-                            </div>
+                  <div class="card-body">
 
-                        <?php else: ?>
+                    <form action="{{ route('import.directory.excel') }}" method="post" enctype="multipart/form-data">
+                        
+                        @csrf
 
-                            <div class="alert alert-danger" role="alert">
+                        <?php 
+                        
+                            session_start();
+                        
+                            $_SESSION['ID_ESPECIALISTA'] = $id_especialista;
 
-                                <?= $message ?>
+                        ?>
 
-                            </div>
+                        <?php 
 
-                            <div>
-                                <a href="{{ route('import-to-director' , $id_temporal )}}" class="btn btn-success">Continuar</a>
-                            </div><br>
+                        if ( isset( $state ) ):?>
+
+                            <?php if ( $state ): ?>
+
+                                <div class="alert alert-success" role="alert">
+
+                                    <?= $message ?>
+
+                                </div>
+
+                            <?php else: ?>
+
+                                <div class="alert alert-danger" role="alert">
+
+                                    <?= $message ?>
+
+                                </div>
+
+                                <div>
+                                    <a href="{{ route('import-to-director' , $id_temporal )}}" class="btn btn-success">Continuar</a>
+                                </div><br>
+
+                            <?php endif; ?>
 
                         <?php endif; ?>
 
-                    <?php endif; ?>
+                          <div class="input-group is-invalid">
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="validatedInputGroupCustomFile" name="file" lang="es" required>
+                              <label class="custom-file-label" for="validatedInputGroupCustomFile">Seleccione el archivo...</label>
+                            </div>
+                            <div class="input-group-append">
+                               <button class="btn btn-outline-secondary">Importar</button>
+                            </div>
+                          </div>
 
-                      <div class="input-group is-invalid">
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" id="validatedInputGroupCustomFile" name="file" lang="es" required>
-                          <label class="custom-file-label" for="validatedInputGroupCustomFile">Seleccione el archivo...</label>
-                        </div>
-                        <div class="input-group-append">
-                           <button class="btn btn-outline-secondary">Importar</button>
-                        </div>
-                      </div>
+                        @if (Session::has("table") )
+                            <p>{{ Session::get("table")}}</p>
+                        @endif
 
-                    @if (Session::has("table") )
-                        <p>{{ Session::get("table")}}</p>
-                    @endif
+                    </form>
 
-                </form>
+                  </div>
+                </div>
+
+
 
             </div>
         </div>

@@ -20,7 +20,7 @@ class ImportTable extends Migration
             $table->integer('id_fila')->unsigned();
             $table->tinyInteger('cod_reg')->unsigned();
             $table->string('cod_mod');
-            $table->string('dni');
+            $table->string('dni')->nullable();
             $table->string('ape_p');
             $table->string('ape_m');
             $table->string('nombres');
@@ -28,6 +28,7 @@ class ImportTable extends Migration
             $table->string('telefono1');
             $table->string('telefono2');
             $table->string('state');
+            $table->string('info_error');
             $table->tinyInteger('created_by')->unsigned();
             $table->timestamp('created_at');
 
