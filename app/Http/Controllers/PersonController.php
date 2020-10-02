@@ -38,7 +38,6 @@ class PersonController extends Controller
         //Excel::import(new UsersImport, $file );
         $array = Excel::toArray(new UsersImport, $file );
 
-
         unset($array[0][0]);
         unset($array[0][1]);
 
@@ -71,6 +70,7 @@ class PersonController extends Controller
             echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
 
         }
+
         #QUITAMOS EL HEADER, YA NO ES NECESARIO        
         unset($array[0][2]);
 
@@ -325,11 +325,11 @@ class PersonController extends Controller
                 }
                 if ( $array[0][$key]['telefono1_err'] )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Formato Telefono 1 incorrecto";
+                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Formato Teléfono 1 incorrecto";
                 }
                 if ( $array[0][$key]['telefono2_err'] )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Formato Telefono 2 incorrecto";
+                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Formato Teléfono 2 incorrecto";
                 }
 
                 $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : '' ) . '>'.
@@ -354,6 +354,7 @@ class PersonController extends Controller
                         ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
                         ->with('state_error', true )
                         ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
+
         }
 
 
@@ -475,7 +476,6 @@ class PersonController extends Controller
 
                 $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : '' ) . '>'.
                             '<th scope="row">' . $val->id_fila . '</td>'.
-                            '<td>' . $val->id . '</td>'.
                             '<td ' . ( $val->COD_REG_ERR || $val->COD_REG_COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
                             '<td ' . ( $val->COD_MOD_ERR || $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
                             '<td ' . ( $val->COD_DNI_EX || $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.

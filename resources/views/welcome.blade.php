@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>SIREG SEEDS - v0.1</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -106,8 +106,6 @@
                 <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
 
                 <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
-
-
 
                 <div class="card">
 
