@@ -59,7 +59,10 @@
                 text-decoration: none;
                 text-transform: uppercase;
             }
-
+table
+{
+    font-size: 9pt!important;
+}
             .m-b-md {
                 margin-bottom: 30px;
             }
@@ -71,7 +74,7 @@
 
         <div class="content">
 
-            <div class="row">
+            <div class="container-fluid">
 
                 <div class="col-xs-2"></div> 
 
@@ -89,28 +92,45 @@
                         <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
                         <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
 
-                        <?php if ( $state_error ): ?>
+                        <?php if ( $state_error === 1): ?>
 
                             <div class="alert alert-danger" role="alert">
 
                                 <?= $message ?>
 
-                                <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
+                                <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-secondary">Regresar a inicio</a>
 
                             </div>
 
 
                         <?php else: ?>
 
-                            <div class="alert alert-info" role="alert">
+                            <?php if ( $state_error === 0 ):?>
 
-                                <?= $message ?>
+                                <div class="alert alert-info" role="alert">
 
-                            </div>
+                                    <?= $message ?>
+
+                                </div>
+                                
+                            <?php else: ?>
+                                
+                                <div class="alert alert-warning" role="alert">
+
+                                    <?= $message ?>
+
+                                </div>
+                                
+                            <?php endif; ?>
+
 
                             <div>
-                                <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
-                            </div><br>
+                                <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-secondary">Cancelar</a>
+
+                                <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-primary">Importar</a>
+                            </div>
+
+                            <br>
 
                         <?php endif; ?>
 

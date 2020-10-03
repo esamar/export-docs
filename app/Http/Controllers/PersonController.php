@@ -428,37 +428,40 @@ class PersonController extends Controller
 
                 if ( $val->COD_MOD_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código módular no existe";
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "Código módular no existe";
                     
                     $error = true;
 
                 }
                 if ( $val->COD_CONTACTO_EX )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "La IE ya tiene asignado un director";
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "La IE ya tiene asignado un director";
                 
                     $error = true;
                 
                 }
                 if ( $val->COD_REG_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código de monitor no existe";
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "Código de monitor no existe";
                  
                     $error = true;
                 
                 }
                 if ( $val->COD_REG_COD_MOD_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El código de registrador no está asociado al código modular";
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "El código de registrador no está asociado al código modular";
                  
                     $error = true;
                 
                 }
+
+                $alerta = false;
+
                 if ( $val->COD_DNI_EX )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El dni se ha registrado anteriormente";
+                    $resumen .= ( $resumen ? '<br>-Alerta: ' : 'Alerta: ') . "Este DNI ya está asociado a otra IE. Se agregará como director de multiples IE";
                 
-                    $error = true;
+                    $alerta = true;
                 
                 }
 
@@ -474,11 +477,11 @@ class PersonController extends Controller
                 }
 
 
-                $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : '' ) . '>'.
+                $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : ( $val->COD_DNI_EX ? 'class="table-warning"' : '' ) ) . '>'.
                             '<th scope="row">' . $val->id_fila . '</td>'.
                             '<td ' . ( $val->COD_REG_ERR || $val->COD_REG_COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
                             '<td ' . ( $val->COD_MOD_ERR || $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
-                            '<td ' . ( $val->COD_DNI_EX || $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
+                            '<td ' . ( $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
                             '<td>' . $val->ape_p . '</td>'.
                             '<td>' . $val->ape_m . '</td>'.
                             '<td>' . $val->nombres . '</td>'.
@@ -492,39 +495,50 @@ class PersonController extends Controller
 
             $message = '';
 
+            if ( $alerta || $error )
+            {
+
+                foreach ($error_update as $key => $val) 
+                {
+
+                    DB::table('import_tables')->where("id", $val['id'] )->update( ["info_error" => $val['info_error'] ]);
+                
+                }
+
+            }
+
             if ( $error )
             {
 
                 $message = 'Se ha detectado errores de integridad. No se puede registrar.';
 
-                // dd($error_update);
+                $e_state = 1;
 
                 // DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
 
-                foreach ($error_update as $key => $val) 
-                {
-
-                    DB::table('import_tables')->where("id", $val['id'])->update(["info_error" => $val['info_error'] ]);
-
-                    // $temp_table = new ImportTable;
-
-                    // $temp_table->exists = true;
-
-                    // $temp_table->id = $val['id'];
-
-                    // $temp_table->info_error = $val['info_error'];
-
-                    // $temp_table->save();
-                
-                }
-
-                DB::update('UPDATE import_tables SET state = 2 WHERE id_temp = "' . $id_temporal. '";');
+                DB::update('UPDATE import_tables SET state = 2 WHERE id_temp = "' . $id_temporal . '";');
 
             }
             else
             {
 
-                $message = 'Atención: Se va a registrar la siguiente información. Presione el boton "Continuar" para proceder con el registro.';
+                if ( $alerta )
+                {
+
+                    $message = 'Advertencia: Se ha detectado registro de director con multiples IE. Si está seguro de continuar, presione el botón "Importar" o "Cancelar" para abortar la importación.';
+                    
+                    $e_state = 2;
+
+                }
+                else
+                {
+
+                    $message = 'Todo bien: Se va a registrar la siguiente información. Presione el boton "Importar" para proceder con el registro.';
+
+                    $e_state = 0;
+
+                }
+
 
                 \Storage::disk('local')->put( $id_temporal . '-' . $file->getClientOriginalName(),  \File::get($file));
 
@@ -533,23 +547,11 @@ class PersonController extends Controller
             return view('error')
                     ->with('resumeTable' , $row )
                     ->with('message' , $message )
-                    ->with('state_error', $error )
+                    ->with('state_error', $e_state )
                     ->with('id_temporal', $id_temporal)
                     ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
                     
         }
-
-
-        // $query_compare = Director::all();
-        // $cod_mon = array_column($array[0],0);
-        // foreach ($query_compare as $key => $value) {
-        //     # code...
-        //     echo $value->Ie_CodigoModular.'<br>';
-        // }
-        // var_dump( $cod_mon );
-        // dd($query_compare->verifyData());
-
-        // dd($array[0]);
 
         //return back()->with('message', 'Importacion de usuario completada');
 
