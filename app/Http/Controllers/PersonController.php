@@ -353,6 +353,7 @@ class PersonController extends Controller
                         ->with('resumeTable' , $row )
                         ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
                         ->with('state_error', true )
+                        ->with('id_temporal', NULL )
                         ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
 
         }
@@ -569,7 +570,7 @@ class PersonController extends Controller
                                 ( Ie_CodigoModular, CDIR_TIPO_DOC, CDIR_DOCUMENTO, CDIR_NOMBRE, CDIR_APELLIDO_P, CDIR_APELLIDO_M, CDIR_EMAIL, CDIR_TELEFONO, CDIR_TELEFONO2, CDIR_ACTIVO, id_seed) 
                     SELECT cod_mod , 1 , dni, nombres, ape_p, ape_m, email, telefono1, telefono2 , 1 , id 
                     FROM  import_tables 
-                    WHERE id_temp = "' . $id_temporal. '";');
+                    WHERE id_temp = "' . $id_temporal. '" AND state = 0;');
 
         DB::update('UPDATE import_tables SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
