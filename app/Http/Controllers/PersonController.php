@@ -1192,7 +1192,7 @@ class PersonController extends Controller
         
             $resp2 = DB::insert("INSERT INTO tb_doc_directorio ( CDOC_CODIGO, RDOC_HISTORIA, Ie_CodigoModular, DGS_GRADO, DGS_SECCION, DGS_AREAS, id_seed )
                                 SELECT CDOC_CODIGO, 0, cod_mod, grado, seccion,  CONCAT('[' , GROUP_CONCAT(ARE_CODIGO SEPARATOR ',') , ']') AREA, id
-                                FROM sireg_campo_v5.import_table_docs A JOIN tb_doc_contacto B ON (A.dni = B.CDOC_NUMERO_DOC AND id_temp ='$id_temporal' AND state = 0 ) 
+                                FROM import_table_docs A JOIN tb_doc_contacto B ON (A.dni = B.CDOC_NUMERO_DOC AND id_temp ='$id_temporal' AND state = 0 ) 
                                 LEFT JOIN tb_areas C ON (A.area = C.ARE_DESCRIPCION )GROUP BY dni, grado, seccion");
 
         DB::update('UPDATE import_table_docs SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
