@@ -110,7 +110,7 @@
 
                 <!-- <p>Click <a href="{{ route('users.excel')}}">aqui</a> para descargar en EXCEL a los usuarios </p> -->
 
-                <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
+                <h5 class="card-title"><b>SIREG SEEDS - P v0.1.1</b></h5>
 
                 <p class="card-text">Módulo de importación de datos semilla para el sistema de registro SIREG-CP.</p>
 
