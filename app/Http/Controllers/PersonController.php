@@ -741,7 +741,7 @@ class PersonController extends Controller
             }
             else
             {
-                $e_dni = 0;
+                $e_dni = 1;
             }
 
             $array[0][$key]['dni_err'] = $e_dni; 
@@ -936,13 +936,13 @@ class PersonController extends Controller
                 }
 
                 $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : '' ) . '>'.
-                            '<th scope="row">' . $key . '</td>'.
+                            '<th scope="row">' . ( $key + 1 ) . '</td>'.
                             '<td ' . ( $val['cod_reg_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['cod_reg'] . '</td>'.
                             '<td ' . ( $val['cod_mod8_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['cod_mod8'] . '</td>'.
-                            '<td ' . ( $val['dni_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['dni'] . '</td>'.
                             '<td ' . ( $val['grado_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['grado'] . '</td>'.
                             '<td ' . ( $val['seccion_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['seccion'] . '</td>'.
                             '<td ' . ( $val['area_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['area'] . '</td>'.
+                            '<td ' . ( $val['dni_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['dni'] . '</td>'.
                             '<td ' . ( $val['apellido_p_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['apellido_p'] . '</td>'.
                             '<td>' . $val['apellido_m'] . '</td>'.
                             '<td ' . ( $val['nombres_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['nombres'] . '</td>'.
@@ -1003,6 +1003,7 @@ class PersonController extends Controller
                                             seccion,
                                             area,
                                             IF( ISNULL( ARE_DESCRIPCION ) , 1 , 0 ) AREA_ERR, /*EL AREA NO EXISTE*/
+                                            IF ( isnull(E.CDOC_NUMERO_DOC) , 0 ,1 ) DOC_EX_ERR, /*EL DOCENTE YA HA SIDO REGISTRADO EN ESTA IE*/
                                             dni,
                                             ape_p,
                                             ape_m,
@@ -1013,10 +1014,10 @@ class PersonController extends Controller
                                         LEFT JOIN tb_agente B ON (B.Age_Codigo = A.cod_reg)
                                         LEFT JOIN tb_registro C ON (C.Ie_CodigoModular = A.cod_mod AND REG_TIPO = 1)
                                         LEFT JOIN ( SELECT 
-                                                        CDOC_NUMERO_DOC 
+                                                        CDOC_NUMERO_DOC, Ie_CodigoModular 
                                                     FROM tb_doc_contacto 
                                                     WHERE NOT ISNULL(CDOC_NUMERO_DOC) AND NOT CDOC_NUMERO_DOC = "" ) E 
-                                                    ON (E.CDOC_NUMERO_DOC = A.dni)
+                                                    ON (E.CDOC_NUMERO_DOC = A.dni AND E.Ie_CodigoModular = C.Ie_CodigoModular )
                                         LEFT JOIN tb_areas F ON (A.area = ARE_DESCRIPCION)
                                         
                                         WHERE id_temp = "' . $id_temporal. '" ORDER BY cod_mod, dni;');
@@ -1047,13 +1048,13 @@ class PersonController extends Controller
                     $error = true;
 
                 }
-                // if ( $val->COD_CONTACTO_EX )
-                // {
-                //     $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "La IE ya tiene asignado un director";
+                if ( $val->DOC_EX_ERR )
+                {
+                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Este docente ya ha sido registrado en esta IE";
                 
-                //     $error = true;
+                    $error = true;
                 
-                // }
+                }
                 if ( $val->COD_REG_ERR )
                 {
                     $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código de monitor no existe";
@@ -1108,7 +1109,7 @@ class PersonController extends Controller
                             '<td>' . $val->grado . '</td>'.
                             '<td>' . $val->seccion . '</td>'.
                             '<td ' . ( $val->AREA_ERR || $val->AREA_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->area . '</td>'.
-                            '<td>' . $val->dni . '</td>'.
+                            '<td ' . ( $val->DOC_EX_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
                             '<td>' . $val->ape_p . '</td>'.
                             '<td>' . $val->ape_m . '</td>'.
                             '<td>' . $val->nombres . '</td>'.
