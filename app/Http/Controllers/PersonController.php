@@ -1324,81 +1324,86 @@ class PersonController extends Controller
 
             $e_dni = 0;
 
-            switch ($tipo_doc) {
-                
-                case 'DNI':
+            if ( trim($row[6]) )
+            {
 
-                    if ( strlen(trim($row[6])) == 8 && is_numeric( trim($row[6]) ) )
-                    {
+                switch ($tipo_doc) {
+                    
+                    case 'DNI':
 
-                        $codigo_tipo_doc = 1;
+                        if ( strlen(trim($row[6])) == 8 && is_numeric( trim($row[6]) ) )
+                        {
 
-                    }
-                    else
-                    {
-                        
+                            $codigo_tipo_doc = 1;
+
+                        }
+                        else
+                        {
+                            
+                            $e_dni = 1;
+
+                        }
+
+                    break;
+                    
+                    case 'CE':
+                                        
+                        if ( strlen( trim($row[6]) ) < 13 )
+                        {
+
+                            $codigo_tipo_doc = 2;
+
+                        }
+                        else
+                        {
+                            
+                            $e_dni = 1;
+
+                        }
+
+                    break;
+
+                    case 'PASAPORTE':
+                                                            
+                        if ( strlen( trim($row[6]) ) < 14 )
+                        {
+
+                            $codigo_tipo_doc = 3;
+
+                        }
+                        else
+                        {
+                            
+                            $e_dni = 1;
+
+                        }
+
+                    break;
+
+                    case 'CUE':
+                                                            
+                        if ( strlen( trim($row[6]) ) == 14 && is_numeric( trim($row[6]) ) )
+                        {
+
+                            $codigo_tipo_doc = 4;
+
+                        }
+                        else
+                        {
+                            
+                            $e_dni = 1;
+
+                        }
+
+                    default:
+
+                        $e_tipo_doc = 1;
+
                         $e_dni = 1;
 
-                    }
+                    break;
+                }
 
-                break;
-                
-                case 'CE':
-                                    
-                    if ( strlen( trim($row[6]) ) < 13 )
-                    {
-
-                        $codigo_tipo_doc = 2;
-
-                    }
-                    else
-                    {
-                        
-                        $e_dni = 1;
-
-                    }
-
-                break;
-
-                case 'PASAPORTE':
-                                                        
-                    if ( strlen( trim($row[6]) ) < 14 )
-                    {
-
-                        $codigo_tipo_doc = 3;
-
-                    }
-                    else
-                    {
-                        
-                        $e_dni = 1;
-
-                    }
-
-                break;
-
-                case 'CUE':
-                                                        
-                    if ( strlen( trim($row[6]) ) == 14 && is_numeric( trim($row[6]) ) )
-                    {
-
-                        $codigo_tipo_doc = 4;
-
-                    }
-                    else
-                    {
-                        
-                        $e_dni = 1;
-
-                    }
-
-                default:
-
-                    $e_tipo_doc = 1;
-
-                    $e_dni = 1;
-
-                break;
             }
 
             $array[0][$key]['tipo_doc'] = $tipo_doc;
@@ -1816,13 +1821,13 @@ class PersonController extends Controller
                             '<th scope="row">' . $val->id_fila . '</td>'.
                             '<td ' . ( $val->COD_REG_ERR || $val->COD_REG_COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
                             '<td ' . ( $val->COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
-                            '<td>' . $val->grado . '</td>'.
-                            '<td>' . $val->seccion . '</td>'.
                             '<td ' . ( $val->DNI_EX_EST_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->tipo_doc . '</td>'.
                             '<td ' . ( $val->DNI_EX_EST_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
                             '<td>' . $val->ape_p . '</td>'.
                             '<td>' . $val->ape_m . '</td>'.
                             '<td>' . $val->nombres . '</td>'.
+                            '<td>' . $val->grado . '</td>'.
+                            '<td>' . $val->seccion . '</td>'.
                             '<td>' . $val->ape_p_apo . '</td>'.
                             '<td>' . $val->ape_m_apo . '</td>'.
                             '<td>' . $val->nombres_apo . '</td>'.
@@ -1908,7 +1913,7 @@ class PersonController extends Controller
                             WHERE id_temp ='$id_temporal' AND state = 0)");
         
         $resp2 = DB::insert("INSERT INTO tb_ppff_estudiante ( CPF_CODIGO, Ie_CodigoModular, EST_NOMBRES, EST_APELLIDO_M, EST_APELLIDO_P, EST_TIPO_DOC, EST_NUMERO_DOC, EST_GRADO, EST_SECCION, id_seed )
-                            SELECT CPF_CODIGO, cod_mod, nombres_apo, ape_p_apo, ape_m_apo, tipo_doc, dni, grado, seccion, id
+                            SELECT CPF_CODIGO, cod_mod, nombres, ape_p, ape_m, tipo_doc, dni, grado, seccion, id
                             FROM import_table_ppffs A 
                             JOIN tb_ppff_contacto B 
                             ON (A.id = id_seed AND id_temp ='$id_temporal' AND state = 0 )");
