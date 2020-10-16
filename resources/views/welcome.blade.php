@@ -98,21 +98,14 @@
             @endif
 
             <div class="content">
-                
-                <?php 
-                
-                    session_start();
-                
-                    $_SESSION['ID_ESPECIALISTA'] = $id_especialista;
 
-                ?>
                 <!-- <p>Click <a href="{{ route('users.pdf')}}">aqui</a> para descargar en PDF a los usuarios </p> -->
 
                 <!-- <p>Click <a href="{{ route('users.excel')}}">aqui</a> para descargar en EXCEL a los usuarios </p> -->
 
                 <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
 
-                <p class="card-text">Módulo de importación de datos semilla para el sistema de registro SIREG-CP.</p>
+                <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
 
                 <div class="card">
 
@@ -124,35 +117,41 @@
 
                   <div class="card-body">
 
-                    <form action="{{ route('import.directory.excel.dir') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('import.directory.excel') }}" method="post" enctype="multipart/form-data">
                         
                         @csrf
 
-                        <?php if ( isset( $state ) ):?>
-                            
-                            <?php if ( $instancia===0 ): ?>
+                        <?php 
+                        
+                            session_start();
+                        
+                            $_SESSION['ID_ESPECIALISTA'] = $id_especialista;
 
-                                <?php if ( $state ): ?>
+                        ?>
 
-                                    <div class="alert alert-success" role="alert">
+                        <?php 
 
-                                        <?= $message ?>
+                        if ( isset( $state ) ):?>
 
-                                    </div>
+                            <?php if ( $state ): ?>
 
-                                <?php else: ?>
+                                <div class="alert alert-success" role="alert">
 
-                                    <div class="alert alert-danger" role="alert">
+                                    <?= $message ?>
 
-                                        <?= $message ?>
+                                </div>
 
-                                    </div>
+                            <?php else: ?>
 
-                                    <div>
-                                        <a href="{{ route('import-to-director' , $id_temporal )}}" class="btn btn-success">Continuar</a>
-                                    </div><br>
+                                <div class="alert alert-danger" role="alert">
 
-                                <?php endif; ?>
+                                    <?= $message ?>
+
+                                </div>
+
+                                <div>
+                                    <a href="{{ route('import-to-director' , $id_temporal )}}" class="btn btn-success">Continuar</a>
+                                </div><br>
 
                             <?php endif; ?>
 
@@ -176,83 +175,6 @@
 
                   </div>
                 </div>
-
-                <br>
-
-                <div class="card">
-
-                  <div class="card-header">
-
-                    Importar datos de docentes
-
-                  </div>
-
-                  <div class="card-body">
-
-                    <form action="{{ route('import.directory.excel.doc') }}" method="post" enctype="multipart/form-data">
-                        
-                        @csrf
-
-                        <?php if ( isset( $state ) ): ?>
-
-                            <?php if ( $instancia===1 ): ?>
-
-                                <?php if ( $state ): ?>
-
-                                    <div class="alert alert-success" role="alert">
-
-                                        <?= $message ?>
-
-                                        <a href="{{ route('inicio' , [$id_especialista] )}}" class="btn btn-success">Aceptar</a>
-
-                                    </div>
-
-                                <?php else: ?>
-
-                                    <div class="alert alert-danger" role="alert">
-
-                                        <?= $message ?>
-
-                                    </div>
-
-                                    <div>
-                                        <a href="{{ route('import-to-director' , $id_temporal )}}" class="btn btn-success">Continuar</a>
-                                    </div><br>
-
-                                <?php endif; ?>
-
-                            <?php endif; ?>
-
-                        <?php endif; ?>
-
-                        <?php if ( !isset( $state ) ): ?>
-
-                          <div class="input-group is-invalid">
-                            <div class="custom-file">
-                              <input type="file" class="custom-file-input" id="validateDocente" name="file" lang="es" required>
-                              <label class="custom-file-label" for="validateDocente">Seleccione el archivo...</label>
-                            </div>
-                            <div class="input-group-append">
-                               <button class="btn btn-outline-secondary">Importar</button>
-                            </div>
-                          </div>
-
-                        <?php endif; ?>
-
-                        @if (Session::has("table") )
-                            <p>{{ Session::get("table")}}</p>
-                        @endif
-
-                    </form>
-
-                  </div>
-                </div>
-
-
-
-
-
-
 
 
 
