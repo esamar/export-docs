@@ -11,13 +11,11 @@ class Director extends Model
     
     protected $primaryKey = 'CDIR_CODIGO';
 
-    public function verifyData()
-    {
+    $articles = DB::table('articles')
+            ->select('articles.id as articles_id', ..... )
+            ->join('categories', 'articles.categories_id', '=', 'categories.id')
+            ->join('users', 'articles.user_id', '=', 'user.id')
 
-	    $data = $this->select('Ie_CodigoModular')
-	                ->get();
-	    return $data;
-	    
-    }
+            ->get();
 
 }

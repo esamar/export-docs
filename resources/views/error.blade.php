@@ -63,19 +63,29 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+
+.fila-o{
+background: #E7EFFF;
+
+}
+.fila-d{
+
+ background: #CEE4FF;
+}
+
         </style>
 
     </head>
 
     <body>
 
-        <div class="content">
+        <div class="">
 
             <div class="row">
 
-                <div class="col-xs-2"></div> 
+                <!-- <div class="col-1"></div>  -->
 
-                <div class="col-xs-8"> 
+                <div class="col-12"> 
 
                     <div class="card text-center">
                       <div class="card-header">
@@ -87,7 +97,7 @@
                       </div>
                       <div class="card-body">
                         <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
-                        <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
+                        <p class="card-text">Módulo de importación de datos semilla para el registro.</p>
 
                         <?php if ( $state_error ): ?>
 
@@ -109,24 +119,72 @@
                             </div>
 
                             <div>
-                                <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+                                
+                                <?php if ( $instancia === 0 ) : ?>
+
+                                    <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+
+                                <?php endif; ?>
+
+                                <?php if ( $instancia === 1 ) :?>
+
+                                    <a href="{{ route('import-to-docente' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+
+                                <?php endif; ?>
+
+                                <?php if ( $instancia === 2 ) :?>
+
+                                    <a href="{{ route('import-to-ppff' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+
+                                <?php endif; ?>
+
                             </div><br>
 
                         <?php endif; ?>
 
-                        <table class="table table-sm table-hover">
+                        <table class="table table-sm table-hover ">
                             <thead>
                                 <tr>    
                                     <th scope="col">FILA</th>
                                     <th scope="col">COD_MONITOR</th>
                                     <th scope="col">COD_MOD8</th>
-                                    <th scope="col">DNI</th>
-                                    <th scope="col">APELLIDO PATERNO</th>
-                                    <th scope="col">APELLIDO MATERNO</th>
-                                    <th scope="col">NOMBRES</th>
-                                    <th scope="col">EMAIL_DIRECTOR</th>
-                                    <th scope="col">TELEFONO 1</th>
-                                    <th scope="col">TELEFONO 2</th>
+                                    <?php if ( $instancia === 0 ): ?> 
+                                        <th scope="col">DNI</th>
+                                        <th scope="col">APELLIDO PATERNO</th>
+                                        <th scope="col">APELLIDO MATERNO</th>
+                                        <th scope="col">NOMBRES</th>
+                                        <th scope="col">EMAIL_DIRECTOR</th>
+                                        <th scope="col">TELEFONO 1</th>
+                                        <th scope="col">TELEFONO 2</th>
+                                    <?php endif; ?>
+
+                                    <?php if ( $instancia === 1 ): ?> 
+                                        <th scope="col">GRADO</th>
+                                        <th scope="col">SECCIÓN</th>
+                                        <th scope="col">ÁREA</th>
+                                        <th scope="col">DNI</th>
+                                        <th scope="col">APELLIDO PATERNO</th>
+                                        <th scope="col">APELLIDO MATERNO</th>
+                                        <th scope="col">NOMBRES</th>
+                                        <th scope="col">TELEFONO 1</th>
+                                        <th scope="col">TELEFONO 2</th>
+                                    <?php endif; ?>
+
+                                    <?php if ( $instancia == 2 ): ?> 
+                                        <th scope="col">TIPO DOC</th>
+                                        <th scope="col">NÚMERO DOC</th>
+                                        <th scope="col">APELLIDO PATERNO</th>
+                                        <th scope="col">APELLIDO MATERNO</th>
+                                        <th scope="col">NOMBRES</th>
+                                        <th scope="col">GRADO</th>
+                                        <th scope="col">SECCIÓN</th>
+                                        <th scope="col">APELLIDO PATERNO APODERADO</th>
+                                        <th scope="col">APELLIDO MATERNO APODERADO</th>
+                                        <th scope="col">NOMBRES APODERADO</th>
+                                        <th scope="col">TELEFONO 1</th>
+                                        <th scope="col">TELEFONO 2</th>
+                                    <?php endif; ?>
+
                                     <th scope="col">RESUMEN</th>
                                 </tr>
                             </thead>
@@ -145,7 +203,7 @@
 
                 </div> 
                 
-                <div class="col-xs-2"></div> 
+                <!-- <div class="col-1"></div>  -->
 
             </div>  
 
