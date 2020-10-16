@@ -29,6 +29,8 @@ Route::post('import-directory-excel-dir' , 'PersonController@importExcel')->name
 
 Route::post('import-directory-excel-doc' , 'PersonController@importExcelDocente')->name('import.directory.excel.doc');
 
+Route::post('import-directory-excel-ppff' , 'PersonController@importExcelPPFF')->name('import.directory.excel.ppff');
+
 Route::get('user-list-pdf' , 'PersonController@ExportPdf')->name('users.pdf');
 
 Route::get('user-list-excel' , 'PersonController@ExportExcel')->name('users.excel');
@@ -38,3 +40,5 @@ Route::get('user-list-excel' , 'PersonController@ExportExcel')->name('users.exce
 Route::get('import-to-director/{id_temporal}/{id_especialista}', array('as' => 'import-to-director', 'uses' => 'PersonController@importTableDirector'));
 
 Route::get('import-to-docente/{id_temporal}/{id_especialista}', array('as' => 'import-to-docente', 'uses' => 'PersonController@importTableDocente'));
+
+Route::get('import-to-ppff/{id_temporal}/{id_especialista}', array('as' => 'import-to-ppff', 'uses' => 'PersonController@importTablePPFF'));

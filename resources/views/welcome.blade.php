@@ -248,8 +248,77 @@
                   </div>
                 </div>
 
+                <br>
 
+                <div class="card">
 
+                  <div class="card-header">
+
+                    Importar datos de PPFF - Estudiantes
+
+                  </div>
+
+                  <div class="card-body">
+
+                    <form action="{{ route('import.directory.excel.ppff') }}" method="post" enctype="multipart/form-data">
+                        
+                        @csrf
+
+                        <?php if ( isset( $state ) ): ?>
+
+                            <?php if ( $instancia===2 ): ?>
+
+                                <?php if ( $state ): ?>
+
+                                    <div class="alert alert-success" role="alert">
+
+                                        <?= $message ?>
+
+                                        <a href="{{ route('inicio' , [$id_especialista] )}}" class="btn btn-success">Aceptar</a>
+
+                                    </div>
+
+                                <?php else: ?>
+
+                                    <div class="alert alert-danger" role="alert">
+
+                                        <?= $message ?>
+
+                                    </div>
+
+                                    <div>
+                                        <a href="{{ route('import-to-ppff' , $id_temporal )}}" class="btn btn-success">Continuar</a>
+                                    </div><br>
+
+                                <?php endif; ?>
+
+                            <?php endif; ?>
+
+                        <?php endif; ?>
+
+                        <?php if ( !isset( $state ) ): ?>
+
+                          <div class="input-group is-invalid">
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="validatePPFF" name="file" lang="es" required>
+                              <label class="custom-file-label" for="validatePPFF">Seleccione el archivo...</label>
+                            </div>
+                            <div class="input-group-append">
+                               <button class="btn btn-outline-secondary">Importar</button>
+                            </div>
+                          </div>
+
+                        <?php endif; ?>
+
+                        @if (Session::has("table") )
+                            <p>{{ Session::get("table")}}</p>
+                        @endif
+
+                    </form>
+
+                  </div>
+
+                </div>
 
 
 

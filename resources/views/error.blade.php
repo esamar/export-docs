@@ -97,7 +97,7 @@ background: #E7EFFF;
                       </div>
                       <div class="card-body">
                         <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
-                        <p class="card-text">Módulo de importación de datos semilla para el registro de directores.</p>
+                        <p class="card-text">Módulo de importación de datos semilla para el registro.</p>
 
                         <?php if ( $state_error ): ?>
 
@@ -132,6 +132,12 @@ background: #E7EFFF;
 
                                 <?php endif; ?>
 
+                                <?php if ( $instancia === 2 ) :?>
+
+                                    <a href="{{ route('import-to-ppff' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+
+                                <?php endif; ?>
+
                             </div><br>
 
                         <?php endif; ?>
@@ -160,6 +166,21 @@ background: #E7EFFF;
                                         <th scope="col">APELLIDO PATERNO</th>
                                         <th scope="col">APELLIDO MATERNO</th>
                                         <th scope="col">NOMBRES</th>
+                                        <th scope="col">TELEFONO 1</th>
+                                        <th scope="col">TELEFONO 2</th>
+                                    <?php endif; ?>
+
+                                    <?php if ( $instancia == 2 ): ?> 
+                                        <th scope="col">TIPO DOC</th>
+                                        <th scope="col">NÚMERO DOC</th>
+                                        <th scope="col">APELLIDO PATERNO</th>
+                                        <th scope="col">APELLIDO MATERNO</th>
+                                        <th scope="col">NOMBRES</th>
+                                        <th scope="col">GRADO</th>
+                                        <th scope="col">SECCIÓN</th>
+                                        <th scope="col">APELLIDO PATERNO APODERADO</th>
+                                        <th scope="col">APELLIDO MATERNO APODERADO</th>
+                                        <th scope="col">NOMBRES APODERADO</th>
                                         <th scope="col">TELEFONO 1</th>
                                         <th scope="col">TELEFONO 2</th>
                                     <?php endif; ?>
