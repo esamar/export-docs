@@ -54,8 +54,7 @@ class SMIController extends Controller
     public function setState(Request $request )
     {
         
-        $data = $request->all();
-var_dump($data);
+        $data[0] = $request->all();
 
         $dni = $data[0]["dni"];
 
