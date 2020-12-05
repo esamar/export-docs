@@ -20,4 +20,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('updateRange', 'SMIController@updateRange')->name('updateRange');
 
-Route::post('setState', 'SMIController@setState')->name('setState');
+
+Route::group(['middleware' => ['cors']], function () {
+    //Rutas a las que se permitirá acceso
+	Route::post('setState', 'SMIController@setState')->name('setState');
+
+});
