@@ -26,8 +26,6 @@ Route::post('updateRange', 'SMIController@updateRange')->name('updateRange');
 
 Route::match(['options', 'post'], 'setState', function (Request $request ) {
     // This will work with the middleware shown in the accepted answer
-    
-	var_dump($request->all());
 
 	$setEstado = new SMIController;
 
