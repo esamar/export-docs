@@ -11,7 +11,9 @@ class Cors
   {
     return $next($request)
        //Url a la que se le dará acceso en las peticiones
-      ->header("Access-Control-Allow-Origin", "http://urlfronted.example")
+      ->header("Access-Control-Allow-Origin", "https://evaluacion.esae.pe")
+      ->header("Access-Control-Allow-Origin", "https://familiarizacion.esae.pe")
+      ->header("Access-Control-Allow-Origin", "https://esae.pe")
       //Métodos que a los que se da acceso
       ->header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
       //Headers de la petición
