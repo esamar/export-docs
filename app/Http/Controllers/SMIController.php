@@ -100,7 +100,7 @@ class SMIController extends Controller
 
                     WHERE dni = '$dni' ;");
 
-        return [ 'resp' => $resp ];
+        return [ 'resp' => $resp , 'estado' => $estado ];
 
     }
 
