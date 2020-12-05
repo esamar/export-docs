@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\SMIController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,6 +28,10 @@ Route::match(['options', 'post'], 'setState', function (Request $request ) {
     // This will work with the middleware shown in the accepted answer
     
 	var_dump($request->all());
+
+	$setEstado = new SMIController;
+
+	return $setEstado->setState($request);
 
 	// Route::post('setState', 'SMIController@setState')->name('setState');
 
