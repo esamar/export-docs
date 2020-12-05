@@ -65,28 +65,28 @@ class SMIController extends Controller
         switch ($ubicacion_nav) 
         {
 
-            case 'BIENVENIDO':
-            case 'TUTORIAL':
-            case 'PREINICIO':
-            case 'TRANSICION':
-            case 'EVALUACION_TEXTO_COMPLETO':
-            case 'EVALUACION':
-            case 'OPORTUNIAD':
-            case 'REVISION_FALTANTES':
+            case 10: #'BIENVENIDO':
+            case 11: #'TUTORIAL':
+            case 1: #'PREINICIO':
+            case 2: #'TRANSICION':
+            case 3: #'EVALUACION_TEXTO_COMPLETO':
+            case 4: #'EVALUACION':
+            case 6: #'OPORTUNIAD':
+            case 5: #'REVISION_FALTANTES':
 
                 $estado = 'Ingresó';
 
             break;
 
-            case 'FINALIZADA': 
-            case 'AGRADECIMIENTO': 
-            case 'CUESTIONARIO': 
+            case 7: #'FINALIZADA': 
+            case 9: #'AGRADECIMIENTO': 
+            case 8: #'CUESTIONARIO': 
 
                 $estado = 'Finalizó 1';
 
             break;
 
-            case 'CUESTIONARIO_AGRADECIMIENTO': 
+            case 12: #'CUESTIONARIO_AGRADECIMIENTO': 
 
                 $estado = 'Finalizó 2';
 
