@@ -20,4 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('updateRange', 'SMIController@updateRange')->name('updateRange');
 
-Route::put('setState', 'SMIController@setState')->name('setState');
+Route::post('setState', 'SMIController@setState')->name('setState');
