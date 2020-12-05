@@ -102,7 +102,9 @@ class SMIController extends Controller
 
         $resp = DB::update("update admin_bd20_cuestionario.37978_persona SET 
                     
-                    estado_evaluacion = '$estado' 
+                    estado_evaluacion = '$estado',
+
+                    origen_estado = 1
 
                     WHERE dni = '$dni' ;");
 
