@@ -68,7 +68,6 @@ class SMIController extends Controller
             case 10: #'BIENVENIDO':
             case 11: #'TUTORIAL':
             case 1: #'PREINICIO':
-            case 2: #'TRANSICION':
         
 
                 $estado = 'Ingresó';
@@ -76,6 +75,7 @@ class SMIController extends Controller
             break;
 
             case 3: #'EVALUACION_TEXTO_COMPLETO':
+            case 2: #'TRANSICION':
             case 4: #'EVALUACION':
             case 6: #'OPORTUNIAD':
             case 5: #'REVISION_FALTANTES':
