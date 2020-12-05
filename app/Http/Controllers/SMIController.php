@@ -55,7 +55,8 @@ class SMIController extends Controller
     {
         
         $data = $request->all();
-
+var_dump($data);
+exit();
         $dni = $data[0]["dni"];
 
         $ubicacion_nav = $data[0]["ubicacion_nav"];
