@@ -7,7 +7,7 @@ use Closure;
 class CORS
 {
     private static $allowedOriginsWhitelist = [
-      'http://localhost', 'https://evaluacion.esae.pe/'
+      'http://localhost', 'https://evaluacion.esae.pe/', 'https://familiarizacion.esae.pe/', 'https://esae.pe/'
     ];
 
     // All the headers must be a string
