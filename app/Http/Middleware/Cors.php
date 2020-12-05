@@ -11,11 +11,9 @@ class Cors
   {
     return $next($request)
        //Url a la que se le dará acceso en las peticiones
-      ->header("Access-Control-Allow-Origin", "https://evaluacion.esae.pe")
-      ->header("Access-Control-Allow-Origin", "https://familiarizacion.esae.pe")
-      ->header("Access-Control-Allow-Origin", "https://esae.pe")
+      ->header("Access-Control-Allow-Origin", "http://localhost")
       //Métodos que a los que se da acceso
-      ->header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+      ->header("Access-Control-Allow-Methods", "GET, POST")
       //Headers de la petición
       ->header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Token-Auth, Authorization"); 
   }
