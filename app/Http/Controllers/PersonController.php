@@ -1912,7 +1912,7 @@ class PersonController extends Controller
                             FROM  import_table_ppffs 
                             WHERE id_temp ='$id_temporal' AND state = 0)");
         
-        $resp2 = DB::insert("INSERT INTO tb_ppff_estudiante ( CPF_CODIGO, Ie_CodigoModular, EST_NOMBRES, EST_APELLIDO_M, EST_APELLIDO_P, EST_TIPO_DOC, EST_NUMERO_DOC, EST_GRADO, EST_SECCION, id_seed )
+        $resp2 = DB::insert("INSERT INTO tb_ppff_estudiante ( CPF_CODIGO, Ie_CodigoModular, EST_NOMBRES, EST_APELLIDO_P, EST_APELLIDO_M, EST_TIPO_DOC, EST_NUMERO_DOC, EST_GRADO, EST_SECCION, id_seed )
                             SELECT CPF_CODIGO, cod_mod, nombres, ape_p, ape_m, tipo_doc, dni, grado, seccion, id
                             FROM import_table_ppffs A 
                             JOIN tb_ppff_contacto B 
