@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ImportTable extends Migration
+class ImportTableDir extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class ImportTable extends Migration
 
     public function up()
     {
-        Schema::create('import_tables', function (Blueprint $table) {
+        Schema::create('import_table_dirs', function (Blueprint $table) {
             $table->increments('id')->index();
             $table->string('id_temp');
             $table->integer('id_fila')->unsigned();
@@ -27,10 +27,13 @@ class ImportTable extends Migration
             $table->string('email');
             $table->string('telefono1');
             $table->string('telefono2');
+            $table->tinyInteger('group_id')->unsigned();
             $table->string('state');
             $table->string('info_error');
             $table->tinyInteger('created_by')->unsigned();
             $table->timestamp('created_at');
+            $table->integer('id_person')->unsigned();
+
 
         });
     }

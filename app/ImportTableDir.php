@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ImportTable extends Model
+class ImportTableDir extends Model
 {
 
     const UPDATED_AT = null;
@@ -12,7 +12,7 @@ class ImportTable extends Model
     public function DeleteTemp( $codigo )
     {
     	
-    	DB::table('import_tables')->whereId($codigo)->delete();
+    	DB::table('import_table_dirs')->whereId($codigo)->delete();
 
     }
    

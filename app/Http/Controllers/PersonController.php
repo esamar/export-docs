@@ -13,7 +13,7 @@ use App\Imports\UsersImport;
 
 use App\User;
 use App\Director;
-use App\ImportTable;
+use App\ImportTableDir;
 use App\ImportTableDoc;
 use App\ImportTablePPFF;
 
@@ -77,6 +77,8 @@ class PersonController extends Controller
         unset($array[0][2]);
 
         $error = false;
+        
+        $alert = false;
 
         foreach ($array[0] as $key => $row) {
 
@@ -367,7 +369,7 @@ class PersonController extends Controller
         foreach ($array[0] as $key => $val) 
         {
 
-            $temp_table = new ImportTable;
+            $temp_table = new ImportTableDir;
             
             $temp_table->id_temp = $id_temporal;
             $temp_table->id_fila = $key + 1;
@@ -386,34 +388,55 @@ class PersonController extends Controller
             $temp_table->save();
         
         }
+        
+        #CREAR PERSONA DESDE TEMP DIRECTOR
+        DB::insert( 'CALL sp_create_dir("' . $id_temporal . '")');
+
+        DB::update('CALL sp_update_id_person_dir("' . $id_temporal . '")');
 
         $integrity_table = DB::select('SELECT
-                                        id,
-                                        id_fila,
-                                        cod_mod,
-                                        cod_reg,
-                                        IF( ISNULL( B.Age_Codigo ) , 1 , 0 ) COD_REG_ERR, /*#No existe codigo registrador*/ 
-                                        IF( cod_mod = C.Ie_CodigoModular , 0 , 1 ) COD_MOD_ERR , /*#Codigo modular no existe*/ 
-                                        IF( cod_reg = C.Age_Codigo , 0 , 1 ) COD_REG_COD_MOD_ERR, /*#El codigo de registrador no está asociado al codigo modular*/
-                                        IF( ISNULL( CDIR_CODIGO ) , 0, 1 ) COD_CONTACTO_EX, /*#La ie ya tiene un director asignado*/ 
-                                        IF( ISNULL( E.CDIR_DOCUMENTO ) , 0 , 1 ) COD_DNI_EX, /*#El dni se ha registrado anteriormente*/
-                                        dni,
-                                        ape_p,
-                                        ape_m,
-                                        nombres,
-                                        email,
-                                        telefono1,
-                                        telefono2
-                                        FROM import_tables A 
+                                            id,
+                                            id_fila,
+                                            cod_mod,
+                                            cod_reg,
+                                            IF( ISNULL( B.Age_Codigo ) , 1 , 0 ) COD_REG_ERR, /*#No existe codigo registrador*/ 
+                                            IF( cod_mod = C.Ie_CodigoModular , 0 , 1 ) COD_MOD_ERR , /*#Codigo modular no existe*/ 
+                                            IF( cod_reg = C.Age_Codigo , 0 , 1 ) COD_REG_COD_MOD_ERR, /*#El codigo de registrador no está asociado al codigo modular*/
+                                            IF( ISNULL( CDIR_CODIGO ) , 0, 1 ) COD_CONTACTO_EX, /*#La ie ya tiene un director asignado*/ 
+                                            IF( ISNULL( E.PER_CODIGO ) , 0 , 1 ) COD_DNI_EX, /*#El dni se ha registrado anteriormente*/
+                                            ID_GRUPO, /*#id que agrupa a los directores repetidos*/
+                                            dni,
+                                            ape_p,
+                                            ape_m,
+                                            nombres,
+                                            email,
+                                            telefono1,
+                                            telefono2
+                                        FROM import_table_dirs A 
                                         LEFT JOIN tb_agente B ON (B.Age_Codigo = A.cod_reg)
                                         LEFT JOIN tb_registro C ON (C.Ie_CodigoModular = A.cod_mod AND REG_TIPO = 1)
                                         LEFT JOIN tb_dir_contacto D ON (C.Ie_CodigoModular = D.Ie_CodigoModular AND CDIR_ACTIVO = 1)
                                         LEFT JOIN ( SELECT 
-                                                        CDIR_DOCUMENTO 
+                                                       DISTINCT PER_CODIGO,
+                                                       Ie_CodigoModular
                                                     FROM tb_dir_contacto 
-                                                    WHERE NOT ISNULL(CDIR_DOCUMENTO) AND NOT CDIR_DOCUMENTO = "" ) E 
-                                                    ON (E.CDIR_DOCUMENTO = A.dni)
-                                        WHERE id_temp = "' . $id_temporal. '";');
+                                                    WHERE NOT ISNULL(PER_CODIGO)  ) E 
+                                                    ON (E.PER_CODIGO = A.id_person AND E.Ie_CodigoModular = cod_mod)
+
+                                        LEFT JOIN (SELECT 
+                                                        @i := @i + 1 as ID_GRUPO, 
+                                                        NOMBRE_COMPUESTO
+                                                    FROM
+                                                    (SELECT
+                                                        CONCAT( ape_p, ape_m, nombres ) NOMBRE_COMPUESTO, 
+                                                        COUNT(id) CONJUNTO
+                                                    FROM import_table_dirs 
+                                                        WHERE id_temp = "' . $id_temporal. '" 
+                                                        GROUP BY concat(ape_p, ape_m,nombres) 
+                                                        HAVING CONJUNTO > 1) AS A
+                                                    CROSS JOIN ( SELECT @i := 0 ) R ) G ON ( NOMBRE_COMPUESTO = CONCAT(ape_p, ape_m, nombres) )
+                                                    
+                                        WHERE id_temp = "' . $id_temporal . '" ;');
 
         
         if ( $integrity_table )
@@ -421,12 +444,18 @@ class PersonController extends Controller
 
             $row = '';
 
-            $error = false;
-
             $error_update = [];
+
+            $id_grupo_previo = 0;
+
+            $color_grupo = 'class="bg-warning"';
 
             foreach ($integrity_table as $key => $val) 
             {
+
+                $error_row = false;
+
+                $alert_row = false;
                 
                 $resumen = '';
 
@@ -434,38 +463,52 @@ class PersonController extends Controller
                 {
                     $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "Código módular no existe";
                     
-                    $error = true;
+                    $error_row = true;
 
                 }
                 if ( $val->COD_CONTACTO_EX )
                 {
                     $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "La IE ya tiene asignado un director";
                 
-                    $error = true;
+                    $error_row = true;
                 
                 }
                 if ( $val->COD_REG_ERR )
                 {
                     $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "Código de monitor no existe";
                  
-                    $error = true;
+                    $error_row = true;
                 
                 }
                 if ( $val->COD_REG_COD_MOD_ERR )
                 {
                     $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "El código de registrador no está asociado al código modular";
                  
-                    $error = true;
+                    $error_row = true;
                 
                 }
 
-                $alerta = false;
-
-                if ( $val->COD_DNI_EX )
+                if ( $val->COD_DNI_EX && $error_row === false )
                 {
-                    $resumen .= ( $resumen ? '<br>-Alerta: ' : 'Alerta: ') . "Este DNI ya está asociado a otra IE. Se agregará como director de multiples IE";
+                    $resumen .= ( $resumen ? '<br>-: ' : 'Error: ') . "Este DNI ya está asociado a la misma IE";
                 
-                    $alerta = true;
+                    $error_row = true;
+                
+                }
+
+                if ( !$val->dni && $error_row === false)
+                {
+                    $resumen .= ( $resumen ? '<br>-Alerta: ' : 'Alerta: ') . "Este usuario no tiene DNI. Se registrará un ID genérico";
+                
+                    $alert_row = true;
+                
+                }
+
+                if ( $val->ID_GRUPO && $error_row === false)
+                {
+                    $resumen .= ( $resumen ? '<br>-Alerta: ' : 'Alerta: ') . "Este usuario tiene multiples IE en el archivo de carga. Se ha agrupado con un ID de AGRUPAMIENTO";
+                
+                    $alert_row = true;
                 
                 }
 
@@ -480,12 +523,38 @@ class PersonController extends Controller
 
                 }
 
+                if ( $id_grupo_previo != $val->ID_GRUPO )
+                {
 
-                $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : ( $val->COD_DNI_EX ? 'class="table-warning"' : '' ) ) . '>'.
-                            '<th scope="row">' . $val->id_fila . '</td>'.
+                    if ( $color_grupo == 'class="bg-warning"' )
+                    {
+                        $color_grupo = 'class="bg-info"';
+                    }
+                    else
+                    {
+                        $color_grupo = 'class="bg-warning"';
+                    }
+                }
+
+                if ( $error_row === true  )
+                {
+                    $error = true; 
+                }
+
+                if ( $alert_row === true  )
+                {
+                    $alert = true; 
+                }
+
+                $row .= '<tr ' . ( $error_row ? 'class="table-danger"' : ( $alert_row ? 'class="table-warning"' : '' ) ) . '>'.
+                            '<th scope="row">' .$val->id_fila . '</td>'.
                             '<td ' . ( $val->COD_REG_ERR || $val->COD_REG_COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
                             '<td ' . ( $val->COD_MOD_ERR || $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
-                            '<td ' . ( $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
+                            
+                            '<td ' . ( $val->ID_GRUPO ? $color_grupo : '' ) . '>' . $val->ID_GRUPO . '</td>'.
+
+                            '<td ' . ( $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . ( $val->dni ? $val->dni : 'ID Autogenerado'). '</td>'.
+
                             '<td>' . $val->ape_p . '</td>'.
                             '<td>' . $val->ape_m . '</td>'.
                             '<td>' . $val->nombres . '</td>'.
@@ -495,17 +564,19 @@ class PersonController extends Controller
                             '<td>' . $resumen . '</td>'.
                         '</tr>';
 
+                $id_grupo_previo = $val->ID_GRUPO;
+
             }
 
             $message = '';
 
-            if ( $alerta || $error )
+            if ( $alert === true || $error === true )
             {
 
                 foreach ($error_update as $key => $val) 
                 {
 
-                    DB::table('import_tables')->where("id", $val['id'] )->update( ["info_error" => $val['info_error'] ]);
+                    DB::table('import_table_dirs')->where("id", $val['id'] )->update( ["info_error" => $val['info_error'] ]);
                 
                 }
 
@@ -514,22 +585,20 @@ class PersonController extends Controller
             if ( $error )
             {
 
-                $message = 'Se ha detectado errores de integridad. No se puede registrar.';
+                $message = ':( Se ha detectado errores de integridad. No se puede registrar.';
 
                 $e_state = 1;
 
-                // DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
-
-                DB::update('UPDATE import_tables SET state = 2 WHERE id_temp = "' . $id_temporal . '";');
+                DB::update('UPDATE import_table_dirs SET state = 2 WHERE id_temp = "' . $id_temporal . '";');
 
             }
             else
             {
 
-                if ( $alerta )
+                if ( $alert )
                 {
 
-                    $message = 'Advertencia: Se ha detectado registro de director con multiples IE. Si está seguro de continuar, presione el botón "Importar" o "Cancelar" para abortar la importación.';
+                    $message = 'Advertencia: Se ha definido alertas en cada fila sombreada. Revise exhaustivamente el cuadro, si es correcto presione el botón "Importar" o "Cancelar" para abortar la importación.';
                     
                     $e_state = 2;
 
@@ -537,7 +606,7 @@ class PersonController extends Controller
                 else
                 {
 
-                    $message = 'Todo bien: Se va a registrar la siguiente información. Presione el boton "Importar" para proceder con el registro.';
+                    $message = 'Se ve bien! : Se va a registrar la siguiente información. Presione el boton "Importar" para proceder con el registro.';
 
                     $e_state = 0;
 
@@ -570,13 +639,56 @@ class PersonController extends Controller
     public function importTableDirector( $id_temporal , $id_especialista )
     {
 
-        $resp = DB::insert('INSERT INTO tb_dir_contacto 
-                                ( Ie_CodigoModular, CDIR_TIPO_DOC, CDIR_DOCUMENTO, CDIR_NOMBRE, CDIR_APELLIDO_P, CDIR_APELLIDO_M, CDIR_EMAIL, CDIR_TELEFONO, CDIR_TELEFONO2, CDIR_ACTIVO, id_seed) 
-                    SELECT cod_mod , 1 , dni, nombres, ape_p, ape_m, email, telefono1, telefono2 , 1 , id 
-                    FROM  import_tables 
-                    WHERE id_temp = "' . $id_temporal. '" AND state = 0;');
+        // $resp = DB::insert('INSERT INTO tb_dir_contacto 
+        //                         (   
+        //                         Ie_CodigoModular, 
+        //                         PER_CODIGO,
+        //                         CDIR_TIPO_DOC, 
+        //                         CDIR_DOCUMENTO, 
+        //                         CDIR_NOMBRE, 
+        //                         CDIR_APELLIDO_P, 
+        //                         CDIR_APELLIDO_M, 
+        //                         CDIR_EMAIL, 
+        //                         CDIR_TELEFONO, 
+        //                         CDIR_TELEFONO2, 
+        //                         CDIR_ACTIVO,
+        //                         id_seed) 
+        //                     SELECT 
+        //                         cod_mod,
+        //                         id_person, 
+        //                         1, 
+        //                         dni, 
+        //                         nombres, 
+        //                         ape_p, 
+        //                         ape_m, 
+        //                         email, 
+        //                         telefono1, 
+        //                         telefono2, 
+        //                         1, 
+        //                         id 
+        //                     FROM  
+        //                         import_table_dirs 
+        //                     WHERE 
+        //                         id_temp = "' . $id_temporal. '" AND state = 0;');
 
-        DB::update('UPDATE import_tables SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
+
+        $resp = DB::insert('INSERT INTO tb_dir_contacto 
+                                (   
+                                Ie_CodigoModular, 
+                                PER_CODIGO,
+                                CDIR_ACTIVO,
+                                id_seed) 
+                            SELECT 
+                                cod_mod,
+                                id_person, 
+                                1,
+                                id 
+                            FROM  
+                                import_table_dirs 
+                            WHERE 
+                                id_temp = "' . $id_temporal. '" AND state = 0;');
+
+        DB::update('UPDATE import_table_dirs SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
         if ( $resp )
         {

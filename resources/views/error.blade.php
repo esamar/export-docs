@@ -64,14 +64,29 @@
                 margin-bottom: 30px;
             }
 
-.fila-o{
-background: #E7EFFF;
+            .fila-o{
+            background: #E7EFFF;
 
-}
-.fila-d{
+            }
 
- background: #CEE4FF;
-}
+            .fila-d{
+
+             background: #CEE4FF;
+            }
+
+/*            #contenidoTabla {
+              font-size: 15px;
+            }*/
+
+            td {
+              font-size: 9pt;
+            }
+
+            th {
+              font-size: 7pt;
+
+            }
+
 
         </style>
 
@@ -99,20 +114,23 @@ background: #E7EFFF;
                         <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
                         <p class="card-text">Módulo de importación de datos semilla para el registro.</p>
 
-                        <?php if ( $state_error ): ?>
+                        <?php if ( $state_error === 1 ): ?>
 
                             <div class="alert alert-danger" role="alert">
 
                                 <?= $message ?>
 
-                                <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
-
                             </div>
-
+                            
+                            <div>
+                                
+                                <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
+                            
+                            </div><br>
 
                         <?php else: ?>
 
-                            <div class="alert alert-info" role="alert">
+                            <div class="alert alert-<?= ( $state_error == 2 ? 'warning' : 'info')?>" role="alert">
 
                                 <?= $message ?>
 
@@ -122,6 +140,12 @@ background: #E7EFFF;
                                 
                                 <?php if ( $instancia === 0 ) : ?>
 
+                                    <?php if ( $state_error == 2 ):?>
+                                        
+                                        <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
+
+                                    <?php endif; ?>
+                                    
                                     <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
 
                                 <?php endif; ?>
@@ -149,6 +173,7 @@ background: #E7EFFF;
                                     <th scope="col">COD_MONITOR</th>
                                     <th scope="col">COD_MOD8</th>
                                     <?php if ( $instancia === 0 ): ?> 
+                                        <th scope="col">ID AGRUPAMIENTO</th>
                                         <th scope="col">DNI</th>
                                         <th scope="col">APELLIDO PATERNO</th>
                                         <th scope="col">APELLIDO MATERNO</th>
