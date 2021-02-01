@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\SMIController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,3 +16,18 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::post('updateRange', 'SMIController@updateRange')->name('updateRange');
+
+// Route::post('setState', 'SMIController@setState')->name('setState');
+
+// Route::post('setState', array('middleware' => 'cors', 'uses' => 'SMIController@setState'));
+
+Route::match(['options', 'post'], 'setState', function (Request $request ) {
+
+	$setEstado = new SMIController;
+
+	return $setEstado->setState($request);
+
+})->middleware('cors');
