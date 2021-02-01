@@ -25,13 +25,9 @@ Route::post('updateRange', 'SMIController@updateRange')->name('updateRange');
 // Route::post('setState', array('middleware' => 'cors', 'uses' => 'SMIController@setState'));
 
 Route::match(['options', 'post'], 'setState', function (Request $request ) {
-    // This will work with the middleware shown in the accepted answer
 
 	$setEstado = new SMIController;
 
 	return $setEstado->setState($request);
-
-	// Route::post('setState', 'SMIController@setState')->name('setState');
-
 
 })->middleware('cors');
