@@ -111,10 +111,14 @@
                         </ul>
                       </div>
                       <div class="card-body">
-                        <h5 class="card-title"><b>SIREG SEEDS - v0.1</b></h5>
+                        
+                        <h5 class="card-title"><b>SIREG SEEDS - v1.5</b></h5>
+
                         <p class="card-text">Módulo de importación de datos semilla para el registro.</p>
 
-                        <?php if ( $state_error === 1 ): ?>
+                        <?php
+
+                         if ( $state_error === 1 ): ?>
 
                             <div class="alert alert-danger" role="alert">
 
@@ -124,9 +128,12 @@
                             
                             <div>
                                 
-                                <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
+                                <a href="{{ route('inicio', $id_especialista)}}" 
+                                    class="btn btn-primary">Regresar a inicio</a>
                             
-                            </div><br>
+                            </div>
+
+                            <br>
 
                         <?php else: ?>
 
@@ -138,27 +145,31 @@
 
                             <div>
                                 
-                                <?php if ( $instancia === 0 ) : ?>
-
-                                    <?php if ( $state_error == 2 ):?>
-                                        
-                                        <a href="{{ route('inicio', $id_especialista)}}" class="btn btn-primary">Regresar a inicio</a>
-
-                                    <?php endif; ?>
+                                <?php if ( $state_error == 2 ):?>
                                     
-                                    <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+                                    <a href="{{ route('inicio', $id_especialista)}}" 
+                                        class="btn btn-primary">Regresar a inicio</a>
+
+                                <?php endif; ?>
+
+                                <?php if ( $instancia === 0 ) : ?>
+                                    
+                                    <a href="{{ route('import-to-director' , [$id_temporal , $id_especialista] )}}" 
+                                        class="btn btn-success">Importar</a>
 
                                 <?php endif; ?>
 
                                 <?php if ( $instancia === 1 ) :?>
 
-                                    <a href="{{ route('import-to-docente' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+                                    <a href="{{ route('import-to-docente' , [$id_temporal , $id_especialista] )}}" 
+                                        class="btn btn-success">Importar</a>
 
                                 <?php endif; ?>
 
                                 <?php if ( $instancia === 2 ) :?>
 
-                                    <a href="{{ route('import-to-ppff' , [$id_temporal , $id_especialista] )}}" class="btn btn-success">Continuar</a>
+                                    <a href="{{ route('import-to-ppff' , [$id_temporal , $id_especialista] )}}" 
+                                        class="btn btn-success">Importar</a>
 
                                 <?php endif; ?>
 

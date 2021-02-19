@@ -620,7 +620,7 @@ class PersonController extends Controller
             return view('error')
                     ->with('resumeTable' , $row )
                     ->with('message' , $message )
-                    ->with('state_error', $e_state )
+                    ->with('state_error', (int)$e_state )
                     ->with('id_temporal', $id_temporal)
                     ->with('instancia' , 0 )
                     ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
@@ -722,6 +722,7 @@ class PersonController extends Controller
         $array = Excel::toArray(new UsersImport, $file );
 
         unset($array[0][0]);
+
         unset($array[0][1]);
 
         $row_header = $array[0][2];
@@ -801,7 +802,6 @@ class PersonController extends Controller
 
             #----------------------------------------------
             
-
             $array[0][$key]['grado'] = trim($row[5]);
 
             if ( is_numeric($row[5]) )
@@ -1050,18 +1050,31 @@ class PersonController extends Controller
                 }
 
                 $row .= '<tr ' . ( $resumen ? 'class="table-danger"' : '' ) . '>'.
+
                             '<th scope="row">' . ( $key + 1 ) . '</td>'.
+                
                             '<td ' . ( $val['cod_reg_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['cod_reg'] . '</td>'.
+                            
                             '<td ' . ( $val['cod_mod8_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['cod_mod8'] . '</td>'.
+                            
                             '<td ' . ( $val['grado_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['grado'] . '</td>'.
+                            
                             '<td ' . ( $val['seccion_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['seccion'] . '</td>'.
+                            
                             '<td ' . ( $val['area_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['area'] . '</td>'.
+                            
                             '<td ' . ( $val['dni_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['dni'] . '</td>'.
+                            
                             '<td ' . ( $val['apellido_p_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['apellido_p'] . '</td>'.
+                            
                             '<td>' . $val['apellido_m'] . '</td>'.
+                            
                             '<td ' . ( $val['nombres_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['nombres'] . '</td>'.
+                            
                             '<td ' . ( $val['telefono1_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['telefono1'] . '</td>'.
+                            
                             '<td ' . ( $val['telefono2_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['telefono2'] . '</td>'.
+                            
                             '<td>' . $resumen . '</td>'.
 
                         '</tr>';
@@ -1071,7 +1084,7 @@ class PersonController extends Controller
             return view('error')
                         ->with('resumeTable' , $row )
                         ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
-                        ->with('state_error', true )
+                        ->with('state_error', 1 )
                         ->with('instancia' , 1 )
                         ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
 
@@ -1105,6 +1118,11 @@ class PersonController extends Controller
         
         }
 
+        #CREAR PERSONA DESDE TEMP DIRECTOR
+        DB::insert( 'CALL sp_create_doc("' . $id_temporal . '")' );
+
+        DB::update( 'CALL sp_update_id_person_doc("' . $id_temporal . '")' );
+
         $integrity_table = DB::select('SELECT
                                             id,
                                             id_fila,
@@ -1113,11 +1131,12 @@ class PersonController extends Controller
                                             IF( ISNULL( B.Age_Codigo ) , 1 , 0 ) COD_REG_ERR, /*#No existe codigo registrador*/
                                             IF( cod_mod = C.Ie_CodigoModular , 0 , 1 ) COD_MOD_ERR , /*#Codigo modular no existe*/
                                             IF( cod_reg = C.Age_Codigo , 0 , 1 ) COD_REG_COD_MOD_ERR, /*#El codigo de registrador no está asociado al codigo modular*/
-                                            grado, 
-                                            seccion,
+                                            A.grado, 
+                                            A.seccion,
+                                            IF( ISNULL(validated) , 0 , IF(validated = 0, 1 , 2 )) COD_GRAD_SEC_ERR,/*#0 => el grado seccion, no existe, 1=> el grado existe pero no está validado, 2=> el grado stá validado*/
                                             area,
                                             IF( ISNULL( ARE_DESCRIPCION ) , 1 , 0 ) AREA_ERR, /*EL AREA NO EXISTE*/
-                                            IF ( isnull(E.CDOC_NUMERO_DOC) , 0 ,1 ) DOC_EX_ERR, /*EL DOCENTE YA HA SIDO REGISTRADO EN ESTA IE*/
+                                            IF( ISNULL( E.PER_CODIGO ) , 0 ,1 ) DOC_EX_ERR, /*EL DOCENTE YA HA SIDO REGISTRADO EN ESTA IE*/
                                             dni,
                                             ape_p,
                                             ape_m,
@@ -1128,12 +1147,25 @@ class PersonController extends Controller
                                         LEFT JOIN tb_agente B ON (B.Age_Codigo = A.cod_reg)
                                         LEFT JOIN tb_registro C ON (C.Ie_CodigoModular = A.cod_mod AND REG_TIPO = 1)
                                         LEFT JOIN ( SELECT 
-                                                        CDOC_NUMERO_DOC, Ie_CodigoModular 
+                                                       DISTINCT PER_CODIGO,
+                                                       Ie_CodigoModular
                                                     FROM tb_doc_contacto 
-                                                    WHERE NOT ISNULL(CDOC_NUMERO_DOC) AND NOT CDOC_NUMERO_DOC = "" ) E 
-                                                    ON (E.CDOC_NUMERO_DOC = A.dni AND E.Ie_CodigoModular = C.Ie_CodigoModular )
+                                                    WHERE NOT ISNULL(PER_CODIGO)  ) E 
+                                                    ON (E.PER_CODIGO = A.id_person AND E.Ie_CodigoModular = cod_mod)
                                         LEFT JOIN tb_areas F ON (A.area = ARE_DESCRIPCION)
-                                        
+                                        LEFT JOIN tb_grado_seccion G ON (A.grado = G.grado AND A.seccion = G.seccion AND A.cod_mod = G.Ie_CodigoModular )
+                                        LEFT JOIN (SELECT 
+                                                        @i := @i + 1 as ID_GRUPO, 
+                                                        NOMBRE_COMPUESTO
+                                                    FROM
+                                                    (SELECT
+                                                        CONCAT( ape_p, ape_m, nombres ) NOMBRE_COMPUESTO, 
+                                                        COUNT(id) CONJUNTO
+                                                    FROM import_table_dirs 
+                                                        WHERE id_temp = "' . $id_temporal. '" 
+                                                        GROUP BY concat(ape_p, ape_m,nombres) 
+                                                        HAVING CONJUNTO > 1) AS A
+                                                    CROSS JOIN ( SELECT @i := 0 ) R ) H ON ( NOMBRE_COMPUESTO = CONCAT(ape_p, ape_m, nombres) )
                                         WHERE id_temp = "' . $id_temporal. '" ORDER BY cod_mod, dni;');
 
 
@@ -1143,6 +1175,8 @@ class PersonController extends Controller
             $row = '';
 
             $error = false;
+            
+            $alert = false;
 
             $error_update = [];
 
@@ -1152,42 +1186,73 @@ class PersonController extends Controller
 
             foreach ($integrity_table as $key => $val) 
             {
+
+                $error_row = false;
+
+                $alert_row = false;
                 
                 $resumen = '';
 
                 if ( $val->COD_MOD_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código módular no existe";
+
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "Código módular no existe";
                     
-                    $error = true;
+                    $error_row = true;
 
                 }
+
                 if ( $val->DOC_EX_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Este docente ya ha sido registrado en esta IE";
                 
-                    $error = true;
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "Este docente ya ha sido registrado en esta IE";
+                
+                    $error_row = true;
                 
                 }
+
                 if ( $val->COD_REG_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código de monitor no existe";
+                    
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "Código de monitor no existe";
                  
-                    $error = true;
+                    $error_row = true;
                 
                 }
+
                 if ( $val->COD_REG_COD_MOD_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El código de registrador no está asociado al código modular";
                  
-                    $error = true;
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "El código de registrador no está asociado al código modular";
+                 
+                    $error_row = true;
                 
                 }
+
+                if ( $val->COD_GRAD_SEC_ERR === 0 )
+                {
+
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "El grado y sección no existe, no se puede registrar";
+                
+                    $error_row = true;
+                
+                }
+
+                if ( $val->COD_GRAD_SEC_ERR === 1 )
+                {
+
+                    $resumen .= ( $resumen ? '<br>-Alerta: ' : 'Alerta: ') . "El grado y sección no está validada en SIREG, no se puede registrar";
+                
+                    $alert_row = true;
+                
+                }
+
                 if ( $val->AREA_ERR )
                 {
-                    $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El área no existe, verifique la ortografía ";
+                    
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "El área no existe, verifique la ortografía ";
                 
-                    $error = true;
+                    $error_row = true;
                 
                 }
 
@@ -1216,12 +1281,31 @@ class PersonController extends Controller
 
                 }
 
-                $row .= '<tr ' . ( $resumen ? 'class="table-danger"' :  ( $color ? 'class="fila-o"' : 'class="fila-d"' ) ) . '>'.
+                if ( $error_row === true  )
+                {
+                
+                    $error = true; 
+                
+                }
+
+                if ( $alert_row === true  )
+                {
+                
+                    $alert = true; 
+                
+                }
+
+
+                // $row .= '<tr ' . ( $resumen ? 'class="table-danger"' :  ( $color ? 'class="fila-o"' : 'class="fila-d"' ) ) . '>'.
+                $row .= '<tr ' . ( $error_row ? 'class="table-danger"' : ( $alert_row ? 'class="table-warning"' : '' ) ) . '>'.
                             '<th scope="row">' . $val->id_fila . '</td>'.
                             '<td ' . ( $val->COD_REG_ERR || $val->COD_REG_COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
                             '<td ' . ( $val->COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
-                            '<td>' . $val->grado . '</td>'.
-                            '<td>' . $val->seccion . '</td>'.
+
+                            '<td ' . ( $val->COD_GRAD_SEC_ERR === 0 ? 'class="bg-danger"' : ( $val->COD_GRAD_SEC_ERR === 1 ? 'class="bg-alert"' : '' ) ) . '>' . $val->grado . '</td>'.
+                            
+                            '<td ' . ( $val->COD_GRAD_SEC_ERR === 0 ? 'class="bg-danger"' : ( $val->COD_GRAD_SEC_ERR === 1 ? 'class="bg-alert"' : '' ) ) . '>' . $val->seccion . '</td>'.
+
                             '<td ' . ( $val->AREA_ERR || $val->AREA_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->area . '</td>'.
                             '<td ' . ( $val->DOC_EX_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->dni . '</td>'.
                             '<td>' . $val->ape_p . '</td>'.
@@ -1239,16 +1323,15 @@ class PersonController extends Controller
             if ( $error )
             {
 
-                $message = 'Se ha detectado errores de integridad. No se puede registrar.';
+                $message = ':( Se ha detectado errores de integridad. No se puede registrar.';
 
-                // dd($error_update);
-
-                // DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
 
                 foreach ($error_update as $key => $val) 
                 {
 
-                    DB::table('import_table_docs')->where("id", $val['id'])->update(["info_error" => $val['info_error'] ]);
+                    DB::table('import_table_docs')
+                            ->where("id", $val['id'])
+                            ->update(["info_error" => $val['info_error'] ]);
 
                     // $temp_table = new ImportTable;
 
@@ -1263,12 +1346,29 @@ class PersonController extends Controller
                 }
 
                 DB::update('UPDATE import_table_docs SET state = 2 WHERE id_temp = "' . $id_temporal. '";');
+                
+                $e_state = 1;
 
             }
             else
             {
 
-                $message = 'Atención: Se va a registrar la siguiente información. Presione el boton "Continuar" para proceder con el registro.';
+                if ( $alert )
+                {
+
+                    $message = 'Advertencia: Se ha definido alertas en cada fila sombreada. Revise cada mensaje en el cuadro, si es correcto presione el botón "Importar" o "Cancelar" para abortar la importación.';
+                    
+                    $e_state = 2;
+
+                }
+                else
+                {
+
+                    $message = 'Se ve bien! : Se va a registrar la siguiente información. Presione el boton "Importar" para proceder con el registro.';
+
+                    $e_state = 0;
+
+                }
 
                 \Storage::disk('local')->put( $id_temporal . '-' . 'doc-' . $file->getClientOriginalName(),  \File::get($file));
 
@@ -1277,38 +1377,71 @@ class PersonController extends Controller
             return view('error')
                     ->with('resumeTable' , $row )
                     ->with('message' , $message )
-                    ->with('state_error', $error )
+                    ->with('state_error', (int) $e_state )
                     ->with('instancia' , 1 )
                     ->with('id_temporal', $id_temporal)
                     ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
                     
         }
 
-
-        // $query_compare = Director::all();
-        // $cod_mon = array_column($array[0],0);
-        // foreach ($query_compare as $key => $value) {
-        //     # code...
-        //     echo $value->Ie_CodigoModular.'<br>';
-        // }
-        // var_dump( $cod_mon );
-        // dd($query_compare->verifyData());
-
-        // dd($array[0]);
-
-        //return back()->with('message', 'Importacion de usuario completada');
-
     }
 
     public function importTableDocente( $id_temporal , $id_especialista )
     {
 
-        $resp = DB::insert("INSERT INTO tb_doc_contacto ( Ie_CodigoModular, CDOC_TIPO_DOC, CDOC_NUMERO_DOC, CDOC_NOMBRE, CDOC_APELLIDO_P, CDOC_APELLIDO_M, CDOC_TELEFONO, CDOC_TELEFONO2, id_seed) (SELECT cod_mod , 1 , dni, nombres, ape_p, ape_m, telefono1, telefono2 , id FROM  import_table_docs WHERE id_temp ='$id_temporal' AND state = 0 GROUP BY dni)");
+        $resp = DB::insert("INSERT INTO tb_doc_contacto ( 
+                                                            Ie_CodigoModular, 
+                                                            PER_CODIGO,
+                                                            /*CDOC_TIPO_DOC, 
+                                                            CDOC_NUMERO_DOC, 
+                                                            CDOC_NOMBRE, 
+                                                            CDOC_APELLIDO_P, 
+                                                            CDOC_APELLIDO_M, 
+                                                            CDOC_TELEFONO, 
+                                                            CDOC_TELEFONO2,*/
+                                                            id_seed
+                                                        ) 
+                                                        (SELECT 
+                                                            cod_mod , 
+                                                            id_person,
+                                                            /*1 , 
+                                                            dni, 
+                                                            nombres, 
+                                                            ape_p, 
+                                                            ape_m, 
+                                                            telefono1, 
+                                                            telefono2,*/
+                                                            id 
+                                                        FROM  
+                                                            import_table_docs 
+                                                        WHERE 
+                                                            id_temp ='$id_temporal' AND state = 0 
+                                                        GROUP BY dni)");
         
-            $resp2 = DB::insert("INSERT INTO tb_doc_directorio ( CDOC_CODIGO, RDOC_HISTORIA, Ie_CodigoModular, DGS_GRADO, DGS_SECCION, DGS_AREAS, id_seed )
-                                SELECT CDOC_CODIGO, 0, cod_mod, grado, seccion,  CONCAT('[' , GROUP_CONCAT(ARE_CODIGO SEPARATOR ',') , ']') AREA, id
-                                FROM import_table_docs A JOIN tb_doc_contacto B ON (A.dni = B.CDOC_NUMERO_DOC  AND A.cod_mod = B.Ie_CodigoModular AND id_temp ='$id_temporal' AND state = 0 ) 
-                                LEFT JOIN tb_areas C ON (A.area = C.ARE_DESCRIPCION ) GROUP BY dni, grado, seccion");
+            $resp2 = DB::insert("INSERT INTO tb_doc_directorio ( 
+                                                                CDOC_CODIGO, 
+                                                                RDOC_HISTORIA, 
+                                                                Ie_CodigoModular, 
+                                                                DGS_GRADO, 
+                                                                DGS_SECCION, 
+                                                                DGS_AREAS, 
+                                                                id_seed 
+                                                                )
+                                                                SELECT 
+                                                                CDOC_CODIGO, 
+                                                                0, 
+                                                                cod_mod,
+                                                                grado, 
+                                                                seccion,  
+                                                                CONCAT('[' , GROUP_CONCAT(ARE_CODIGO SEPARATOR ',') , ']') AREA, 
+                                                                id
+                                                                FROM 
+                                                                import_table_docs A 
+                                                                JOIN 
+                                                                tb_doc_contacto B ON (A.id_person = B.PER_CODIGO AND A.cod_mod = B.Ie_CodigoModular AND id_temp ='$id_temporal' AND state = 0 ) 
+                                                                LEFT JOIN 
+                                                                tb_areas C ON (A.area = C.ARE_DESCRIPCION ) 
+                                                                GROUP BY dni, grado, seccion");
 
         DB::update('UPDATE import_table_docs SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
@@ -1344,6 +1477,7 @@ class PersonController extends Controller
         $array = Excel::toArray(new UsersImport, $file );
 
         unset($array[0][0]);
+
         unset($array[0][1]);
 
         $row_header = $array[0][2];
@@ -1790,7 +1924,7 @@ class PersonController extends Controller
             return view('error')
                         ->with('resumeTable' , $row )
                         ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
-                        ->with('state_error', true )
+                        ->with('state_error', 1 )
                         ->with('instancia' , 2 )
                         ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
 
