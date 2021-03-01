@@ -1418,30 +1418,36 @@ class PersonController extends Controller
                                                             id_temp ='$id_temporal' AND state = 0 
                                                         GROUP BY dni)");
         
-            $resp2 = DB::insert("INSERT INTO tb_doc_directorio ( 
-                                                                CDOC_CODIGO, 
-                                                                RDOC_HISTORIA, 
-                                                                Ie_CodigoModular, 
-                                                                DGS_GRADO, 
-                                                                DGS_SECCION, 
-                                                                DGS_AREAS, 
-                                                                id_seed 
-                                                                )
-                                                                SELECT 
-                                                                CDOC_CODIGO, 
-                                                                0, 
-                                                                cod_mod,
-                                                                grado, 
-                                                                seccion,  
-                                                                CONCAT('[' , GROUP_CONCAT(ARE_CODIGO SEPARATOR ',') , ']') AREA, 
-                                                                id
-                                                                FROM 
-                                                                import_table_docs A 
-                                                                JOIN 
-                                                                tb_doc_contacto B ON (A.id_person = B.PER_CODIGO AND A.cod_mod = B.Ie_CodigoModular AND id_temp ='$id_temporal' AND state = 0 ) 
-                                                                LEFT JOIN 
-                                                                tb_areas C ON (A.area = C.ARE_DESCRIPCION ) 
-                                                                GROUP BY dni, grado, seccion");
+            $resp2 = DB::insert("INSERT INTO 
+                                    tb_doc_directorio ( 
+                                            CDOC_CODIGO, 
+                                            RDOC_HISTORIA, 
+                                            Ie_CodigoModular, 
+                                            DGS_GRADO, 
+                                            DGS_SECCION, 
+                                            DGS_AREAS, 
+                                            id_seed,
+                                            id_seccion
+                                        )
+                                        SELECT 
+                                            CDOC_CODIGO, 
+                                            0, 
+                                            A.cod_mod,
+                                            A.grado, 
+                                            A.seccion,  
+                                            CONCAT('[' , GROUP_CONCAT(ARE_CODIGO SEPARATOR ',') , ']') AREA, 
+                                            id,
+                                            C.id_seccion
+                                        FROM 
+                                        import_table_docs A 
+                                        JOIN 
+                                        tb_doc_contacto B ON (A.id_person = B.PER_CODIGO AND A.cod_mod = B.Ie_CodigoModular AND id_temp ='$id_temporal' AND state = 0 ) 
+                                        JOIN
+                                        tb_grado_seccion C 
+                                        ON ( A.cod_mod = C.Ie_CodigoModular AND A.grado = C.grado AND A.seccion = C.seccion )
+                                        LEFT JOIN 
+                                        tb_areas D ON (A.area = D.ARE_DESCRIPCION ) 
+                                        GROUP BY dni, grado, seccion");
 
         DB::update('UPDATE import_table_docs SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
@@ -1482,6 +1488,10 @@ class PersonController extends Controller
 
         $row_header = $array[0][2];
 
+        $error = false;
+
+        $alert = false;
+
         if ( count($array[0][2]) != 18 )
         {
 
@@ -1507,9 +1517,6 @@ class PersonController extends Controller
                           15 => "TELÉFONO 1",
                           16 => "TELÉFONO 2",
                           17 => "OBSERVACIÓN"];
-
-     
-
 
         if ( array_diff($row_header, $row_master) )
         {
@@ -1575,6 +1582,7 @@ class PersonController extends Controller
 
                 switch ($tipo_doc) {
                     
+                    case '1':
                     case 'DNI':
 
                         if ( strlen(trim($row[6])) == 8 && is_numeric( trim($row[6]) ) )
@@ -1592,6 +1600,7 @@ class PersonController extends Controller
 
                     break;
                     
+                    case '2':
                     case 'CE':
                                         
                         if ( strlen( trim($row[6]) ) < 13 )
@@ -1609,6 +1618,7 @@ class PersonController extends Controller
 
                     break;
 
+                    case '3':
                     case 'PASAPORTE':
                                                             
                         if ( strlen( trim($row[6]) ) < 14 )
@@ -1626,6 +1636,7 @@ class PersonController extends Controller
 
                     break;
 
+                    case '5':
                     case 'CUE':
                                                             
                         if ( strlen( trim($row[6]) ) == 14 && is_numeric( trim($row[6]) ) )
@@ -1961,6 +1972,62 @@ class PersonController extends Controller
         
         }
 
+        #CREAR PERSONA DESDE TEMP DIRECTOR
+        DB::insert( 'CALL sp_create_ppff("' . $id_temporal . '")' );
+
+        // DB::update( 'CALL sp_update_id_person_ppff("' . $id_temporal . '")' );
+// $tiempo_inicial = microtime(true); //true es para que sea calculado en segundos
+
+        // DB::update('UPDATE import_table_ppffs A 
+
+        //             LEFT JOIN (
+                        
+        //                 SELECT
+                            
+        //                     id,
+                            
+        //                     IF ( NOT ISNULL( B.PER_CODIGO ), B.PER_CODIGO,  NULL  ) ID_PERSON
+                        
+        //                 FROM import_table_ppffs A 
+
+        //                 LEFT JOIN tb_persona B ON ( token_validator =  CONCAT(ape_p_apo, ape_m_apo,nombres_apo) )
+                                    
+        //                 WHERE id_temp = "' . $id_temporal . '" ) B ON ( A.id = B.id )
+
+        //                     SET A.id_person = B.ID_PERSON
+
+        //                 WHERE id_temp = "' . $id_temporal . '";');
+
+
+
+        DB::update('UPDATE import_table_ppffs A 
+
+                    LEFT JOIN (
+                        
+                        SELECT
+                            
+                            id,
+                            
+                            IF ( NOT ISNULL( B.PER_CODIGO ), B.PER_CODIGO,  NULL  ) ID_PERSON
+                        
+                        FROM import_table_ppffs A 
+
+                        LEFT JOIN tb_persona B ON ( A.token_validator = B.token_validator )
+                                    
+                        WHERE id_temp = "' . $id_temporal . '" ) B ON ( A.id = B.id )
+
+                            SET A.id_person = B.ID_PERSON
+
+                        WHERE id_temp = "' . $id_temporal . '";');
+
+
+// $tiempo_final = microtime(true);
+
+// $tiempo = $tiempo_final - $tiempo_inicial; //este resultado estará en segundos
+
+// echo "------------------------------------>al update->".$tiempo;
+
+// exit();
         $integrity_table = DB::select('SELECT
                                             id,
                                             id_fila,
@@ -1969,8 +2036,9 @@ class PersonController extends Controller
                                             IF( ISNULL( B.Age_Codigo ) , 1 , 0 ) COD_REG_ERR, /*#No existe codigo registrador*/
                                             IF( cod_mod = C.Ie_CodigoModular , 0 , 1 ) COD_MOD_ERR , /*#Codigo modular no existe*/
                                             IF( cod_reg = C.Age_Codigo , 0 , 1 ) COD_REG_COD_MOD_ERR, /*#El codigo de registrador no está asociado al codigo modular*/
-                                            grado, 
-                                            seccion,
+                                            A.grado, 
+                                            A.seccion,
+                                            IF( ISNULL(validated) , 0 , IF(validated = 0, 1 , 2 )) COD_GRAD_SEC_ERR,/*#0 => el grado seccion, no existe, 1=> el grado existe pero no está validado, 2=> el grado stá validado*/
                                             tipo_doc,
                                             dni,
                                             IF( isnull(EST_NUMERO_DOC ) , 0 , 1 ) DNI_EX_EST_ERR, /*#El DNI del estudiante ya ha sido registrado*/
@@ -1981,22 +2049,28 @@ class PersonController extends Controller
                                             ape_m_apo,
                                             nombres_apo,
                                             telefono1,
-                                            telefono2
+                                            telefono2, 
+                                            id_seccion,
+                                            validated
+                                        
                                         FROM import_table_ppffs A 
+                                        
                                         LEFT JOIN tb_agente B ON (B.Age_Codigo = A.cod_reg)
+                                        
                                         LEFT JOIN tb_registro C ON (C.Ie_CodigoModular = A.cod_mod AND REG_TIPO = 1)
                                         
                                         LEFT JOIN tb_ppff_estudiante D ON (A.dni = D.EST_NUMERO_DOC)
                                         
+                                        LEFT JOIN tb_grado_seccion F ON (A.cod_mod = F.Ie_CodigoModular AND A.grado = F.grado AND A.seccion = F.seccion )
+
                                         WHERE id_temp = "' . $id_temporal. '";');
+
 
 
         if ( $integrity_table )
         {
 
             $row = '';
-
-            $error = false;
 
             $error_update = [];
 
@@ -2006,35 +2080,57 @@ class PersonController extends Controller
 
             foreach ($integrity_table as $key => $val) 
             {
-                
+                    
+                $error_row = false;
+
+                $alert_row = false;
+
                 $resumen = '';
 
                 if ( $val->COD_MOD_ERR )
                 {
                     $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código módular no existe";
                     
-                    $error = true;
+                    $error_row = true;
 
                 }
                 if ( $val->COD_REG_ERR )
                 {
                     $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "Código de monitor no existe";
                  
-                    $error = true;
+                    $error_row = true;
                 
                 }
                 if ( $val->COD_REG_COD_MOD_ERR )
                 {
                     $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El código de registrador no está asociado al código modular";
                  
-                    $error = true;
+                    $error_row = true;
                 
                 }
                 if ( $val->DNI_EX_EST_ERR )
                 {
                     $resumen .= ( $resumen ? ', ' : 'Error(es): ') . "El documento de identidad del estudiante ya ha sido registrado";
                 
-                    $error = true;
+                    $error_row = true;
+                
+                }
+
+                if ( $val->COD_GRAD_SEC_ERR === 0 )
+                {
+
+                    $resumen .= ( $resumen ? '<br>-' : 'Error(es): ') . "El grado y sección no existe, no se puede registrar";
+                
+                    $error_row = true;
+                
+                }
+
+                if ( $val->COD_GRAD_SEC_ERR === 1 )
+                {
+
+                    $resumen .= ( $resumen ? '<br>-Alerta: ' : 'Alerta: ') . "El grado y sección no está validada en SIREG, no se puede registrar";
+                
+                    $alert_row = true;
                 
                 }
 
@@ -2063,7 +2159,18 @@ class PersonController extends Controller
 
                 }
 
-                $row .= '<tr ' . ( $resumen ? 'class="table-danger"' :  ( $color ? 'class="fila-o"' : 'class="fila-d"' ) ) . '>'.
+                if ( $error_row === true  )
+                {
+                    $error = true; 
+                }
+
+                if ( $alert_row === true  )
+                {
+                    $alert = true; 
+                }
+
+                $row .= '<tr ' . ( $error_row ? 'class="table-danger"' : ( $alert_row ? 'class="table-warning"' : '' ) ) . '>'.
+                // $row .= '<tr ' . ( $resumen ? 'class="table-danger"' :  ( $color ? 'class="fila-o"' : 'class="fila-d"' ) ) . '>'.
                             '<th scope="row">' . $val->id_fila . '</td>'.
                             '<td ' . ( $val->COD_REG_ERR || $val->COD_REG_COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_reg . '</td>'.
                             '<td ' . ( $val->COD_MOD_ERR ? 'class="bg-danger"' : '' ) . '>' . $val->cod_mod . '</td>'.
@@ -2072,8 +2179,8 @@ class PersonController extends Controller
                             '<td>' . $val->ape_p . '</td>'.
                             '<td>' . $val->ape_m . '</td>'.
                             '<td>' . $val->nombres . '</td>'.
-                            '<td>' . $val->grado . '</td>'.
-                            '<td>' . $val->seccion . '</td>'.
+                            '<td ' . ( $val->COD_GRAD_SEC_ERR === 0 ? 'class="bg-danger"' : ( $val->COD_GRAD_SEC_ERR === 1 ? 'class="bg-alert"' : '' ) ) . '>' . $val->grado . '</td>'.
+                            '<td ' . ( $val->COD_GRAD_SEC_ERR === 0 ? 'class="bg-danger"' : ( $val->COD_GRAD_SEC_ERR === 1 ? 'class="bg-alert"' : '' ) ) . '>' . $val->seccion . '</td>'.
                             '<td>' . $val->ape_p_apo . '</td>'.
                             '<td>' . $val->ape_m_apo . '</td>'.
                             '<td>' . $val->nombres_apo . '</td>'.
@@ -2089,36 +2196,39 @@ class PersonController extends Controller
             if ( $error )
             {
 
-                $message = 'Se ha detectado errores de integridad. No se puede registrar.';
-
-                // dd($error_update);
-
-                // DB::delete('DELETE FROM import_tables WHERE id_temp = "' . $id_temporal. '";');
+                $message = ':( Se ha detectado errores de integridad. No se puede registrar.';
 
                 foreach ($error_update as $key => $val) 
                 {
 
                     DB::table('import_table_ppffs')->where("id", $val['id'])->update(["info_error" => $val['info_error'] ]);
-
-                    // $temp_table = new ImportTable;
-
-                    // $temp_table->exists = true;
-
-                    // $temp_table->id = $val['id'];
-
-                    // $temp_table->info_error = $val['info_error'];
-
-                    // $temp_table->save();
                 
                 }
 
                 DB::update('UPDATE import_table_ppffs SET state = 2 WHERE id_temp = "' . $id_temporal. '";');
 
+                $e_state = 1;
+
             }
             else
             {
 
-                $message = 'Atención: Se va a registrar la siguiente información. Presione el boton "Continuar" para proceder con el registro.';
+                if ( $alert )
+                {
+
+                    $message = 'Advertencia: Se ha definido alertas en cada fila sombreada. Revise cada mensaje en el cuadro, si es correcto presione el botón "Importar" o "Cancelar" para abortar la importación.';
+                    
+                    $e_state = 2;
+
+                }
+                else
+                {
+
+                    $message = 'Se ve bien! : Se va a registrar la siguiente información. Presione el boton "Importar" para proceder con el registro.';
+
+                    $e_state = 0;
+
+                }
 
                 \Storage::disk('local')->put( $id_temporal . '-' . 'ppff-' . $file->getClientOriginalName(),  \File::get($file));
 
@@ -2127,39 +2237,77 @@ class PersonController extends Controller
             return view('error')
                     ->with('resumeTable' , $row )
                     ->with('message' , $message )
-                    ->with('state_error', $error )
+                    ->with('state_error', (int)$e_state )
                     ->with('instancia' , 2 )
                     ->with('id_temporal', $id_temporal)
                     ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
                     
         }
 
-
-        // $query_compare = Director::all();
-        // $cod_mon = array_column($array[0],0);
-        // foreach ($query_compare as $key => $value) {
-        //     # code...
-        //     echo $value->Ie_CodigoModular.'<br>';
-        // }
-        // var_dump( $cod_mon );
-        // dd($query_compare->verifyData());
-
-        // dd($array[0]);
-
-        //return back()->with('message', 'Importacion de usuario completada');
-
     }
 
     public function importTablePPFF( $id_temporal , $id_especialista )
     {
 
-        $resp = DB::insert("INSERT INTO tb_ppff_contacto ( Ie_CodigoModular, CPF_NOMBRE, CPF_APELLIDO_P, CPF_APELLIDO_M, CPF_TELEFONO, CPF_TELEFONO2, id_seed)
-                            (SELECT cod_mod , nombres_apo, ape_p_apo, ape_m_apo, telefono1, telefono2 , id 
-                            FROM  import_table_ppffs 
+        // $resp = DB::insert("INSERT INTO tb_ppff_contacto 
+        //                                 ( 
+        //                                     Ie_CodigoModular, 
+        //                                     PER_CODIGO,
+        //                                     CPF_NOMBRE, 
+        //                                     CPF_APELLIDO_P, 
+        //                                     CPF_APELLIDO_M, 
+        //                                     CPF_TELEFONO, 
+        //                                     CPF_TELEFONO2, 
+        //                                     id_seed
+        //                                 )
+        //                     (SELECT 
+        //                         cod_mod , 
+        //                         nombres_apo, 
+        //                         ape_p_apo, 
+        //                         ape_m_apo, 
+        //                         telefono1, 
+        //                         telefono2 , 
+        //                         id 
+        //                     FROM import_table_ppffs 
+        //                     WHERE id_temp ='$id_temporal' AND state = 0)");
+
+                            $resp = DB::insert("INSERT INTO tb_ppff_contacto 
+                                        ( 
+                                            Ie_CodigoModular, 
+                                            PER_CODIGO,
+                                            id_seed
+                                        )
+                            (SELECT 
+                                cod_mod , 
+                                id_person,
+                                id 
+                            FROM import_table_ppffs 
                             WHERE id_temp ='$id_temporal' AND state = 0)");
         
-        $resp2 = DB::insert("INSERT INTO tb_ppff_estudiante ( CPF_CODIGO, Ie_CodigoModular, EST_NOMBRES, EST_APELLIDO_P, EST_APELLIDO_M, EST_TIPO_DOC, EST_NUMERO_DOC, EST_GRADO, EST_SECCION, id_seed )
-                            SELECT CPF_CODIGO, cod_mod, nombres, ape_p, ape_m, tipo_doc, dni, grado, seccion, id
+        $resp2 = DB::insert("INSERT INTO tb_ppff_estudiante 
+                                ( 
+                                    CPF_CODIGO, 
+                                    Ie_CodigoModular, 
+                                    EST_NOMBRES, 
+                                    EST_APELLIDO_P, 
+                                    EST_APELLIDO_M, 
+                                    EST_TIPO_DOC, 
+                                    EST_NUMERO_DOC, 
+                                    EST_GRADO, 
+                                    EST_SECCION, 
+                                    id_seed 
+                                )
+                            SELECT 
+                                    CPF_CODIGO, 
+                                    cod_mod, 
+                                    nombres, 
+                                    ape_p, 
+                                    ape_m, 
+                                    tipo_doc, 
+                                    dni, 
+                                    grado, 
+                                    seccion, 
+                                    id
                             FROM import_table_ppffs A 
                             JOIN tb_ppff_contacto B 
                             ON (A.id = id_seed AND id_temp ='$id_temporal' AND state = 0 )");
