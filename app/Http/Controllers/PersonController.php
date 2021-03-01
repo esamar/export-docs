@@ -2050,7 +2050,7 @@ class PersonController extends Controller
                                             nombres_apo,
                                             telefono1,
                                             telefono2, 
-                                            id_seccion,
+                                            F.id_seccion,
                                             validated
                                         
                                         FROM import_table_ppffs A 
@@ -2295,7 +2295,8 @@ class PersonController extends Controller
                                     EST_NUMERO_DOC, 
                                     EST_GRADO, 
                                     EST_SECCION, 
-                                    id_seed 
+                                    id_seed, 
+                                    id_seccion
                                 )
                             SELECT 
                                     CPF_CODIGO, 
@@ -2305,12 +2306,17 @@ class PersonController extends Controller
                                     ape_m, 
                                     tipo_doc, 
                                     dni, 
-                                    grado, 
-                                    seccion, 
-                                    id
+                                    A.grado, 
+                                    A.seccion, 
+                                    id,
+                                    C.id_seccion
                             FROM import_table_ppffs A 
-                            JOIN tb_ppff_contacto B 
-                            ON (A.id = id_seed AND id_temp ='$id_temporal' AND state = 0 )");
+                            JOIN 
+                                tb_ppff_contacto B 
+                                ON (A.id = id_seed AND id_temp ='$id_temporal' AND state = 0 )
+                            JOIN
+                                tb_grado_seccion C 
+                                ON ( A.cod_mod = C.Ie_CodigoModular AND A.grado = C.grado AND A.seccion = C.seccion )");
 
         DB::update('UPDATE import_table_ppffs SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
