@@ -855,7 +855,7 @@ class PersonController extends Controller
             }
             else
             {
-                $e_dni = 1;
+                $e_dni = 0;
             }
 
             $array[0][$key]['dni_err'] = $e_dni; 
