@@ -1,3 +1,4 @@
+.htaccess_example
 /node_modules
 /public/hot
 /public/storage

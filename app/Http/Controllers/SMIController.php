@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use App\Monitoreo;
+
 class SMIController extends Controller
 {
-        
+       
 	public function updateRange(Request $request )
     {
-    	
+
     	$data = $request->all();
 
     	$dni = $data[0]["dni"];
@@ -53,12 +55,12 @@ class SMIController extends Controller
 
     public function setState(Request $request )
     {
-        
-        $data[0] = $request->all();
 
-        $dni = $data[0]["dni"];
+        $data = $request->all();
 
-        $ubicacion_nav = $data[0]["ubicacion_nav"];
+        $dni = $data["dni"];
+
+        $ubicacion_nav = $data["ubicacion_nav"];
         
         $estado = "";
         
@@ -100,13 +102,23 @@ class SMIController extends Controller
         
         }
 
-        $resp = DB::update("update admin_bd20_cuestionario.37978_persona SET 
+        $resp = Monitoreo::where('dni', '=', $dni )
+                        ->update(   array(
+
+                                        'estado_evaluacion' => $estado, 
+
+                                        'origen_estado' => 1
+
+                                        ) 
+                                );
+
+        // $resp = DB::update("update admin_bd20_cuestionario.37978_persona SET 
                     
-                    estado_evaluacion = '$estado',
+        //             estado_evaluacion = '$estado',
 
-                    origen_estado = 1
+        //             origen_estado = 1
 
-                    WHERE dni = '$dni' ;");
+        //             WHERE dni = '$dni' ;");
 
         return [ 'resp' => $resp , 'estado' => $estado ];
 

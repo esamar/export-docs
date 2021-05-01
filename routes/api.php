@@ -17,8 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-Route::post('updateRange', 'SMIController@updateRange')->name('updateRange');
+// Route::post('updateRange', 'SMIController@updateRange')->name('updateRange');
 
 // Route::post('setState', 'SMIController@setState')->name('setState');
 
@@ -31,3 +30,5 @@ Route::match(['options', 'post'], 'setState', function (Request $request ) {
 	return $setEstado->setState($request);
 
 })->middleware('cors');
+
+Route::post('import-credentials', 'CuestionarioController@setCredentials')->name('import.credentials');
