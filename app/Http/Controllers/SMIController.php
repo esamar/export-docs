@@ -102,23 +102,26 @@ class SMIController extends Controller
         
         }
 
+// UBICACION IN ( 1, 10, 11 ) THEN
+// '1' --'Autenticado'
+// n.UBICACION IN ( 2, 3, 4, 6 ) THEN
+// '2' --'En evaluación'
+// --WHEN n.UBICACION IN ( 5, 8, 9, 12 ) THEN
+// n.UBICACION IN ( 5, 8, 9 ) THEN
+// '3' --'Evaluación finalizada 1'
+// n.UBICACION IN ( 7,12)
+// '4' --'Finalizado'
+
+
         $resp = Monitoreo::where('dni', '=', $dni )
                         ->update(   array(
 
                                         'estado_evaluacion' => $estado, 
 
-                                        'origen_estado' => 1
+                                        'origen_estado' => 1 
 
                                         ) 
                                 );
-
-        // $resp = DB::update("update admin_bd20_cuestionario.37978_persona SET 
-                    
-        //             estado_evaluacion = '$estado',
-
-        //             origen_estado = 1
-
-        //             WHERE dni = '$dni' ;");
 
         return [ 'resp' => $resp , 'estado' => $estado ];
 

@@ -14,7 +14,7 @@ class CuestionarioController extends Controller
 
         $data = $request->all();
 
-        $idinstitucion = Cuestionario::institucion( $data['codmod'] );
+        $idinstitucion = Cuestionario::getInstitucion( $data['codmod'] );
 
         if ( $idinstitucion )
         {
@@ -26,7 +26,7 @@ class CuestionarioController extends Controller
 				    							"dni" 			=> $data['dni'] ,
 				    							"idinstitucion" => $idinstitucion->id,
 				    							"nivel" 		=> $data['nivel'] ,
-				    							"idgrado" 		=> $data['grado'] ,
+				    							"idgrado" 		=> $data['idgrado'] ,
 				    							"grado" 		=> $data['grado'] ,
 				    							"seccion" 		=> $data['seccion'] ,
 			        							"estado" 		=> 1,
@@ -38,7 +38,7 @@ class CuestionarioController extends Controller
         		$idusuario = $this->storeUser([
 			        							"idpersona"		=> $idpersona ,
 			        							"idrol"			=> $data['idrol'] ,
-			        							"nombre"		=> $data['dni'] ,
+			        							"nombre"		=> $data['user'] ,
 			        							"contrasenia"	=> $data['md5_user'] ,
 			        							"estado"		=> 1 ,
 			        						]);

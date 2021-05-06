@@ -29,7 +29,7 @@ class Cuestionario extends Model
     
     protected $fillable = ["nombres","appaterno","apmaterno","dni","idinstitucion","nivel","idgrado","grado","seccion","estado"];
 
-    public static function institucion( $codmod )
+    public static function getInstitucion( $codmod )
     {
 
     	return DB::connection( 'mysql_cuestionario' )
