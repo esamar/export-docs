@@ -9,20 +9,20 @@ class Monitoreo extends Model
 	
     const UPDATED_AT = null;
     
-     /**
-     * The database connection used by the model.
-     *
-     * @var string
-     */
+    /**
+    * The database connection used by the model.
+    *
+    * @var string
+    */
 
-     protected $connection = 'mysql_monitoreo';
+    protected $connection = 'mysql_cuestionario';
 
-     /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-     protected $table = '37978_persona';
+    /**
+    * The database table used by the model.
+    *
+    * @var string
+    */
 
+    protected $table = 'monitoreo_seel';
 
 }

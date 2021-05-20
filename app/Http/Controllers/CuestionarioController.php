@@ -15,6 +15,15 @@ class CuestionarioController extends Controller
         $data = $request->all();
 
         $idinstitucion = Cuestionario::getInstitucion( $data['codmod'] );
+        
+        $id_usuario_existente = Cuestionario::existsUser( $data['user'] );
+
+        if ( $id_usuario_existente )
+        {
+
+            return [ "resp" => 1, "iduser" => $id_usuario_existente->id , "error" => "El usuario ya existe, se ha cancelado la operación" ];
+
+        }
 
         if ( $idinstitucion )
         {

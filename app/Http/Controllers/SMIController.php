@@ -56,75 +56,171 @@ class SMIController extends Controller
     public function setState(Request $request )
     {
 
+        $estado = "";
+
         $data = $request->all();
 
-        $dni = $data["dni"];
+        $id_tipo = $data['id_tipo'];
+        
+        $tipo_doc = $data['tipo_doc'];
 
-        $ubicacion_nav = $data["ubicacion_nav"];
+        $numero_doc = $data['numero_doc'];
         
-        $estado = "";
-        
-        switch ($ubicacion_nav) 
+        $estado_actual = (int) $data['id_estado'];
+
+        $fecha_estado = $data['fecha_hora'];
+
+        if ( ( $estado_actual < 6 && $tipo_doc < 5 && $fecha_estado && $numero_doc ) == false )
         {
-
-            case 10: #'BIENVENIDO':
-            case 11: #'TUTORIAL':
-            case 1: #'PREINICIO':
         
+            return [ 'resp' => 0 , 'msg' => 'Error en los parametros' ];
 
-                $estado = 'Ingresó';
-
-            break;
-
-            case 3: #'EVALUACION_TEXTO_COMPLETO':
-            case 2: #'TRANSICION':
-            case 4: #'EVALUACION':
-            case 6: #'OPORTUNIAD':
-            case 5: #'REVISION_FALTANTES':
-
-                $estado = 'Incompleto';
-
-            break;
-
-            case 7: #'FINALIZADA': 
-            case 9: #'AGRADECIMIENTO': 
-            case 8: #'CUESTIONARIO': 
-
-                $estado = 'Finalizado 1';
-
-            break;
-
-            case 12: #'CUESTIONARIO_AGRADECIMIENTO': 
-
-                $estado = 'Finalizado 2';
-
-            break;
-        
         }
 
-// UBICACION IN ( 1, 10, 11 ) THEN
-// '1' --'Autenticado'
-// n.UBICACION IN ( 2, 3, 4, 6 ) THEN
-// '2' --'En evaluación'
-// --WHEN n.UBICACION IN ( 5, 8, 9, 12 ) THEN
-// n.UBICACION IN ( 5, 8, 9 ) THEN
-// '3' --'Evaluación finalizada 1'
-// n.UBICACION IN ( 7,12)
-// '4' --'Finalizado'
+        $resp = Monitoreo::where('tipo', '=' , $id_tipo )
+                        ->where('documento_tipo', '=' , $tipo_doc )
+                        ->where('documento_numero', '=' , $numero_doc )
+                        ->get();
+        
+        if ( count( $resp ) )
+        {
+            
+            $values = array();
 
+            $estado_registrado = $resp->first()->estado;
 
-        $resp = Monitoreo::where('dni', '=', $dni )
-                        ->update(   array(
+            if ( $estado_actual === 1 )
+            {
 
-                                        'estado_evaluacion' => $estado, 
+                $estado = 'Inicio de sesión';
 
-                                        'origen_estado' => 1 
+                $values[ 'login_contador'] = (int) $resp->first()->login_contador + 1 ;
 
-                                        ) 
-                                );
+            }
 
-        return [ 'resp' => $resp , 'estado' => $estado ];
+            if ( $estado_actual == 5 )
+            {
 
+                $estado = 'Fin de sesión';
+                
+                $values['logout'] = $fecha_estado;
+
+            }
+
+            if ( $estado_registrado < $estado_actual && $estado_actual < 5 )
+            {
+                
+                $values['estado'] = $estado_actual;
+
+                switch ( $estado_actual ) 
+                {
+        
+                    case 1: 
+                
+                        $estado = 'Ingresó';
+                        
+                        $values['login'] = $fecha_estado;
+
+                    break;
+        
+                    case 2: 
+        
+                        $estado = 'Incompleto';
+
+                        $values['inicio'] = $fecha_estado;
+        
+                    break;
+        
+                    case 3: 
+        
+                        $estado = 'Finalizado 1';
+
+                        $values['fin1'] = $fecha_estado;
+        
+                    break;
+                
+                    case 4: 
+        
+                        $estado = 'Finalizado 2';
+
+                        $values['fin2'] = $fecha_estado;
+        
+                    break;
+
+                }
+                
+            }
+            
+        }
+        else
+        {
+            
+            $values = [
+
+                'login' => $fecha_estado,
+                'estado' => $estado_actual,
+                'login_contador' => 1
+            ];
+
+            $estado = 'Inicio de sesión';
+
+        }
+
+        if ( $values )
+        {
+
+            Monitoreo::updateOrInsert(
+                
+                [
+                    'tipo' => $id_tipo, 
+                    'documento_tipo' => $tipo_doc,
+                    'documento_numero' => $numero_doc 
+                ],
+                $values
+            );
+            
+            return [ 'resp' => 1 , 'estado' => $estado , 'fecha_hora' => date('Y-m-d H:m:s') ];
+            
+        }
+        else{
+
+            return [ 'resp' => 0 , 'msg' => 'Nada que actualizar' ];
+
+        }
+            // $resp = Monitoreo::updateOrInsert(
+                
+                //                         [
+                    //                             'tipo' => $id_tipo, 
+                    //                             'documento_tipo' => $tipo_doc,
+        //                             'documento_numero' => $usuario 
+        //                         ],
+                                
+        //                         [
+        //                             'estado' => $id_estado,
+        //                             'fecha_simulacro' => '',
+        //                             'fecha_hora_login' => $fecha_hora_autenticacion,
+        //                             'fecha_hora_inicio' => $hora_inicio_evaluacion,
+        //                             'fecha_hora_logout' => $hora_salida_seel
+        //                         ]
+        //                 );
+
+        // var_dump($resp);
+
+                        // ->update(   array(
+
+                        //                 'estado_evaluacion' => $estado, 
+
+                        //                 'origen_estado' => 1 
+
+                        //                 ) 
+                        //         );
+
+    }
+
+    function validateDate($date, $format = 'Y-m-d H:i:s')
+    {
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) == $date;
     }
 
 }

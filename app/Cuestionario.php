@@ -40,5 +40,18 @@ class Cuestionario extends Model
 				->first();
     } 
 
+    public static function existsUser( $user )
+    {
+
+    	return DB::connection( 'mysql_cuestionario' )
+				->table('37978_usuario')
+				->join('37978_persona', '37978_usuario.idpersona', '=', '37978_persona.id')
+				->select('37978_usuario.id')
+				->where( 'nombre' , '=' , $user )
+				->get()
+				->first();
+    } 
+
+
 
 }

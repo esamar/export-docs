@@ -1662,6 +1662,14 @@ class PersonController extends Controller
                 }
 
             }
+            else
+            {
+
+                $e_tipo_doc = 1;
+
+                $e_dni = 1;
+
+            }
 
             $array[0][$key]['tipo_doc'] = $tipo_doc;
 
