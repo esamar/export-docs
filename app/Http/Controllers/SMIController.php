@@ -96,6 +96,8 @@ class SMIController extends Controller
 
                 $values[ 'login_contador'] = (int) $resp->first()->login_contador + 1 ;
 
+                $values['login'] = $fecha_estado;
+
             }
 
             if ( $estado_actual == 5 )
@@ -114,14 +116,6 @@ class SMIController extends Controller
 
                 switch ( $estado_actual ) 
                 {
-        
-                    case 1: 
-                
-                        $estado = 'Ingresó';
-                        
-                        $values['login'] = $fecha_estado;
-
-                    break;
         
                     case 2: 
         
@@ -179,7 +173,7 @@ class SMIController extends Controller
                 $values
             );
             
-            return [ 'resp' => 1 , 'estado' => $estado , 'fecha_hora' => date('Y-m-d H:m:s') ];
+            return [ 'resp' => 1 , 'msg' => $estado , 'fecha_hora' => date('Y-m-d H:m:s') ];
             
         }
         else{
@@ -215,12 +209,6 @@ class SMIController extends Controller
                         //                 ) 
                         //         );
 
-    }
-
-    function validateDate($date, $format = 'Y-m-d H:i:s')
-    {
-        $d = DateTime::createFromFormat($format, $date);
-        return $d && $d->format($format) == $date;
     }
 
 }
