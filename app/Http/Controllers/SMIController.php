@@ -96,8 +96,6 @@ class SMIController extends Controller
 
                 $values[ 'login_contador'] = (int) $resp->first()->login_contador + 1 ;
 
-                $values['login'] = $fecha_estado;
-
             }
 
             if ( $estado_actual == 5 )
@@ -113,6 +111,8 @@ class SMIController extends Controller
             {
                 
                 $values['estado'] = $estado_actual;
+
+                $values['login'] = $fecha_estado;
 
                 switch ( $estado_actual ) 
                 {
