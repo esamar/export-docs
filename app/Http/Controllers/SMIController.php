@@ -112,10 +112,18 @@ class SMIController extends Controller
                 
                 $values['estado'] = $estado_actual;
 
-                $values['login'] = $fecha_estado;
+                $values['login_ultimo'] = $fecha_estado;
 
                 switch ( $estado_actual ) 
                 {
+        
+                    case 1: 
+                
+                        $estado = 'Ingresó';
+                        
+                        $values['login'] = $fecha_estado;
+
+                    break;
         
                     case 2: 
         
