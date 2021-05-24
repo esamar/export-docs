@@ -62,9 +62,9 @@ class SMIController extends Controller
 
         $id_tipo = $data['id_tipo'];
         
-        $tipo_doc = $data['tipo_doc'];
+        $tipo_doc = $data['tipo_documento'];
 
-        $numero_doc = $data['numero_doc'];
+        $numero_doc = $data['numero_documento'];
         
         $estado_actual = (int) $data['id_estado'];
 
@@ -96,6 +96,8 @@ class SMIController extends Controller
 
                 $values[ 'login_contador'] = (int) $resp->first()->login_contador + 1 ;
 
+                $values['login_ultimo'] = $fecha_estado;
+
             }
 
             if ( $estado_actual == 5 )
@@ -112,7 +114,7 @@ class SMIController extends Controller
                 
                 $values['estado'] = $estado_actual;
 
-                $values['login_ultimo'] = $fecha_estado;
+                $values['login'] = $resp->first()->login_ultimo;
 
                 switch ( $estado_actual ) 
                 {
@@ -160,6 +162,7 @@ class SMIController extends Controller
             $values = [
 
                 'login' => $fecha_estado,
+                'login_ultimo' => $fecha_estado,
                 'estado' => $estado_actual,
                 'login_contador' => 1
             ];
@@ -189,33 +192,6 @@ class SMIController extends Controller
             return [ 'resp' => 0 , 'msg' => 'Nada que actualizar' ];
 
         }
-            // $resp = Monitoreo::updateOrInsert(
-                
-                //                         [
-                    //                             'tipo' => $id_tipo, 
-                    //                             'documento_tipo' => $tipo_doc,
-        //                             'documento_numero' => $usuario 
-        //                         ],
-                                
-        //                         [
-        //                             'estado' => $id_estado,
-        //                             'fecha_simulacro' => '',
-        //                             'fecha_hora_login' => $fecha_hora_autenticacion,
-        //                             'fecha_hora_inicio' => $hora_inicio_evaluacion,
-        //                             'fecha_hora_logout' => $hora_salida_seel
-        //                         ]
-        //                 );
-
-        // var_dump($resp);
-
-                        // ->update(   array(
-
-                        //                 'estado_evaluacion' => $estado, 
-
-                        //                 'origen_estado' => 1 
-
-                        //                 ) 
-                        //         );
 
     }
 
