@@ -62,15 +62,13 @@ class SMIController extends Controller
 
         $id_tipo = $data['id_tipo'];
         
-        $tipo_doc = $data['tipo_documento'];
-
-        $numero_doc = $data['numero_documento'];
+        $usuario = $data['numero_documento'];
         
         $estado_actual = (int) $data['id_estado'];
 
         $fecha_estado = $data['fecha_hora'];
 
-        if ( ( $estado_actual < 6 && $tipo_doc < 5 && $fecha_estado && $numero_doc ) == false )
+        if ( ( $estado_actual < 6 && $fecha_estado && $usuario ) == false )
         {
         
             return [ 'resp' => 0 , 'msg' => 'Error en los parametros' ];
@@ -78,8 +76,7 @@ class SMIController extends Controller
         }
 
         $resp = Monitoreo::where('tipo', '=' , $id_tipo )
-                        ->where('documento_tipo', '=' , $tipo_doc )
-                        ->where('documento_numero', '=' , $numero_doc )
+                        ->where('usuario', '=' , $usuario )
                         ->get();
         
         if ( count( $resp ) )
@@ -178,8 +175,7 @@ class SMIController extends Controller
                 
                 [
                     'tipo' => $id_tipo, 
-                    'documento_tipo' => $tipo_doc,
-                    'documento_numero' => $numero_doc 
+                    'usuario' => $usuario 
                 ],
                 $values
             );
