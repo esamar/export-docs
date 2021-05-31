@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Monitoreo extends Model
 {
@@ -24,5 +25,16 @@ class Monitoreo extends Model
     */
 
     protected $table = 'monitoreo_seel';
+
+    public static function getTipo( $id_evaluacion )
+    {
+
+        return DB::connection( 'mysql_cuestionario' )
+                ->table('evaluacion_seel')
+                ->select('tipo')
+                ->where( 'id' , '=' , $id_evaluacion )
+                ->get()
+                ->first();
+    } 
 
 }

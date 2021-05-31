@@ -60,7 +60,7 @@ class SMIController extends Controller
 
         $data = $request->all();
 
-        $id_tipo = $data['id_tipo'];
+        $id_evaluacion = $data['id_tipo'];
         
         $usuario = $data['numero_documento'];
         
@@ -75,6 +75,17 @@ class SMIController extends Controller
 
         }
 
+        $id_tipo = Monitoreo::getTipo($id_evaluacion);
+
+        if ( is_null( $id_tipo ) )
+        {
+
+            return [ 'resp' => 0 , 'msg' => 'No existe el id/tipo de evaluación' ]; 
+
+        }
+        
+        $id_tipo = $id_tipo->tipo;
+        
         $resp = Monitoreo::where('tipo', '=' , $id_tipo )
                         ->where('usuario', '=' , $usuario )
                         ->get();
@@ -108,7 +119,7 @@ class SMIController extends Controller
 
             if ( $estado_registrado < $estado_actual && $estado_actual < 5 )
             {
-                
+                    
                 $values['estado'] = $estado_actual;
 
                 $values['login'] = $resp->first()->login_ultimo;
@@ -137,14 +148,27 @@ class SMIController extends Controller
                         $estado = 'Finalizado 1';
 
                         $values['fin1'] = $fecha_estado;
+
+                        if ( $id_tipo == 0 )
+                        {
+
+                            $values['logout'] = $fecha_estado; 
+
+                        }
         
                     break;
                 
                     case 4: 
-        
-                        $estado = 'Finalizado 2';
+            
+                        if ( $id_tipo > 0 )
+                        {
+                            $estado = 'Finalizado 2';
 
-                        $values['fin2'] = $fecha_estado;
+                            $values['fin2'] = $fecha_estado;
+
+                            $values['logout'] = $fecha_estado; 
+
+                        }
         
                     break;
 
@@ -157,7 +181,7 @@ class SMIController extends Controller
         {
             
             $values = [
-
+                'idevaluacion' => $id_evaluacion,
                 'login' => $fecha_estado,
                 'login_ultimo' => $fecha_estado,
                 'estado' => $estado_actual,

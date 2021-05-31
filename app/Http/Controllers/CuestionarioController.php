@@ -44,12 +44,14 @@ class CuestionarioController extends Controller
         	if ( $idpersona )
         	{
 
+        		$estado = ($data['idrol'] == 3 || $data['idrol'] == 9 ? 0 : 1 );
+        		
         		$idusuario = $this->storeUser([
 			        							"idpersona"		=> $idpersona ,
 			        							"idrol"			=> $data['idrol'] ,
 			        							"nombre"		=> $data['user'] ,
 			        							"contrasenia"	=> $data['md5_user'] ,
-			        							"estado"		=> 1 ,
+			        							"estado"		=> $estado ,
 			        						]);
 
         		if ( $idusuario )
