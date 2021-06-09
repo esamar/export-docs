@@ -31,7 +31,7 @@ class Monitoreo extends Model
 
         return DB::connection( 'mysql_cuestionario' )
                 ->table('evaluacion_seel')
-                ->select('tipo')
+                ->select('tipo', 'recuperacion')
                 ->where( 'id' , '=' , $id_evaluacion )
                 ->get()
                 ->first();
