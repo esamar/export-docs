@@ -115,7 +115,7 @@ class SMIController extends Controller
 
                 $estado = 'Inicio de sesión';
 
-                $values[ $pre . 'login_contador'] = (int) $resp->first()->login_contador + 1 ;
+                $values[ $pre . 'login_contador'] = ( $pre ? (int) $resp->first()->rec_login_contador + 1 : (int) $resp->first()->login_contador + 1 ) ;
 
                 $values[ $pre . 'login_ultimo'] = $fecha_estado;
 
@@ -139,7 +139,7 @@ class SMIController extends Controller
                     
                 $values[ $pre . 'estado'] = $estado_actual;
 
-                $values[ $pre . 'login'] = $resp->first()->login_ultimo;
+                $values[ $pre . 'login'] = ( $pre ? $resp->first()->rec_login_ultimo : $resp->first()->login_ultimo );
 
                 switch ( $estado_actual ) 
                 {
