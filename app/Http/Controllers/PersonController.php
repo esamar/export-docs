@@ -36,8 +36,7 @@ class PersonController extends Controller
         session_start();
 
     	$file = $request->file('file');
-        
-        //Excel::import(new UsersImport, $file );
+
         $array = Excel::toArray(new UsersImport, $file );
 
         unset($array[0][0]);
@@ -48,7 +47,11 @@ class PersonController extends Controller
         if ( count($array[0][2]) != 13 )
         {
 
-            echo "Error: El archivo no tiene la estructura correcta<br>" . PHP_EOL;
+            // echo "Error: El archivo no tiene la estructura correcta<br>" . PHP_EOL;
+
+            return view('error')
+            ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] )
+            ->with('error_estructura' , 1 );
 
         }
 
@@ -71,6 +74,9 @@ class PersonController extends Controller
 
             echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
 
+            return view('error')
+            ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] )
+            ->with('error_estructura' , 2 );
         }
 
         #QUITAMOS EL HEADER, YA NO ES NECESARIO        
@@ -80,7 +86,8 @@ class PersonController extends Controller
         
         $alert = false;
 
-        foreach ($array[0] as $key => $row) {
+        foreach ($array[0] as $key => $row) 
+        {
 
             $array[0][$key]['cod_reg'] = trim($row[0]);
 
@@ -88,14 +95,18 @@ class PersonController extends Controller
 
             if ( !is_numeric( $row[0] ) )
             {
+
                 $e_cod_reg = 1;
+
             }
             else
             {
 
                 if ( (int) $row[0] > 255 || (int) $row[0] < 1 )
                 {
+
                     $e_cod_reg = 1;
+
                 }
 
             }
@@ -113,7 +124,9 @@ class PersonController extends Controller
             } 
             else
             {
+
                 $e_cod_mor = 1;
+
             }
 
             $array[0][$key]['cod_mod8_err'] = $e_cod_mor;
@@ -126,16 +139,23 @@ class PersonController extends Controller
             {
                 if ( is_numeric($row[5]) && strlen($row[5])==8 )
                 {
+
                     $e_dni = 0;
+
                 }
                 else
                 {
+
                     $e_dni = 1;
+
                 }
+
             }
             else
             {
+
                 $e_dni = 0;
+
             }
 
             $array[0][$key]['dni_err'] = $e_dni; 
@@ -340,10 +360,11 @@ class PersonController extends Controller
                             '<th scope="row">' . $key . '</td>'.
                             '<td ' . ( $val['cod_reg_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['cod_reg'] . '</td>'.
                             '<td ' . ( $val['cod_mod8_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['cod_mod8'] . '</td>'.
+                            '<td></td>'.
                             '<td ' . ( $val['dni_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['dni'] . '</td>'.
-                            '<td ' . ( $val['apellido_p_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['apellido_p'] . '</td>'.
+                            '<td ' . ( $val['apellido_p_err'] ? 'class="bg-danger"' : '' ) . ' style="text-align: left;">' . $val['apellido_p'] . '</td>'.
                             '<td>' . $val['apellido_m'] . '</td>'.
-                            '<td ' . ( $val['nombres_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['nombres'] . '</td>'.
+                            '<td ' . ( $val['nombres_err'] ? 'class="bg-danger"' : '' ) . ' style="text-align: left;">' . $val['nombres'] . '</td>'.
                             '<td ' . ( $val['email_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['email'] . '</td>'.
                             '<td ' . ( $val['telefono1_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['telefono1'] . '</td>'.
                             '<td ' . ( $val['telefono2_err'] ? 'class="bg-danger"' : '' ) . '>' . $val['telefono2'] . '</td>'.
@@ -356,8 +377,9 @@ class PersonController extends Controller
             return view('error')
                         ->with('resumeTable' , $row )
                         ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
-                        ->with('state_error', true )
-                        ->with('id_temporal', NULL )                        
+                        ->with('state_error', 1 )
+                        ->with('id_temporal', NULL )  
+                        ->with('error_estructura', 0 )
                         ->with('instancia' , 0 )
                         ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
 
@@ -555,9 +577,9 @@ class PersonController extends Controller
 
                             '<td ' . ( $val->COD_CONTACTO_EX ? 'class="bg-danger"' : '' ) . '>' . ( $val->dni ? $val->dni : 'ID Autogenerado'). '</td>'.
 
-                            '<td>' . $val->ape_p . '</td>'.
-                            '<td>' . $val->ape_m . '</td>'.
-                            '<td>' . $val->nombres . '</td>'.
+                            '<td style="text-align: left;">' . $val->ape_p . '</td>'.
+                            '<td style="text-align: left;">' . $val->ape_m . '</td>'.
+                            '<td style="text-align: left;">' . $val->nombres . '</td>'.
                             '<td>' . $val->email . '</td>'.
                             '<td>' . $val->telefono1 . '</td>'.
                             '<td>' . $val->telefono2 . '</td>'.
@@ -623,6 +645,7 @@ class PersonController extends Controller
                     ->with('state_error', (int)$e_state )
                     ->with('id_temporal', $id_temporal)
                     ->with('instancia' , 0 )
+                    ->with('error_estructura',0)
                     ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
                     
         }
@@ -633,44 +656,13 @@ class PersonController extends Controller
 
     public function exportExcel()
     {
+
     	return Excel::download(new UsersExport, 'user-list.xlsx');
+   
     }
 
     public function importTableDirector( $id_temporal , $id_especialista )
     {
-
-        // $resp = DB::insert('INSERT INTO tb_dir_contacto 
-        //                         (   
-        //                         Ie_CodigoModular, 
-        //                         PER_CODIGO,
-        //                         CDIR_TIPO_DOC, 
-        //                         CDIR_DOCUMENTO, 
-        //                         CDIR_NOMBRE, 
-        //                         CDIR_APELLIDO_P, 
-        //                         CDIR_APELLIDO_M, 
-        //                         CDIR_EMAIL, 
-        //                         CDIR_TELEFONO, 
-        //                         CDIR_TELEFONO2, 
-        //                         CDIR_ACTIVO,
-        //                         id_seed) 
-        //                     SELECT 
-        //                         cod_mod,
-        //                         id_person, 
-        //                         1, 
-        //                         dni, 
-        //                         nombres, 
-        //                         ape_p, 
-        //                         ape_m, 
-        //                         email, 
-        //                         telefono1, 
-        //                         telefono2, 
-        //                         1, 
-        //                         id 
-        //                     FROM  
-        //                         import_table_dirs 
-        //                     WHERE 
-        //                         id_temp = "' . $id_temporal. '" AND state = 0;');
-
 
         $resp = DB::insert('INSERT INTO tb_dir_contacto 
                                 (   
@@ -703,7 +695,7 @@ class PersonController extends Controller
 
         }
 
-        return view('welcome')
+        return view('seeds')
                 ->with('message' , $message )
                 ->with('state', $resp )
                 ->with('instancia' , 0 )
@@ -717,8 +709,7 @@ class PersonController extends Controller
         session_start();
 
         $file = $request->file('file');
-        
-        //Excel::import(new UsersImport, $file );
+
         $array = Excel::toArray(new UsersImport, $file );
 
         unset($array[0][0]);
@@ -730,7 +721,12 @@ class PersonController extends Controller
         if ( count($array[0][2]) != 15 )
         {
 
-            echo "Error: El archivo no tiene la estructura correcta<br>" . PHP_EOL;
+            // echo "Error: El archivo no tiene la estructura correcta<br>" . PHP_EOL;
+
+            return view('error')
+                    ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] )
+                    ->with('error_estructura' , 1 );
+
 
         }
      
@@ -753,7 +749,11 @@ class PersonController extends Controller
         if ( array_diff($row_header, $row_master) )
         {
 
-            echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
+            // echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
+
+            return view('error')
+                    ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] )
+                    ->with('error_estructura' , 2 );
 
         }
 
@@ -1086,6 +1086,7 @@ class PersonController extends Controller
                         ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
                         ->with('state_error', 1 )
                         ->with('instancia' , 1 )
+                        ->with('error_estructura', 0 )
                         ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
 
         }
@@ -1378,6 +1379,7 @@ class PersonController extends Controller
                     ->with('resumeTable' , $row )
                     ->with('message' , $message )
                     ->with('state_error', (int) $e_state )
+                    ->with('error_estructura', 0 )
                     ->with('instancia' , 1 )
                     ->with('id_temporal', $id_temporal)
                     ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
@@ -1424,7 +1426,7 @@ class PersonController extends Controller
                                             RDOC_HISTORIA, 
                                             Ie_CodigoModular, 
                                             DGS_GRADO, 
-                                            DGS_SECCION, 
+                                            DGS_SECCION,
                                             DGS_AREAS, 
                                             id_seed,
                                             id_seccion
@@ -1464,10 +1466,11 @@ class PersonController extends Controller
 
         }
 
-        return view('welcome')
+        return view('seeds')
                 ->with('message' , $message )
                 ->with('state', $resp )
                 ->with('instancia' , 1 )
+                ->with('error_estructura', 0 )
                 ->with('id_especialista' , $id_especialista );
 
     }
@@ -1476,10 +1479,11 @@ class PersonController extends Controller
     {
 
         session_start();
-
+        
+        ini_set('memory_limit', '512M');
+        
         $file = $request->file('file');
         
-        //Excel::import(new UsersImport, $file );
         $array = Excel::toArray(new UsersImport, $file );
 
         unset($array[0][0]);
@@ -1495,7 +1499,11 @@ class PersonController extends Controller
         if ( count($array[0][2]) != 18 )
         {
 
-            echo "Error: El archivo no tiene la estructura correcta<br>" . PHP_EOL;
+            // echo "Error: El archivo no tiene la estructura correcta<br>" . PHP_EOL;
+
+            return view('error')
+                    ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] )
+                    ->with('error_estructura' , 1 );
 
         }
      
@@ -1521,7 +1529,11 @@ class PersonController extends Controller
         if ( array_diff($row_header, $row_master) )
         {
 
-            echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
+            // echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
+
+            return view('error')
+                    ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] )
+                    ->with('error_estructura' , 2 );
 
         }
 
@@ -1943,6 +1955,7 @@ class PersonController extends Controller
             return view('error')
                         ->with('resumeTable' , $row )
                         ->with('message' , 'Se ha detectado algunos errores en el archivo que está intentando importar. No se puede continuar.')
+                        ->with('error_estructura', 0 )
                         ->with('state_error', 1 )
                         ->with('instancia' , 2 )
                         ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
@@ -1983,59 +1996,8 @@ class PersonController extends Controller
         #CREAR PERSONA DESDE TEMP DIRECTOR
         DB::insert( 'CALL sp_create_ppff("' . $id_temporal . '")' );
 
-        // DB::update( 'CALL sp_update_id_person_ppff("' . $id_temporal . '")' );
-// $tiempo_inicial = microtime(true); //true es para que sea calculado en segundos
+        DB::update( 'CALL sp_update_id_person_ppff("' . $id_temporal . '")' );
 
-        // DB::update('UPDATE import_table_ppffs A 
-
-        //             LEFT JOIN (
-                        
-        //                 SELECT
-                            
-        //                     id,
-                            
-        //                     IF ( NOT ISNULL( B.PER_CODIGO ), B.PER_CODIGO,  NULL  ) ID_PERSON
-                        
-        //                 FROM import_table_ppffs A 
-
-        //                 LEFT JOIN tb_persona B ON ( token_validator =  CONCAT(ape_p_apo, ape_m_apo,nombres_apo) )
-                                    
-        //                 WHERE id_temp = "' . $id_temporal . '" ) B ON ( A.id = B.id )
-
-        //                     SET A.id_person = B.ID_PERSON
-
-        //                 WHERE id_temp = "' . $id_temporal . '";');
-
-
-
-        DB::update('UPDATE import_table_ppffs A 
-
-                    LEFT JOIN (
-                        
-                        SELECT
-                            
-                            id,
-                            
-                            IF ( NOT ISNULL( B.PER_CODIGO ), B.PER_CODIGO,  NULL  ) ID_PERSON
-                        
-                        FROM import_table_ppffs A 
-
-                        LEFT JOIN tb_persona B ON ( A.token_validator = B.token_validator )
-                                    
-                        WHERE id_temp = "' . $id_temporal . '" ) B ON ( A.id = B.id )
-
-                            SET A.id_person = B.ID_PERSON
-
-                        WHERE id_temp = "' . $id_temporal . '";');
-
-
-// $tiempo_final = microtime(true);
-
-// $tiempo = $tiempo_final - $tiempo_inicial; //este resultado estará en segundos
-
-// echo "------------------------------------>al update->".$tiempo;
-
-// exit();
         $integrity_table = DB::select('SELECT
                                             id,
                                             id_fila,
@@ -2246,6 +2208,7 @@ class PersonController extends Controller
                     ->with('resumeTable' , $row )
                     ->with('message' , $message )
                     ->with('state_error', (int)$e_state )
+                    ->with('error_estructura', 0 )
                     ->with('instancia' , 2 )
                     ->with('id_temporal', $id_temporal)
                     ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] );
@@ -2341,7 +2304,7 @@ class PersonController extends Controller
 
         }
 
-        return view('welcome')
+        return view('seeds')
                 ->with('message' , $message )
                 ->with('state', $resp )
                 ->with('instancia' , 2 )

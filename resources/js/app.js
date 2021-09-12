@@ -1,32 +1,38 @@
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
+
+require('./helpers');
+
+import Vue from 'vue';
 
 window.Vue = require('vue');
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+window.moment = require('moment');
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+window.eventBus = new Vue;
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('table-repo-component', require('./components/sample/TableRepoComponent.vue').default);
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+Vue.component('table-service-component', require('./components/sample/TableServiceComponent.vue').default);
+
+Vue.component('info-repo-component', require('./components/sample/InfoRepoComponent.vue').default);
+
+Vue.component('mange-repo-component', require('./components/sample/ManageRepoComponent.vue').default);
+
+Vue.component('table-sample-component', require('./components/sample/TableSampleComponent.vue').default);
+
+Vue.component('table-users-component', require('./components/sample/TableUsersComponent.vue').default);
+
+Vue.component('modal-manage-ie-component', require('./components/sample/ModalManageIEComponent.vue').default);
+
+Vue.component('modal-manage-csv-component', require('./components/sample/ModalManageCSVComponent.vue').default);
+
+Vue.component('form-main-component', require('./components/config/FormMainComponent.vue').default);
+
+window.axiosR = axios.create({
+
+    baseURL : 'http://localhost:3000'
+
+});
 
 const app = new Vue({
     el: '#app'

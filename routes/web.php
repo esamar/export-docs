@@ -11,15 +11,26 @@
 |
 */
 
-Route::get('/', function ( ) {
-    return view('welcome');
-});
+Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('inicio/{id_especialista}', function ( $id_especialista ) {
+Route::get('/sample', 'SampleController@index')->name('sample');
 
-    return view('welcome')->with('id_especialista' , $id_especialista );
+Route::get('/sample/edit/{id_sample}/{option}', 'SampleController@edit')->name('sample.edit');
 
-})->name('inicio');
+// Route::get('/users', 'UsersController@index')->name('user');
+
+Route::get('/configs/{option}', 'ConfigController@index')->name('config.index');
+
+Route::get('/configs/get/{nivel}', 'ConfigController@show')->name('config.show');
+
+
+
+
+Route::get('seeds/{id_especialista}', function ( $id_especialista ) {
+
+    return view('seeds')->with('id_especialista' , $id_especialista );
+
+})->name('seeds');
 
 Route::get('/import', function() {
 	return view('import');
