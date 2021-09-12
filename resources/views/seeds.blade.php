@@ -133,7 +133,7 @@
 
                                         <?= $message ?>
 
-                                        <a href="{{ route('inicio' , [$id_especialista] )}}" class="btn btn-success">Aceptar</a>
+                                        <a href="{{ route('seeds' , [$id_especialista] )}}" class="btn btn-success">Aceptar</a>
 
                                     </div>
 
@@ -215,7 +215,7 @@
 
                                         <?= $message ?>
 
-                                        <a href="{{ route('inicio' , [$id_especialista] )}}" class="btn btn-success">Aceptar</a>
+                                        <a href="{{ route('seeds' , [$id_especialista] )}}" class="btn btn-success">Aceptar</a>
 
                                     </div>
 
