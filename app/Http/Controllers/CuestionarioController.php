@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Cuestionario;
 use App\UserCuestionario;
+use App\UserSiregCuestionario;
 
 class CuestionarioController extends Controller
 {
@@ -18,52 +19,92 @@ class CuestionarioController extends Controller
         
         $id_usuario_existente = Cuestionario::existsUser( $data['user'] );
 
-        if ( $id_usuario_existente )
-        {
+        // if ( $id_usuario_existente )
+        // {
 
-            return [ "resp" => 1, "iduser" => $id_usuario_existente->id , "error" => "El usuario ya existe, se ha cancelado la operación" ];
+        //     return [ "resp" => 1, "idusuario" => $id_usuario_existente->idusuario , "error" => "El usuario ya existe, se ha cancelado la operación" ];
 
-        }
+        // }
 
         if ( $idinstitucion )
         {
 
-        	$idpersona = $this->storePerson([
-				    							"nombres" 		=> $data['nombres'] ,
-				    							"appaterno" 	=> $data['appaterno'] ,
-				    							"apmaterno" 	=> $data['apmaterno'] ,
-				    							"dni" 			=> $data['dni'] ,
-				    							"idinstitucion" => $idinstitucion->id,
-				    							"nivel" 		=> $data['nivel'] ,
-				    							"idgrado" 		=> $data['idgrado'] ,
-				    							"grado" 		=> $data['grado'] ,
-				    							"seccion" 		=> $data['seccion'] ,
-			        							"estado" 		=> 1,
-			    							]);
+   	        if ( $id_usuario_existente )
+	        {
+				
+				$idpersona = $id_usuario_existente->idusuario;
+
+	        }
+	        else
+	        {
+	        	$idpersona = $this->storePerson([
+				        							"idrol"		=> $data['idrol'] ,
+				        							"username"	=> $data['user'] ,
+				        							"password"	=> $data['md5_user'] ,
+					    							"dni" 		=> $data['dni'] ,
+					    							"nombre" 	=> $data['nombres'] ,
+					    							"apepat" 	=> $data['appaterno'] ,
+					    							"apemat" 	=> $data['apmaterno'] ,
+					    							"telefono1" => $data['telefono1'] ,
+					    							"telefono2" => $data['telefono2'] ,
+				        							"activo" 	=> 1,
+				    							]);
+
+	        }
 
         	if ( $idpersona )
         	{
 
-        		$estado = ($data['idrol'] == 3 || $data['idrol'] == 9 ? 0 : 1 );
-        		
+        		$estado = 1;
+
         		$idusuario = $this->storeUser([
-			        							"idpersona"		=> $idpersona ,
-			        							"idrol"			=> $data['idrol'] ,
-			        							"nombre"		=> $data['user'] ,
-			        							"contrasenia"	=> $data['md5_user'] ,
-			        							"estado"		=> $estado ,
+			        							"idusuario"		 => $idpersona ,
+			        							"idcuestionario" => $data['idcuest'] ,
+			        							"idinstitucion"	 => $idinstitucion->idinstitucion ,
+			        							"estado"		 => $estado ,
 			        						]);
 
         		if ( $idusuario )
         		{
 
-        			return [ "resp"=>1, "iduser" => $idusuario ];
+        			$id_usuario_sireg_existente = Cuestionario::existsUserSireg( $data['user'] , $idpersona );
+
+        			if ( $id_usuario_sireg_existente )
+        			{
+            			
+            			return [ "resp" => 1, "id_usuario_sireg" => $id_usuario_sireg_existente->idususig , "error" => "El usuario sireg ya existe, se ha cancelado la operación" ];
+
+        			}
+        			else
+					{
+					
+	        			$idusuario_sireg = $this->storeAuth([
+				        							"dni"		 => $data['dni'] ,
+				        							"username"   => $data['user'] ,
+				        							"password"	 => $data['md5_user'] ,
+				        							"idusuario"	 => $idpersona ,
+				        						]);
+
+	        			if ( $idusuario_sireg )
+	        			{
+
+	        				return [ "resp"=>1, "iduser" => $idusuario_sireg ];
+
+	        			}
+	        			else
+	        			{
+	        				
+	        				return [ "resp"=>0, "error" => "No se puede crear el usuario SIREG" ];
+
+	        			}
+
+					}
 
         		}
         		else
         		{
 
-        			return [ "resp"=>0, "error" => "No se puede crear el usuario" ];
+        			return [ "resp"=>0, "error" => "No se puede crear la configuracion del cuestionario" ];
 
         		}
 
@@ -96,6 +137,13 @@ class CuestionarioController extends Controller
     {
 
     	return UserCuestionario::create( $data )->id;
+
+    }
+
+    public function storeAuth( $data )
+    {
+
+    	return UserSiregCuestionario::create( $data )->id;
 
     }
 

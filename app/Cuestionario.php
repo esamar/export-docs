@@ -25,16 +25,16 @@ class Cuestionario extends Model
 	*
 	* @var string
 	*/
-	protected $table = '37978_persona';
+	protected $table = 'usuario';
     
-    protected $fillable = ["nombres","appaterno","apmaterno","dni","idinstitucion","nivel","idgrado","grado","seccion","estado"];
+    protected $fillable = ["idrol","username","password","dni","nombre","apepat","apemat","telefono1","telefono2","activo"];
 
     public static function getInstitucion( $codmod )
     {
 
     	return DB::connection( 'mysql_cuestionario' )
-				->table('37978_institucion')
-				->select('id')
+				->table('institucion')
+				->select('idinstitucion')
 				->where( 'modular' , '=' , $codmod )
 				->get()
 				->first();
@@ -44,12 +44,24 @@ class Cuestionario extends Model
     {
 
     	return DB::connection( 'mysql_cuestionario' )
-				->table('37978_usuario')
-				->join('37978_persona', '37978_usuario.idpersona', '=', '37978_persona.id')
-				->select('37978_usuario.id')
-				->where( 'nombre' , '=' , $user )
+				->table('usuario')
+				->select('idusuario')
+				->where( 'username' , '=' , $user )
 				->get()
 				->first();
     } 
+
+    public static function existsUserSireg( $user , $idusuario )
+    {
+
+    	return DB::connection( 'mysql_cuestionario' )
+				->table('usuario_sireg')
+				->select('idususig')
+				->where( 'username' , '=' , $user )
+				->where( 'idusuario' , '=' , $idusuario )
+				->get()
+				->first();
+    } 
+
 
 }

@@ -2242,12 +2242,12 @@ class PersonController extends Controller
         //                     FROM import_table_ppffs 
         //                     WHERE id_temp ='$id_temporal' AND state = 0)");
 
-                            $resp = DB::insert("INSERT INTO tb_ppff_contacto 
-                                        ( 
-                                            Ie_CodigoModular, 
-                                            PER_CODIGO,
-                                            id_seed
-                                        )
+                $resp = DB::insert("INSERT INTO tb_ppff_contacto 
+                            ( 
+                                Ie_CodigoModular, 
+                                PER_CODIGO,
+                                id_seed
+                            )
                             (SELECT 
                                 cod_mod , 
                                 id_person,

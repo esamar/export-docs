@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserCuestionario extends Model
+class UserSiregCuestionario extends Model
 {
     const UPDATED_AT = null;
     
@@ -23,8 +23,8 @@ class UserCuestionario extends Model
 	*
 	* @var string
 	*/
-	protected $table = 'usuario_cuestionario';
+	protected $table = 'usuario_sireg';
 
-    protected $fillable = ["idusucue","idusuario","idcuestionario","idinstitucion","estado"];
+    protected $fillable = ["idususig","dni","username","password","idusuario"];
 
 }
