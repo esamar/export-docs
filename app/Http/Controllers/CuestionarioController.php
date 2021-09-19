@@ -37,6 +37,7 @@ class CuestionarioController extends Controller
 	        }
 	        else
 	        {
+	        	
 	        	$idpersona = $this->storePerson([
 				        							"idrol"		=> $data['idrol'] ,
 				        							"username"	=> $data['user'] ,
@@ -72,7 +73,7 @@ class CuestionarioController extends Controller
         			if ( $id_usuario_sireg_existente )
         			{
             			
-            			return [ "resp" => 1, "id_usuario_sireg" => $id_usuario_sireg_existente->idususig , "error" => "El usuario sireg ya existe, se ha cancelado la operación" ];
+            			return [ "resp" => 1, "iduser" => $id_usuario_sireg_existente->idususig , "error" => "El usuario sireg ya existe, se ha cancelado la operación" ];
 
         			}
         			else
