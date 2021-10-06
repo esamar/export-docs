@@ -40,13 +40,14 @@ class Cuestionario extends Model
 				->first();
     } 
 
-    public static function existsUser( $user )
+    public static function existsUser( $dni , $user = null )
     {
 
     	return DB::connection( 'mysql_cuestionario' )
 				->table('usuario')
 				->select('idusuario')
-				->where( 'username' , '=' , $user )
+				->where( 'dni' , '=' , $dni )
+				->orwhere( 'username' , '=' , $user )
 				->get()
 				->first();
     } 

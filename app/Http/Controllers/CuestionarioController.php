@@ -17,7 +17,7 @@ class CuestionarioController extends Controller
 
         $idinstitucion = Cuestionario::getInstitucion( $data['codmod'] );
         
-        $id_usuario_existente = Cuestionario::existsUser( $data['user'] );
+        $id_usuario_existente = Cuestionario::existsUser( $data['dni'] , $data['user'] );
 
         // if ( $id_usuario_existente )
         // {
@@ -57,15 +57,24 @@ class CuestionarioController extends Controller
         	{
 
         		$estado = 1;
+				
+				$idusucue = array();
+				
+				foreach ($data['idcuest'] as $key => $id_cuest) 
+				{
 
-        		$idusuario = $this->storeUser([
-			        							"idusuario"		 => $idpersona ,
-			        							"idcuestionario" => $data['idcuest'] ,
-			        							"idinstitucion"	 => $idinstitucion->idinstitucion ,
-			        							"estado"		 => $estado ,
-			        						]);
+	        		$idusucue[$key] = $this->storeUser([
+					        							"idusuario"		 => $idpersona ,
+					        							"idcuestionario" => $id_cuest ,
+					        							"idinstitucion"	 => $idinstitucion->idinstitucion ,
+					        							"seccion" 		 => $data['seccion'] ,
+							    						"fecha_participa" => $data['fecha_participacion'] ,
+					        							"estado"		 => $estado ,
+					        						]);
 
-        		if ( $idusuario )
+				}
+
+        		if ( count($idusucue) )
         		{
 
         			$id_usuario_sireg_existente = Cuestionario::existsUserSireg( $data['user'] , $idpersona );
@@ -73,7 +82,11 @@ class CuestionarioController extends Controller
         			if ( $id_usuario_sireg_existente )
         			{
             			
-            			return [ "resp" => 1, "iduser" => $id_usuario_sireg_existente->idususig , "error" => "El usuario sireg ya existe, se ha cancelado la operación" ];
+            			return [ 
+		            				"resp" => 1, 
+		            				"iduser" => $id_usuario_sireg_existente->idususig , 
+		            				"error" => "El usuario sireg ya existe, se ha cancelado la operación" 
+		            			];
 
         			}
         			else
@@ -89,13 +102,13 @@ class CuestionarioController extends Controller
 	        			if ( $idusuario_sireg )
 	        			{
 
-	        				return [ "resp"=>1, "iduser" => $idusuario_sireg ];
+	        				return [ "resp"=> 1, "iduser" => $idusuario_sireg ];
 
 	        			}
 	        			else
 	        			{
 	        				
-	        				return [ "resp"=>0, "error" => "No se puede crear el usuario SIREG" ];
+	        				return [ "resp"=> 0, "error" => "No se puede crear el usuario SIREG" ];
 
 	        			}
 
@@ -105,7 +118,7 @@ class CuestionarioController extends Controller
         		else
         		{
 
-        			return [ "resp"=>0, "error" => "No se puede crear la configuracion del cuestionario" ];
+        			return [ "resp"=> 0, "error" => "No se puede crear la configuracion del cuestionario" ];
 
         		}
 

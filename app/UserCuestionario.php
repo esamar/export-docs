@@ -25,6 +25,6 @@ class UserCuestionario extends Model
 	*/
 	protected $table = 'usuario_cuestionario';
 
-    protected $fillable = ["idusucue","idusuario","idcuestionario","idinstitucion","estado"];
+    protected $fillable = ["idusucue","idusuario","idcuestionario","idinstitucion","estado","seccion","fecha_participa"];
 
 }

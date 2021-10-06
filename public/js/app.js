@@ -6180,7 +6180,7 @@ __webpack_require__.r(__webpack_exports__);
       var file = e.target.files[0];
       this.nameCsv = file.name;
 
-      if (file.type === 'application/vnd.ms-excel') {
+      if (file.type === 'application/vnd.ms-excel' || file.type === 'text/csv') {
         var reader = new FileReader();
 
         reader.onloadend = function () {

@@ -199,8 +199,8 @@
         		const file = e.target.files[0];
 
         		this.nameCsv = file.name;
-
-			  if (file.type === 'application/vnd.ms-excel') 
+        		
+			  if (file.type === 'application/vnd.ms-excel' || file.type === 'text/csv') 
 			  {
 
 			    let reader = new FileReader();
