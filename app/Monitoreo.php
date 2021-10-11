@@ -24,15 +24,26 @@ class Monitoreo extends Model
     * @var string
     */
 
-    protected $table = 'monitoreo_seel';
+    protected $table = 'usuario_cuestionario';
 
-    public static function getTipo( $id_evaluacion )
+    public static function getIdCuestionario( $id_evaluacion )
     {
 
         return DB::connection( 'mysql_cuestionario' )
-                ->table('evaluacion_seel')
-                ->select('tipo', 'recuperacion')
-                ->where( 'id' , '=' , $id_evaluacion )
+                ->table('cuestionario')
+                ->select('idcuestionario')
+                ->where( 'seel_idevaluacion' , '=' , $id_evaluacion )
+                ->get()
+                ->first();
+    } 
+
+    public static function getIdUsuario( $dni )
+    {
+
+        return DB::connection( 'mysql_cuestionario' )
+                ->table('usuario')
+                ->select('idusuario')
+                ->where( 'dni' , '=' , $dni )
                 ->get()
                 ->first();
     } 

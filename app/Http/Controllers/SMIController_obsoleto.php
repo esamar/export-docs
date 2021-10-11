@@ -70,8 +70,6 @@ class SMIController extends Controller
         
         $fecha_estado_seel = $data['fecha_hora'];
 
-        $avance = $data['preguntas_respondidas'];
-
         if ( ( $estado_actual < 6 && $usuario ) == false )
         {
         
@@ -79,30 +77,28 @@ class SMIController extends Controller
 
         }
 
-        $data_tipo = Monitoreo::getIdCuestionario($id_evaluacion);
-
-        $id_usuario = Monitoreo::getIdUsuario($usuario);
+        $data_tipo = Monitoreo::getTipo($id_evaluacion);
 
         if ( is_null( $data_tipo ) )
         {
 
-            return [ 'resp' => 0 , 'msg' => 'No existe el id de evaluación' ]; 
+            return [ 'resp' => 0 , 'msg' => 'No existe el id/tipo de evaluación' ]; 
 
         }
         
-        if ( is_null( $id_usuario ) )
+        $id_tipo = $data_tipo->tipo;
+
+        $pre = '';
+
+        if ( $data_tipo->recuperacion )
         {
 
-            return [ 'resp' => 0 , 'msg' => 'No existe el usuario' ]; 
+            $pre = 'rec_';
 
         }
 
-        $id_tipo = $data_tipo->idcuestionario;
-
-        $id_usuario = $id_usuario->idusuario;
-
-        $resp = Monitoreo::where('idcuestionario', '=' , $id_tipo )
-                        ->where('idusuario', '=' , $id_usuario)
+        $resp = Monitoreo::where('tipo', '=' , $id_tipo )
+                        ->where('usuario', '=' , $usuario )
                         ->get();
         
         if ( count( $resp ) )
@@ -112,62 +108,49 @@ class SMIController extends Controller
 
             $estado_registrado = $resp->first()->estado;
             
-            // $fechas_seel = (array) json_decode( $resp->first()->info_date_seel );
+            $fechas_seel = (array) json_decode( $resp->first()->info_date_seel );
 
             if ( $estado_actual === 1 )
             {
 
                 $estado = 'Inicio de sesión';
 
-                $values['login_contador'] =  (int) $resp->first()->login_contador + 1 ;
+                $values[ $pre . 'login_contador'] = ( $pre ? (int) $resp->first()->rec_login_contador + 1 : (int) $resp->first()->login_contador + 1 ) ;
 
-                $values['seel_login_ultimo'] = $fecha_estado;
+                $values[ $pre . 'login_ultimo'] = $fecha_estado;
 
-                // $fechas_seel['seel_login_ultimo'] = $fecha_estado_seel;
+                $fechas_seel['login_ultimo'] = $fecha_estado_seel;
                 
             }
-            // else
-            // {
-            //      $estado = 'Inicio de sesión';
-
-            //     $values['login_contador'] = 1 ;
-
-            //     $values['login'] = $fecha_estado;
-
-            //     // $fechas_seel['login'] = $fecha_estado_seel;
-
-            // }
 
             if ( $estado_actual == 5 )
             {
 
                 $estado = 'Fin de sesión';
                 
-                $values['logout'] = $fecha_estado;
+                $values[ $pre . 'logout'] = $fecha_estado;
 
-                // $fechas_seel['logout'] = $fecha_estado_seel;
+                $fechas_seel['logout'] = $fecha_estado_seel;
 
             }
 
             if ( $estado_registrado < $estado_actual && $estado_actual < 5 )
             {
                     
-                $values['estado'] = $estado_actual;
+                $values[ $pre . 'estado'] = $estado_actual;
 
-                $values['login'] = $resp->first()->seel_login_ultimo;
+                $values[ $pre . 'login'] = ( $pre ? $resp->first()->rec_login_ultimo : $resp->first()->login_ultimo );
 
                 switch ( $estado_actual ) 
                 {
         
                     case 1: 
                 
-                        $estado = 'Inicio de sesión';
+                        $estado = 'Ingresó';
                         
-                        $values['login'] = $fecha_estado;
-                                    
-                        $values['login_contador'] = 1 ;
-
-                        // $fechas_seel['login'] = $fecha_estado_seel;
+                        $values[ $pre . 'login'] = $fecha_estado;
+                    
+                        $fechas_seel['login'] = $fecha_estado_seel;
 
                     break;
         
@@ -175,9 +158,9 @@ class SMIController extends Controller
         
                         $estado = 'Incompleto';
 
-                        $values['inicio'] = $fecha_estado;
+                        $values[ $pre . 'inicio'] = $fecha_estado;
 
-                        // $fechas_seel['inicio'] = $fecha_estado_seel;
+                        $fechas_seel['inicio'] = $fecha_estado_seel;
         
                     break;
         
@@ -185,18 +168,16 @@ class SMIController extends Controller
         
                         $estado = 'Finalizado 1';
 
-                        $values['fin1'] = $fecha_estado;
+                        $values[ $pre . 'fin1'] = $fecha_estado;
                         
-                        $values['avance'] = $avance;
-                        
-                        // $fechas_seel['fin1'] = $fecha_estado_seel;
+                        $fechas_seel['fin1'] = $fecha_estado_seel;
 
                         if ( $id_tipo == 0 )
                         {
 
-                            $values['logout'] = $fecha_estado; 
+                            $values[ $pre . 'logout'] = $fecha_estado; 
     
-                            // $fechas_seel['logout'] = $fecha_estado_seel;
+                            $fechas_seel['logout'] = $fecha_estado_seel;
 
                         }
         
@@ -208,13 +189,13 @@ class SMIController extends Controller
                         {
                             $estado = 'Finalizado 2';
 
-                            $values['fin2'] = $fecha_estado;
+                            $values[ $pre . 'fin2'] = $fecha_estado;
 
-                            // $fechas_seel['fin2'] = $fecha_estado_seel;
+                            $fechas_seel['fin2'] = $fecha_estado_seel;
 
-                            $values['logout'] = $fecha_estado; 
+                            $values[ $pre . 'logout'] = $fecha_estado; 
 
-                            // $fechas_seel['logout'] = $fecha_estado_seel;
+                            $fechas_seel['logout'] = $fecha_estado_seel;
 
                         }
         
@@ -224,25 +205,23 @@ class SMIController extends Controller
                 
             }
 
-            // $values['info_date_seel'] = json_encode($fechas_seel);
+            $values['info_date_seel'] = json_encode($fechas_seel);
             
         }
         else
         {
-
-            return [ 'resp' => 0 , 'msg' => 'No existe registrado en usuario cuestionarios' ];
             
-            // $values = [
-            //     'idevaluacion'          => $id_evaluacion,
-            //    'login'          => $fecha_estado,
-            //    'seel_login_ultimo'   => $fecha_estado,
-            //    'estado'         => 1,
-            //    'login_contador' => 1,
-            //     'estado_temporal'=> $estado_actual,
-            //     'info_date_seel' => '{"login":"' . $fecha_estado_seel . '", "seel_login_ultimo":"' . $fecha_estado_seel . '"}'
-            // ];
+            $values = [
+                'idevaluacion'          => $id_evaluacion,
+                $pre . 'login'          => $fecha_estado,
+                $pre . 'login_ultimo'   => $fecha_estado,
+                $pre . 'estado'         => 1,
+                $pre . 'login_contador' => 1,
+                'estado_temporal'=> $estado_actual,
+                'info_date_seel' => '{"login":"' . $fecha_estado_seel . '", "login_ultimo":"' . $fecha_estado_seel . '"}'
+            ];
 
-            // $estado = 'Inicio de sesión';
+            $estado = 'Inicio de sesión';
 
         }
 
@@ -252,8 +231,8 @@ class SMIController extends Controller
             Monitoreo::updateOrInsert(
                 
                 [
-                    'idcuestionario' => $id_tipo, 
-                    'idusuario' => $id_usuario 
+                    'tipo' => $id_tipo, 
+                    'usuario' => $usuario 
                 ],
                 $values
             );
