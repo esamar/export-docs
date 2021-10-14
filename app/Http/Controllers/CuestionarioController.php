@@ -70,13 +70,6 @@ class CuestionarioController extends Controller
         
         $id_usuario_existente = Cuestionario::existsUser( $data['dni'] , $data['user'] );
 
-        // if ( $id_usuario_existente )
-        // {
-
-        //     return [ "resp" => 1, "idusuario" => $id_usuario_existente->idusuario , "error" => "El usuario ya existe, se ha cancelado la operación" ];
-
-        // }
-
         if ( $idinstitucion )
         {
 
@@ -135,7 +128,7 @@ class CuestionarioController extends Controller
             			
             			return [ 
 		            				"resp" => 1, 
-		            				"iduser" => $id_usuario_sireg_existente->idususig , 
+		            				"iduser" => $idpersona , 
 		            				"error" => "El usuario sireg ya existe, se ha cancelado la operación" 
 		            			];
 
