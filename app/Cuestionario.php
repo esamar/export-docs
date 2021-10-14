@@ -25,6 +25,7 @@ class Cuestionario extends Model
 	*
 	* @var string
 	*/
+
 	protected $table = 'usuario';
     
     protected $fillable = ["idrol","username","password","dni","nombre","apepat","apemat","telefono1","telefono2","activo"];
@@ -63,6 +64,5 @@ class Cuestionario extends Model
 				->get()
 				->first();
     } 
-
 
 }

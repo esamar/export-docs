@@ -60,7 +60,7 @@ class SMIController extends Controller
 
         $data = $request->all();
 
-        $id_evaluacion = $data['id_tipo'];
+        $id_evaluacion = $data['id_evaluacion'];
         
         $usuario = $data['numero_documento'];
         

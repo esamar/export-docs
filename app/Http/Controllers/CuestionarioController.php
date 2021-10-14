@@ -9,6 +9,57 @@ use App\UserSiregCuestionario;
 
 class CuestionarioController extends Controller
 {
+
+    public function setParticipa(Request $request )
+    {
+
+        $data = $request->all();
+        
+        $resp = array();
+
+		foreach ($data as $key => $v) 
+		{
+
+	        $values['fecha_participa'] = $v['fecha_participacion'];
+				
+			$fecha = UserCuestionario::where('idcuestionario', $v['idcuest'] )
+	            				->where('idusuario', $v['iduser'] )
+	            				->get()
+	            				->first();
+
+	        if ( !$fecha ->fecha_participa )
+          	{
+
+        		array_push( $resp ,
+        					UserCuestionario::where('idcuestionario', $v['idcuest'] )
+		            				->where('idusuario', $v['iduser'] )
+		            				->update($values)
+		            		);
+
+          	};
+
+		}
+
+		if ( count( $resp ) )
+		{
+
+		    return [ 
+		    		'resp' => 1 , 
+		    		'msg' => 'Se actualizó la fecha de participación'
+		    		];
+
+		}
+		else
+		{
+			    
+		    return [ 
+		    		'resp' => 0 , 
+		    		'msg' => 'Nada que actualizar'
+	    		];
+		    				
+		}
+
+    }
     
     public function setCredentials(Request $request )
     {
@@ -56,7 +107,7 @@ class CuestionarioController extends Controller
         	if ( $idpersona )
         	{
 
-        		$estado = 1;
+        		$estado = 0;
 				
 				$idusucue = array();
 				
@@ -102,7 +153,7 @@ class CuestionarioController extends Controller
 	        			if ( $idusuario_sireg )
 	        			{
 
-	        				return [ "resp"=> 1, "iduser" => $idusuario_sireg ];
+	        				return [ "resp"=> 1, "iduser" => $idpersona ];
 
 	        			}
 	        			else
