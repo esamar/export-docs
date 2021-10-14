@@ -27,7 +27,7 @@ class CuestionarioController extends Controller
 	            				->get()
 	            				->first();
 
-	        if ( !$fecha ->fecha_participa )
+	        if ( !$fecha ->fecha_participa || $fecha ->fecha_participa =='0000-00-00' )
           	{
 
         		array_push( $resp ,
