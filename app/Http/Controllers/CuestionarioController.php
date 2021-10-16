@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Cuestionario;
 use App\UserCuestionario;
 use App\UserSiregCuestionario;
+use App\UserPadreHijo;
 
 class CuestionarioController extends Controller
 {
@@ -70,6 +71,15 @@ class CuestionarioController extends Controller
         
         $id_usuario_existente = Cuestionario::existsUser( $data['dni'] , $data['user'] );
 
+        $idpadre = null ;
+        
+        if ( isset( $data['dni_padre'] ) )
+        {
+
+        	$idpadre = Cuestionario::existsUser( $data['dni_padre'] , 'undefined' );
+        
+    	}
+
         if ( $idinstitucion )
         {
 
@@ -99,6 +109,19 @@ class CuestionarioController extends Controller
 
         	if ( $idpersona )
         	{
+				
+
+        		if ( $idpadre )
+        		{
+
+					$this->storeUserPadreHijo([ 
+												
+												"idusuario_padre" 	=> $idpadre->idusuario,
+												"idusuario_hijo" 	=> $idpersona 
+
+												]);
+
+        		}
 
         		$estado = 0;
 				
@@ -107,14 +130,30 @@ class CuestionarioController extends Controller
 				foreach ($data['idcuest'] as $key => $id_cuest) 
 				{
 
-	        		$idusucue[$key] = $this->storeUser([
-					        							"idusuario"		 => $idpersona ,
-					        							"idcuestionario" => $id_cuest ,
-					        							"idinstitucion"	 => $idinstitucion->idinstitucion ,
-					        							"seccion" 		 => $data['seccion'] ,
-							    						"fecha_participa" => $data['fecha_participacion'] ,
-					        							"estado"		 => $estado ,
-					        						]);
+					$id_temp = UserCuestionario::select('idusucue')
+										->where('idusuario', $idpersona )
+										->where('idcuestionario', $id_cuest )
+										->get()
+										->first();
+					if ( $id_temp )
+					{
+					
+						$idusucue[$key]= $id_temp->idusucue;
+
+
+					}
+					else
+					{
+
+		        		$idusucue[$key] = $this->storeUser([
+						        							"idusuario"		 => $idpersona ,
+						        							"idcuestionario" => $id_cuest ,
+						        							"idinstitucion"	 => $idinstitucion->idinstitucion ,
+						        							"seccion" 		 => $data['seccion'] ,
+								    						"fecha_participa" => $data['fecha_participacion'] ,
+						        							"estado"		 => $estado ,
+						        						]);
+					}
 
 				}
 
@@ -128,7 +167,7 @@ class CuestionarioController extends Controller
             			
             			return [ 
 		            				"resp" => 1, 
-		            				"iduser" => $idpersona , 
+		            				"iduser" => $idpersona, 
 		            				"error" => "El usuario sireg ya existe, se ha cancelado la operación" 
 		            			];
 
@@ -195,6 +234,21 @@ class CuestionarioController extends Controller
     {
 
     	return UserCuestionario::create( $data )->id;
+
+    }
+
+    public function storeUserPadreHijo( $data )
+    {
+
+		try{
+		    
+		    UserPadreHijo::create( $data );
+
+		} catch (\Illuminate\Database\QueryException $exception) {
+
+		    // $errorInfo = $exception->errorInfo;
+			// Error de duplicidad, no enviar nada
+		}
 
     }
 
