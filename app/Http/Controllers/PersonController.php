@@ -2220,27 +2220,7 @@ class PersonController extends Controller
     public function importTablePPFF( $id_temporal , $id_especialista )
     {
 
-        // $resp = DB::insert("INSERT INTO tb_ppff_contacto 
-        //                                 ( 
-        //                                     Ie_CodigoModular, 
-        //                                     PER_CODIGO,
-        //                                     CPF_NOMBRE, 
-        //                                     CPF_APELLIDO_P, 
-        //                                     CPF_APELLIDO_M, 
-        //                                     CPF_TELEFONO, 
-        //                                     CPF_TELEFONO2, 
-        //                                     id_seed
-        //                                 )
-        //                     (SELECT 
-        //                         cod_mod , 
-        //                         nombres_apo, 
-        //                         ape_p_apo, 
-        //                         ape_m_apo, 
-        //                         telefono1, 
-        //                         telefono2 , 
-        //                         id 
-        //                     FROM import_table_ppffs 
-        //                     WHERE id_temp ='$id_temporal' AND state = 0)");
+
 
                 $resp = DB::insert("INSERT INTO tb_ppff_contacto 
                             ( 
@@ -2264,8 +2244,6 @@ class PersonController extends Controller
                                     EST_APELLIDO_M, 
                                     EST_TIPO_DOC, 
                                     EST_NUMERO_DOC, 
-                                    EST_GRADO, 
-                                    EST_SECCION, 
                                     id_seed, 
                                     id_seccion
                                 )
@@ -2277,8 +2255,6 @@ class PersonController extends Controller
                                     ape_m, 
                                     tipo_doc, 
                                     dni, 
-                                    A.grado, 
-                                    A.seccion, 
                                     id,
                                     C.id_seccion
                             FROM import_table_ppffs A 
@@ -2288,6 +2264,11 @@ class PersonController extends Controller
                             JOIN
                                 tb_grado_seccion C 
                                 ON ( A.cod_mod = C.Ie_CodigoModular AND A.grado = C.grado AND A.seccion = C.seccion )");
+
+                                    // A.grado, 
+                                    // A.seccion, 
+                                    // EST_GRADO, 
+                                    // EST_SECCION, 
 
         DB::update('UPDATE import_table_ppffs SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 

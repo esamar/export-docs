@@ -186,6 +186,8 @@ class SMIController extends Controller
                         $estado = 'Finalizado 1';
 
                         $values['fin1'] = $fecha_estado;
+
+                        $values['fecha_resolucion'] = date("Y-m-d", strtotime($fecha_estado));
                         
                         $values['avance'] = $avance;
                         
