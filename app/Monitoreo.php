@@ -48,4 +48,12 @@ class Monitoreo extends Model
                 ->first();
     } 
 
+    public static function setRequestBody( $body )
+    {
+
+        return DB::connection( 'mysql' )
+                ->insert('insert into temp_request_seel (body) values (?);', [ $body ]);
+
+    }
+
 }

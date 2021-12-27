@@ -31,6 +31,14 @@ Route::match(['options', 'post'], 'setState', function (Request $request ) {
 
 })->middleware('cors');
 
+Route::match(['options', 'post'], 'setResendStates', function (Request $request ) {
+
+	$setEstado = new SMIController;
+
+	return $setEstado->setResendStates($request);
+
+})->middleware('cors');
+
 Route::post('import-credentials', 'CuestionarioController@setCredentials')->name('import.credentials');
 
 Route::post('update-participa', 'CuestionarioController@setParticipa')->name('update.participa');

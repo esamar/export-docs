@@ -56,6 +56,8 @@ class SMIController extends Controller
     public function setState(Request $request )
     {
 
+        // Monitoreo::setRequestBody( $request->getContent() );
+
         $estado = "";
 
         $data = $request->all();
@@ -270,5 +272,198 @@ class SMIController extends Controller
         }
 
     }
+
+    public function setResendStates(Request $request )
+    {
+
+        $data = $request->all();
+        $resp = [];
+
+        foreach ($data as $key => $value) 
+        {
+
+            $resp[$key]['body'] = json_encode($value);    
+            $resp[$key]['resp'] = $this->setState_origin_date($value);
+
+        }
+        return $resp;
+    }
+
+    public function setState_origin_date( $data_req )
+    {
+
+        $data = $data_req;
+
+        $estado = "";
+
+        $id_evaluacion = $data['id_evaluacion'];
+        
+        $usuario = $data['numero_documento'];
+        
+        $estado_actual = (int) $data['id_estado'];
+
+        $fecha_estado = $data['fecha_hora'];/*date('Y-m-d H:i:s');*/
+        
+        $fecha_estado_seel = $data['fecha_hora'];
+
+        $avance = $data['preguntas_respondidas'];
+
+        if ( ( $estado_actual < 6 && $usuario ) == false )
+        {
+        
+            return [ 'resp' => 0 , 'msg' => 'Error en los parametros' ];
+
+        }
+
+        $data_tipo = Monitoreo::getIdCuestionario($id_evaluacion);
+
+        $id_usuario = Monitoreo::getIdUsuario($usuario);
+
+        if ( is_null( $data_tipo ) )
+        {
+
+            return [ 'resp' => 0 , 'msg' => 'No existe el id de evaluación' ]; 
+
+        }
+        
+        if ( is_null( $id_usuario ) )
+        {
+
+            return [ 'resp' => 0 , 'msg' => 'No existe el usuario' ]; 
+
+        }
+
+        $id_tipo = $data_tipo->idcuestionario;
+
+        $id_usuario = $id_usuario->idusuario;
+
+        $resp = Monitoreo::where('idcuestionario', '=' , $id_tipo )
+                        ->where('idusuario', '=' , $id_usuario)
+                        ->get();
+        
+        if ( count( $resp ) )
+        {
+            
+            $values = array();
+
+            $estado_registrado = $resp->first()->estado;
+            
+            if ( $estado_actual === 1 )
+            {
+
+                $estado = 'Inicio de sesión';
+
+                $values['login_contador'] =  (int) $resp->first()->login_contador + 1 ;
+
+                $values['seel_login_ultimo'] = $fecha_estado;
+  
+            }
+
+            if ( $estado_actual == 5 )
+            {
+
+                $estado = 'Fin de sesión';
+                
+                $values['logout'] = $fecha_estado;
+
+            }
+
+            if ( $estado_registrado < $estado_actual && $estado_actual < 5 )
+            {
+                    
+                $values['estado'] = $estado_actual;
+
+                $values['login'] = $resp->first()->seel_login_ultimo;
+
+                switch ( $estado_actual ) 
+                {
+        
+                    case 1: 
+                
+                        $estado = 'Inicio de sesión';
+                        
+                        $values['login'] = $fecha_estado;
+                                    
+                        $values['login_contador'] = 1 ;
+
+                    break;
+        
+                    case 2: 
+        
+                        $estado = 'Incompleto';
+
+                        $values['inicio'] = $fecha_estado;
+
+                    break;
+        
+                    case 3: 
+        
+                        $estado = 'Finalizado 1';
+
+                        $values['fin1'] = $fecha_estado;
+
+                        $values['fecha_resolucion'] = date("Y-m-d", strtotime($fecha_estado));
+                        
+                        $values['avance'] = $avance;
+
+                        if ( $id_tipo == 0 )
+                        {
+
+                            $values['logout'] = $fecha_estado; 
+
+                        }
+        
+                    break;
+                
+                    case 4: 
+            
+                        if ( $id_tipo > 0 )
+                        {
+                            $estado = 'Finalizado 2';
+
+                            $values['fin2'] = $fecha_estado;
+
+                            $values['logout'] = $fecha_estado; 
+
+                        }
+        
+                    break;
+
+                }
+                
+            }
+
+            
+        }
+        else
+        {
+
+            return [ 'resp' => 0 , 'msg' => 'No existe registrado en usuario cuestionarios' ];
+
+        }
+
+        if ( $values )
+        {
+
+            Monitoreo::updateOrInsert(
+                
+                [
+                    'idcuestionario' => $id_tipo, 
+                    'idusuario' => $id_usuario 
+                ],
+                $values
+            );
+            
+            return [ 'resp' => 1 , 'msg' => $estado , 'fecha_hora' => date('Y-m-d H:m:s') ];
+            
+        }
+        else{
+
+            return [ 'resp' => 0 , 'msg' => 'Nada que actualizar' ];
+
+        }
+
+    }
+
 
 }
