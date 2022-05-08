@@ -72,7 +72,7 @@ class PersonController extends Controller
         if ( array_diff($row_header, $row_master) )
         {
 
-            echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
+            // echo "Error: La cabecera no tiene el formato correcto<br>" . PHP_EOL;
 
             return view('error')
             ->with('id_especialista' , $_SESSION['ID_ESPECIALISTA'] )

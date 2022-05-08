@@ -120,7 +120,7 @@
                       <th scope="col" style="text-align: left;">Teléfono</th>
                       <th scope="col" style="text-align: left;">Rol Modelo 1</th>
                       <th scope="col" style="text-align: left;">Rol Modelo 2</th>
-                      <th scope="col" style="text-align: left;">IEs</th>
+                      <th scope="col" style="text-align: left;">Carga</th>
                       <th scope="col" style="text-align: left;">Estado</th>
                       <th scope="col"></th>
                       <th scope="col"></th>
@@ -144,12 +144,23 @@
                       </th>
                       <td style="text-align: left;">{{user.numero_documento}}</td>
                       <td style="text-align: left;">{{user.nombres + ', ' + user.apellido_paterno + ' ' + user.apellido_materno }}</td>
+                      
                       <td style="text-align: left;">{{user.email}}</td>
                       <td style="text-align: left;">{{user.telefono}}</td>
                       <td style="text-align: left;">{{user.rol_modelo_1}}</td>
                       <td style="text-align: left;">{{user.rol_modelo_2}}</td>
                       <td style="text-align: left;">{{user.total_ie}}</td>
-                      <td style="text-align: left;">{{user.estado}}</td>
+
+                      <td style="text-align: left;">
+
+
+                        <div class="custom-control custom-switch">
+                          <input type="checkbox" class="custom-control-input" :id="`sw` + user.id_persona" :checked="user.estado" >
+                          <label class="custom-control-label" :for="`sw` + user.id_persona"></label>
+                        </div>
+
+                      </td>
+
                       <td>
                         
                         <a href="#" @click="editUser(user.numero_documento)">

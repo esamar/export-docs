@@ -22,9 +22,18 @@
                     
                         <a href="#" class="list-group-item list-group-item-action text-primary pl-2 pr-2" style="background: #F9F9F9;">
                             <svg class="bi mr-2" width="16" height="16"><use xlink:href="#bi-grid-fill"/></svg>
-                            <strong>Configurador de módulos</strong>
+                            <strong>Editor de formularios</strong>
                         </a>
-
+                    
+                        <a href="#" class="list-group-item list-group-item-action text-primary pl-2 pr-2" style="background: #F9F9F9;">
+                            <svg class="bi mr-2" width="16" height="16"><use xlink:href="#bi-grid-fill"/></svg>
+                            <strong>Editor de items</strong>
+                        </a>
+                    
+                        <a href="#" class="list-group-item list-group-item-action text-primary pl-2 pr-2" style="background: #F9F9F9;">
+                            <svg class="bi mr-2" width="16" height="16"><use xlink:href="#bi-grid-fill"/></svg>
+                            <strong>Configuración de estados</strong>
+                        </a>
 
                     </div>
 

@@ -77,23 +77,28 @@
 
                         <?php endif; ?>
 
-                          <div class="input-group is-invalid">
-                            <div class="custom-file">
-                              <input type="file" class="custom-file-input" id="validatedInputGroupCustomFile" name="file" lang="es" required>
-                              <label class="custom-file-label" for="validatedInputGroupCustomFile">Seleccione el archivo...</label>
+                            <div class="input-group is-invalid">
+
+                                <div class="custom-file">
+
+                                    <input type="file" class="custom-file-input" id="validatedInputGroupCustomFile" name="file" lang="es" required>
+                                    <label class="custom-file-label" for="validatedInputGroupCustomFile">Seleccione el archivo...</label>
+                                
+                                </div>
+
+                                <div class="input-group-append">
+
+                                    <button id="btn_import1" class="btn btn-outline-secondary" onmouseup="run_import_dir()">
+                                        Importar
+                                    </button>
+
+                                    <button id="spin_1" class="btn btn-outline-secondary" disabled hidden>
+                                        <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Analizando...
+                                    </button>
+
+                                </div>
+                                
                             </div>
-                            <div class="input-group-append">
-
-                                <button id="btn_import1" class="btn btn-outline-secondary" onmouseup="run_import_dir()">
-                                    Importar
-                                </button>
-
-                                <button id="spin_1" class="btn btn-outline-secondary" disabled hidden>
-                                    <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Analizando...
-                                </button>
-
-                            </div>
-                          </div>
 
                         @if (Session::has("table") )
                             <p>{{ Session::get("table")}}</p>
@@ -239,22 +244,26 @@
 
                         <?php if ( !isset( $state ) ): ?>
 
-                          <div class="input-group is-invalid">
-                            <div class="custom-file">
-                              <input type="file" class="custom-file-input" id="validatePPFF" name="file" lang="es" required>
-                              <label class="custom-file-label" for="validatePPFF">Seleccione el archivo...</label>
-                            </div>
-                            <div class="input-group-append">
-                               <button id="btn_import3" class="btn btn-outline-secondary"onmouseup="run_import_ppff()">
-                                    Importar
-                               </button>
+                            <div class="input-group is-invalid">
 
-                                <button id="spin_3" class="btn btn-outline-secondary" disabled hidden>
-                                    <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Analizando...
-                                </button>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="validatePPFF" name="file" lang="es" required>
+                                    <label class="custom-file-label" for="validatePPFF">Seleccione el archivo...</label>
+                                </div>
+
+                                <div class="input-group-append">
+
+                                    <button id="btn_import3" class="btn btn-outline-secondary"onmouseup="run_import_ppff()">
+                                            Importar
+                                    </button>
+
+                                    <button id="spin_3" class="btn btn-outline-secondary" disabled hidden>
+                                        <span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>Analizando...
+                                    </button>
+
+                                </div>
 
                             </div>
-                          </div>
 
                         <?php endif; ?>
 
@@ -278,18 +287,23 @@
 
 </div>
 
-<script>
+<script type="application/javascript">
+    
+    document.querySelectorAll('input[type="file"]')
+        .forEach( function (el) {
+            el.addEventListener('change', (object)=>{
+
+                document.querySelector(`[for="${object.target.id}"]`)
+                        .innerHTML = object.target.files[0].name;
+            
+            });
+
+        });
+
     
     function run_import_dir()
     {
-        
-        // document.querySelectorAll('.btn_import').forEach( (el) =>{
 
-        //     el.setAttribute("disabled", true);
-
-        // });
-
-// debugger;
         document.getElementById('spin_1').removeAttribute('hidden');
         document.getElementById('btn_import1').setAttribute('hidden',true);
         document.getElementById('btn_import2').setAttribute('disabled', true);

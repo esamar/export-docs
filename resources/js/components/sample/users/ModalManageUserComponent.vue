@@ -26,19 +26,42 @@
                         
                         <div class="alert alert-success d-flex align-items-center" role="alert" v-if="okModal">
                           <svg class="bi flex-shrink-0 mr-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
-                          <div>
-                            {{ msgOk }}
+                          <div v-html="msgOk">
+                            
                           </div>
                         </div>
 
                         <div class="alert alert-danger d-flex align-items-center" role="alert" v-if="errModal">
                           <svg class="bi flex-shrink-0 mr-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
                           <div>
-                            El DNI ingresado no tiene el formato correcto
+                            {{ msgError }}
                           </div>
                         </div>
 
-				        <div class="card" >
+					    <!-- <p class="card-text mt-3" v-if="respUser">Agregue los codigos modulares separados por comas (,)</p> -->
+
+					    <div class="pb-2">
+					    	
+							<!-- <ul class="nav nav-tabs mt-3" v-if="respUser"> -->
+							<ul class="nav nav-pills mt-3" v-if="respUser">
+
+								<li class="nav-item">
+									<a :class="tabs.tab0 ? 'nav-link active' : 'nav-link'" href="#" @click="tabSelect(0)">Usuario</a>
+								</li>
+
+								<li class="nav-item">
+									<a :class="tabs.tab1 ? 'nav-link active' : 'nav-link'" href="#" @click="tabSelect(1)">Carga</a>
+								</li>
+
+								<li class="nav-item">
+									<a :class="tabs.tab2 ? 'nav-link active' : 'nav-link'" href="#" @click="tabSelect(2)">Asignar Carga</a>
+								</li>
+
+							</ul>
+
+					    </div>
+
+				        <div class="card mt-2" v-if="tabs.tab0">
 
 				          <div class="card-header">
 				            
@@ -75,7 +98,12 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="text" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="fullNames" :disabled="mode==1">
+				                    <input type="text" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="fullNames" 
+											:disabled="mode==1">
 
 				                </div>
 
@@ -91,7 +119,12 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="text" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="user.nombres" :disabled="mode==1">
+				                    <input type="text" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="user.nombres" 
+											:disabled="mode==1">
 
 				                </div>
 
@@ -107,7 +140,12 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="text" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="user.apellido_paterno" :disabled="mode==1">
+				                    <input type="text" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="user.apellido_paterno" 
+											:disabled="mode==1">
 
 				                </div>
 
@@ -123,7 +161,12 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="text" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="user.apellido_materno" :disabled="mode==1">
+				                    <input type="text" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="user.apellido_materno" 
+											:disabled="mode==1">
 
 
 				                </div>
@@ -140,7 +183,12 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="text" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="user.email" :disabled="mode==1">
+				                    <input type="text" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="user.email" 
+											:disabled="mode==1">
 
 				                </div>
 
@@ -156,7 +204,12 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="text" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="user.telefono" :disabled="mode==1">
+				                    <input type="text" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="user.telefono" 
+											:disabled="mode==1">
 
 				                </div>
 
@@ -172,7 +225,13 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="text" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="userPayload.usuario">
+				                    <input type="text" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="userPayload.usuario" 
+											@change="activeAddButton"
+											autocomplete="off">
 
 				                </div>
 
@@ -188,7 +247,13 @@
 				                        </span>
 				                    </div>
 				                    
-				                    <input type="password" class="form-control font-weight-bold" aria-label="Nombre de muestra" aria-describedby="button-addon2"  v-model="userPayload.password">
+				                    <input type="password" 
+											class="form-control font-weight-bold" 
+											aria-label="Nombre de muestra" 
+											aria-describedby="button-addon2"  
+											v-model="userPayload.password" 
+											@change="activeAddButton"
+											autocomplete="off">
 
 				                </div>
 
@@ -204,7 +269,7 @@
 				                        </span>
 				                    </div>
 	                    
-                            <select class="form-control" v-model:value="userPayload.rol_mod1">
+                            <select class="form-control" v-model:value="userPayload.rol_mod1" @change="activeAddButton">
 
                                 <option v-for="rol in roles" :value="rol.id_rol">{{ rol.rol }}</option>
 
@@ -224,7 +289,7 @@
 			                        </span>
 			                    </div>
                   
-                          <select class="form-control" v-model:value="userPayload.rol_mod2">
+                          <select class="form-control" v-model:value="userPayload.rol_mod2" @change="activeAddButton">
 
                               <option v-for="rol in roles" :value="rol.id_rol">{{ rol.rol }}</option>
 
@@ -237,26 +302,6 @@
 				          </ul>
 
 				        </div>
-
-					    <!-- <p class="card-text mt-3" v-if="respUser">Agregue los codigos modulares separados por comas (,)</p> -->
-
-					    <div class="pb-2">
-					    	
-							<ul class="nav nav-tabs mt-3" v-if="respUser">
-							<!-- <ul class="nav nav-pills mt-3" v-if="respUser"> -->
-
-							  <li class="nav-item">
-
-							    <a :class="tabs.tab1 ? 'nav-link active' : 'nav-link'" href="#" @click="tabSelect(1)">Asignadas</a>
-							  </li>
-
-							  <li class="nav-item">
-							    <a :class="tabs.tab2 ? 'nav-link active' : 'nav-link'" href="#" @click="tabSelect(2)">Asignar nuevas IEs</a>
-							  </li>
-
-							</ul>
-
-					    </div>
 
 				        <div class="card mt-2" v-if="respUser && tabs.tab1">
 
@@ -331,7 +376,6 @@
 
 				        </div>
 
-				        
 				        <div class="card mt-2" v-if="respUser && tabs.tab2">
 
 				          <div class="card-header">
@@ -397,9 +441,7 @@
 
 				        </div>
 
-
 				    </div>
-
 				    
 				</div>
 
@@ -416,7 +458,9 @@
 	      </div>
 
 	    </div>
+
 	  </div>
+
 	</div>
 
 </template>
@@ -436,6 +480,10 @@
 						nombres : "",
 						numero_documento : "",
 						telefono : "",
+						usuario : "",
+						rol_mod1 : null,
+						rol_mod2 : null,
+
                 	},
 				ies : [],
 				listIesRemove : [],
@@ -459,7 +507,8 @@
                 processing:false,
                 contentCodmod : [],
                 tabs : {
-                	tab1 : true,
+                	tab0 : true,
+                	tab1 : false,
                 	tab2 : false
                 },
 
@@ -500,6 +549,8 @@
             {
 
                 this.user = {};
+				
+				this.userPayload = {};
 
                 this.dni = "";
 
@@ -507,6 +558,8 @@
                 
                 this.okModal = false;
                 
+				this.errModal = false;
+
                 this.msgError = "";
                 
                 this.msgOk = "";
@@ -539,12 +592,20 @@
 
                 	this.loadUser = true;
 
-	                axiosR.get(`/api/users/0?dni=${this.dni}`)
+					axiosR.get(`/api/users/${ this.mode == '0' ? this.sample : 0 }?dni=${this.dni}`)
 	                    .then( (response) => {
 
 	                        this.user = response.data.data[0];
 
 	                        this.userPayload.numero_documento = this.dni;
+
+	                        this.userPayload.usuario = this.user.usuario;
+
+	                        this.userPayload.password = "";
+
+	                        this.userPayload.rol_mod1 = this.user.id_rol_modelo_1;
+							
+	                        this.userPayload.rol_mod2 = this.user.id_rol_modelo_2;
 
 	                        this.loadUser = false;
 
@@ -579,7 +640,7 @@
             addUserSample : function ()
             {
 
-                axiosR.post(`/api/users/${this.sample}/setUserSample`, [ this.userPayload ] )
+                axiosR.post(`/api/users/${this.sample}/setUserToSample`, [ this.userPayload ] )
                     .then( (response) => {
 
                     	if ( response.data.resp )
@@ -596,9 +657,19 @@
                     	}
                     	else
                     	{
-							
-							this.msgError = response.data.msg;	
 
+							switch (response.data.msg)
+							{
+
+								case 'ER_DUP_ENTRY': 
+									this.msgError = 'El DNI ingresado ya ha sido registrado como usuario de la aplicación';
+								break;
+								
+								default:
+									this.msgError = response.data.msg;
+
+							}
+							
                     		this.errModal = true;                    		
 
                     	}
@@ -606,27 +677,76 @@
                 });
 
             },
-
             UpdateUserSample : function ()
             {
 
                 axiosR.put(`/api/users/0/${this.dni}`, this.user )
-                    .then( (response) => {
+				.then( response => {
 
-		                console.log(response.data);
+					eventBus.$emit('updateUsers' , true);
 
-		                eventBus.$emit('updateUsers' , true);
+					if ( resp_person && resp_user )
+					{
 
-                });
+						this.okModal = true;
+						
+						this.msgOk = `<li>Se ha actualizado la información correctamente</li>`;
 
-                axiosR.put(`/api/users/${this.sample}/${this.dni}/updateUser`, this.userPayload )
-                    .then( (response) => {
+						return 1 ;
 
-                    	console.log( response.data );
+					}
+					
+					return response.data;
 
-		                eventBus.$emit('updateUsers' , true);
+				})
+				.then( response_person => {
 
-                });
+					return axiosR.put(`/api/users/${this.sample}/${this.dni}/updateUser`, this.userPayload )
+					.then( (response_user) => {
+
+						eventBus.$emit('updateUsers' , true);
+	
+						console.log(response_user.data);
+
+						const resp_person = response_person.resp;
+
+						const resp_user = response_user.data.resp;
+
+						if ( resp_person && resp_user )
+						{
+
+							this.okModal = true;
+							
+							this.msgOk = `<li>Se ha actualizado la información correctamente</li>`;
+
+							return 1 ;
+
+						}
+
+					});
+
+				})
+				.then(resp_user =>{
+					
+					axiosR.post(`/api/users/${this.sample}/setIeToUser`, [this.userPayload] )
+					.then( (response_ie) => {
+
+						console.log(response_ie);
+
+						this.okModal = true;
+							
+						this.msgOk += `<li>Se ha actualizado la carga IE asignada</li>`;
+
+					});
+
+				})
+				.catch( err =>{
+
+					console.log(err);
+
+				});
+
+
 
 
             },
@@ -659,12 +779,10 @@
             },
         	activeAddButton : function ()
         	{
-
+				// && this.contentCodmod.length 
                 if ( this.userPayload.numero_documento && 
                 	 this.userPayload.password && 
-                	 this.userPayload.rol_mod1 && 
-                	 this.userPayload.rol_mod2 && 
-                	 this.contentCodmod.length )
+                	 this.userPayload.rol_mod1 )
                 {
 
                 	this.addBotton = true;
@@ -681,9 +799,18 @@
         	tabSelect : function ( tab )
         	{
 
-        		if ( tab == 1 )
+        		if ( tab === 0 )
         		{
 
+	        		this.tabs.tab0 = true;
+	        		this.tabs.tab1 = false;
+	        		this.tabs.tab2 = false;
+
+        		}
+        		else if ( tab == 1 )
+        		{
+
+	        		this.tabs.tab0 = false;
 	        		this.tabs.tab1 = true;
 	        		this.tabs.tab2 = false;
 
@@ -691,6 +818,7 @@
         		else
         		{
 
+	        		this.tabs.tab0 = false;
 	        		this.tabs.tab1 = false;
 	        		this.tabs.tab2 = true;
 

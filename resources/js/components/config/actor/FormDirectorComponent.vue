@@ -83,14 +83,14 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="width:110px;"><b>Email</b></span>
                                 </div>
-                                <textarea required class="form-control" placeholder="Plantilla" aria-label="Nombre del servicio" aria-describedby="button-addon2" rows="10" v-model:value="config.plantilla_mensaje.email"></textarea> 
+                                <textarea required class="form-control" placeholder="Plantilla" aria-label="Nombre del servicio" aria-describedby="button-addon2" rows="10" v-model="config.plantilla_mensaje.email"></textarea> 
                             </div>
 
                             <div class="input-group input-group-sm">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="width:110px;"><b>WhatsApp</b></span>
                                 </div>
-                                <textarea required class="form-control" placeholder="Plantilla" aria-label="Nombre del servicio" aria-describedby="button-addon2" rows="10" v-model:value="config.plantilla_mensaje.wsp"></textarea> 
+                                <textarea required class="form-control" placeholder="Plantilla" aria-label="Nombre del servicio" aria-describedby="button-addon2" rows="10" v-model="config.plantilla_mensaje.wsp"></textarea> 
                             </div>
 
                         </div>
@@ -118,7 +118,12 @@
         {
         
             return{
-                config :{},
+                config :{
+                    plantilla_mensaje : {
+                        email : "",
+                        wsp : ""
+                    }
+                },
                 ptEs: {
                       "night": "Dia",
                       "nights": "Dias",

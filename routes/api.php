@@ -42,3 +42,23 @@ Route::match(['options', 'post'], 'setResendStates', function (Request $request 
 Route::post('import-credentials', 'CuestionarioController@setCredentials')->name('import.credentials');
 
 Route::post('update-participa', 'CuestionarioController@setParticipa')->name('update.participa');
+
+/*
+*
+*/
+
+Route::apiResource('sireg/director', Api\Sireg\DirectorController::class)
+		->only(['show', 'index']);
+
+Route::apiResource('sireg/docente', Api\Sireg\DocenteController::class)
+		->only(['show', 'index']);
+
+Route::apiResource('sireg/estudiante', Api\Sireg\EstudianteController::class)
+		->only(['show', 'index']);
+
+// Route::get('sireg/get-all-director', 'Api\Sireg\DirectorController@index')->name('get.all.director');
+
+// Route::get('sireg/get-director', 'Api\Sireg\DirectorController@show')->name('get.director');
+// Route::get('sireg/get-docente', 'Api\Sireg\DocenteController@show')->name('get.docente');
+// Route::get('sireg/get-estudiante', 'Api\Sireg\EstudianteController@show')->name('get.estudiante');
+// Route::get('sireg/get-ppff', 'Api\Sireg\PadreController@show')->name('get.ppff');
