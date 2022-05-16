@@ -2029,11 +2029,11 @@ class PersonController extends Controller
                                         
                                         LEFT JOIN tb_registro C ON (C.Ie_CodigoModular = A.cod_mod AND REG_TIPO = 1)
                                         
-                                        LEFT JOIN tb_ppff_estudiante D ON (A.dni = D.EST_NUMERO_DOC)
-                                        
+                                        LEFT JOIN ( SELECT X2.* FROM tb_ppff_estudiante X1 JOIN tb_estudiante X2 ON (X1.EST_CODIGO = X2.EST_CODIGO) ) D ON (A.dni = D.EST_NUMERO_DOC)
                                         LEFT JOIN tb_grado_seccion F ON (A.cod_mod = F.Ie_CodigoModular AND A.grado = F.grado AND A.seccion = F.seccion )
 
                                         WHERE id_temp = "' . $id_temporal. '";');
+                                        // -- LEFT JOIN tb_ppff_estudiante D ON (A.dni = D.EST_NUMERO_DOC)
 
 
 
@@ -2220,41 +2220,55 @@ class PersonController extends Controller
     public function importTablePPFF( $id_temporal , $id_especialista )
     {
 
+        $resp = DB::insert("INSERT INTO tb_ppff_contacto 
+                    ( 
+                        Ie_CodigoModular, 
+                        PER_CODIGO,
+                        id_seed
+                    )
+                    (SELECT 
+                        cod_mod , 
+                        id_person,
+                        id 
+                    FROM import_table_ppffs 
+                    WHERE id_temp ='$id_temporal' AND state = 0)");
 
-
-                $resp = DB::insert("INSERT INTO tb_ppff_contacto 
-                            ( 
-                                Ie_CodigoModular, 
-                                PER_CODIGO,
-                                id_seed
-                            )
-                            (SELECT 
-                                cod_mod , 
-                                id_person,
-                                id 
-                            FROM import_table_ppffs 
-                            WHERE id_temp ='$id_temporal' AND state = 0)");
+        $resp2 = DB::insert("INSERT INTO tb_estudiante 
+                                    ( 
+                                        EST_NOMBRES, 
+                                        EST_APELLIDO_P, 
+                                        EST_APELLIDO_M, 
+                                        EST_TIPO_DOC, 
+                                        EST_NUMERO_DOC, 
+                                        id_seed
+                                    )
+                                SELECT 
+                                        nombres, 
+                                        ape_p, 
+                                        ape_m, 
+                                        tipo_doc, 
+                                        dni, 
+                                        id
+                                FROM import_table_ppffs A 
+                                JOIN 
+                                    tb_ppff_contacto B 
+                                    ON (A.id = id_seed AND id_temp ='$id_temporal' AND state = 0 )
+                                
+                                ON DUPLICATE KEY UPDATE id_seed=id;");
         
-        $resp2 = DB::insert("INSERT INTO tb_ppff_estudiante 
+        
+        $resp3 = DB::insert("INSERT INTO tb_ppff_estudiante 
                                 ( 
                                     CPF_CODIGO, 
                                     Ie_CodigoModular, 
-                                    EST_NOMBRES, 
-                                    EST_APELLIDO_P, 
-                                    EST_APELLIDO_M, 
-                                    EST_TIPO_DOC, 
-                                    EST_NUMERO_DOC, 
+                                    EST_CODIGO,
                                     id_seed, 
                                     id_seccion
                                 )
                             SELECT 
                                     CPF_CODIGO, 
                                     cod_mod, 
-                                    nombres, 
-                                    ape_p, 
-                                    ape_m, 
-                                    tipo_doc, 
-                                    dni, 
+                                    EST_CODIGO,
                                     id,
                                     C.id_seccion
                             FROM import_table_ppffs A 
@@ -2263,16 +2277,16 @@ class PersonController extends Controller
                                 ON (A.id = id_seed AND id_temp ='$id_temporal' AND state = 0 )
                             JOIN
                                 tb_grado_seccion C 
-                                ON ( A.cod_mod = C.Ie_CodigoModular AND A.grado = C.grado AND A.seccion = C.seccion )");
+                                ON ( A.cod_mod = C.Ie_CodigoModular AND A.grado = C.grado AND A.seccion = C.seccion )
+                            JOIN
+								tb_estudiante D
+                                ON (A.id = D.id_seed)");
 
-                                    // A.grado, 
-                                    // A.seccion, 
-                                    // EST_GRADO, 
-                                    // EST_SECCION, 
+
 
         DB::update('UPDATE import_table_ppffs SET state = 1 WHERE id_temp = "' . $id_temporal. '";');
 
-        if ( $resp && $resp2 )
+        if ( $resp && $resp3 )
         {
         
             $message = 'Se ha importado los datos correctamente.';
