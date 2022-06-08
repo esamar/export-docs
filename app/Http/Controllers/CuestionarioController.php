@@ -126,7 +126,7 @@ class CuestionarioController extends Controller
         		$estado = 0;
 				
 				$idusucue = array();
-				
+
 				foreach ($data['idcuest'] as $key => $id_cuest) 
 				{
 
@@ -150,7 +150,7 @@ class CuestionarioController extends Controller
 						        							"idcuestionario" => $id_cuest ,
 						        							"idinstitucion"	 => $idinstitucion->idinstitucion ,
 						        							"seccion" 		 => $data['seccion'] ,
-								    						"fecha_participa" => $data['fecha_participacion'] ,
+								    						"fecha_participa"=> $data['idcuest_fechas'][$id_cuest]['fecha'] ,
 						        							"estado"		 => $estado ,
 						        						]);
 					}
