@@ -311,7 +311,7 @@
 
             <div class="row">
             
-                <main style = "width:72px;">
+                <main style = "width:52px;">
                     @include('partials.sidebar')
                 </main>
                 

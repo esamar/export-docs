@@ -87,6 +87,8 @@
 					                    <tr>
 					                      <th scope="col" style="text-align: left;width: 80px;">DNI</th>
 					                      <th scope="col" style="text-align: left;">Nombres</th>
+					                      <th scope="col" style="text-align: left;">Apellido_1</th>
+					                      <th scope="col" style="text-align: left;">Apellido_2</th>
 					                      <th scope="col" style="text-align: left;">Rol mod 1</th>
 					                      <th scope="col" style="text-align: left;">Rol mod 2</th>
 					                      <th scope="col" style="text-align: left;">Usuario</th>
@@ -99,6 +101,8 @@
 
 					                      <th scope="row" style="text-align: left;width: 80px;">{{ user.dni }}</th>
 					                      <td style="text-align: left;">{{ user.nombres }}</td>
+					                      <td style="text-align: left;">{{ user.apellido_1 }}</td>
+					                      <td style="text-align: left;">{{ user.apellido_2 }}</td>
 					                      <td style="text-align: left;">{{ user.rol_mod1 }}</td>
 					                      <td style="text-align: left;">{{ user.rol_mod2 }}</td>
 					                      <td style="text-align: left;">{{ user.usuario }}</td>
@@ -106,7 +110,7 @@
 					                      <td style="text-align: left;width: 80px;">
 
 					                      		<span :class="'badge bg-' + ( user.id_persona ? 'primary' : 'danger' ) + ' text-light p-2'" v-if="user.estado_muestra">
-					                      			{{ user.id_persona ? 'Correcto' : 'No existe'}}
+					                      			{{ user.id_persona ? 'Correcto' : 'Nuevo'}}
 					                      		</span>
 
 					                      		<span class="badge bg-danger text-light p-2" v-if="!user.estado_muestra">
@@ -220,7 +224,7 @@
 					case "1": this.titleMode ="Asignar usuarios a la muestra por archivo CSV"; break;
 					case "2": this.titleMode ="Asignar carga IE para usuarios por archivo CSV"; break;
 					case "3": this.titleMode ="Desasignar carga IE a usuarios por archivo CSV"; break;
-					case "4": this.titleMode ="Registrar nuevas personas por archivo CSV"; break;
+					case "4": this.titleMode ="Importar nuevos usuarios por archivo CSV"; break;
 
 				}
 
@@ -252,7 +256,7 @@
 
 							? `Se agregará ${numOkItem} Usuarios a la muestra actual. Presione el boton <b>"Procesar"</b> para registrar.`
 						
-							: `Se ha encontrado problemas con <b>${totalItem - numOkItem}</b> Usuarios. Solo se puede agregar ${numOkItem} usuarios de la lista. Presione el boton <b>"Procesar"</b> para ignorar y continuar.` );
+							: `Se ha encontrado  <b>${totalItem - numOkItem}</b> usuarios nuevos. Se registrarán y agregarán ${numOkItem} usuarios a la muestra. Presione el boton <b>"Procesar"</b> para continuar.` );
 
 						info = (totalItem == numOkItem);
 
@@ -309,40 +313,42 @@
 
         		this.nameCsv = file.name;
 
-			  if (file.type === 'application/vnd.ms-excel') 
-			  {
+				if (file.type === 'application/vnd.ms-excel' || file.type === 'text/csv') 
+				{
 
-			    let reader = new FileReader();
-			    
-			    reader.onloadend = () => { 
+					let reader = new FileReader();
+					
+					reader.onloadend = () => { 
 
-			    	var lines = reader.result.split('\n'); 
+						var lines = reader.result.split('\n'); 
 
-			    	switch (this.mode)
-			    	{
+						switch (this.mode)
+						{
 
-			    		case "1": this.processFileUserToSample( lines ); break;
+							case "1": this.processFileUserToSample( lines ); break;
 
-			    		case "2": this.processFileIesToUser( lines ); break;
+							case "2": this.processFileIesToUser( lines ); break;
 
-			    	}
+							case "4": this.processFileAddUsers( lines ); break;
 
-			    };
+						}
 
-			    reader.readAsText(file, 'ISO-8859-1');
+					};
 
-			  } 
-			  else 
-			  {
-			  
-			    alert('No se soporta este tipo de archivo');
-			  
-			  }
+					reader.readAsText(file, 'ISO-8859-1');
+
+				} 
+				else 
+				{
+				
+					alert('No se soporta este tipo de archivo');
+				
+				}
 
         	},
         	processFile : function (  )
         	{
-				
+
 				switch (this.mode)
 		    	{
 
@@ -374,12 +380,15 @@
 
 		    			preContent.push( { 
     										dni : cols[0],
-    										rol_mod1 : cols[1],
-    										rol_mod2 : cols[2],
-    										usuario : cols[3],
-    										password : cols[4]
+											nombres : cols[1],
+											apellido_1 : cols[2],
+											apellido_2 : cols[3],
+    										rol_mod1 : cols[4],
+    										rol_mod2 : cols[5],
+    										usuario : cols[6],
+    										password : cols[7],
 
-    									} );
+    									});
 
 		    		}
 
@@ -387,26 +396,30 @@
 
                 axiosR.get(`/api/users/0?dni=${ preContent.map( x=> x.dni).join(',') }`)
                     .then( (response) => {
-
+console.log(preContent,response);
                         preContent.forEach( x => {
 
                         	const data_person = response.data.data.filter( y => y.numero_documento == x.dni )[0];
+							
+							const estado_muestra = ( typeof data_person == 'undefined' ? true : ( data_person.id_muestra == this.sample ? false : true ) );
 
                         	this.contentFile.push( { 
                         							'dni' : x.dni,
-													'nombres' : ( typeof data_person != 'undefined' ? data_person.apellido_paterno + data_person.apellido_materno + ', ' + data_person.nombres : '' ),
+													'nombres' : ( typeof data_person != 'undefined' ? data_person.nombres : x.nombres ),
+													'apellido_1' : ( typeof data_person != 'undefined' ? data_person.apellido_paterno : x.apellido_1 ),
+													'apellido_2' : ( typeof data_person != 'undefined' ? data_person.apellido_materno : x.apellido_2 ),
 													'rol_mod1' : x.rol_mod1,
 													'rol_mod2' : x.rol_mod2,
 													'usuario' : x.usuario,
 													'password' : x.password,
 													'id_persona' : ( typeof data_person != 'undefined' ? true : false ) ,
-													'estado_muestra' : ( data_person.id_muestra == this.sample ? false : true )
-                         							 } );
+													estado_muestra
+                         						} );
 
                         });
 
-                    	this.payload = this.contentFile.filter( x => x.estado_muestra && x.id_persona );
-
+                    	this.payload = this.contentFile.filter( x => x.estado_muestra );
+						console.log(this.payload);
                 });
 
             },
@@ -464,13 +477,12 @@
 																	.filter( x => x.pertenece_muestra_persona && x.pertenece_muestra_ie )
 																	.map( x => { return  { 'dni' : x.dni } } ) , 'dni' );
 
-
 						this.payload = this.payload.map( x => {
 
-								return {
-											'numero_documento' : x.dni,
-											'codmod' : this.contentFile.filter( y  => y.dni == x.dni ).map( z => z.codmod ),
-										}
+							return {
+										'numero_documento' : x.dni,
+										'codmod' : this.contentFile.filter( y  => y.dni == x.dni ).map( z => z.codmod ),
+									}
 
 						});
 
@@ -478,6 +490,71 @@
                 	});
 
             },
+			processFileAddUsers : function (lines)
+			{
+
+		    	let preContent = new Array();
+
+		    	for (var i = 1; i < lines.length; i++) 
+		    	{
+
+		    		if ( lines[i] )
+		    		{
+		    			
+		    			const cols = lines[i].trim().split(',');
+
+		    			preContent.push( { 
+
+											tipo_documento : cols[0].trim(),
+											numero : cols[1].trim(),
+											Nombres : cols[2].trim(),
+											apellido_1 : cols[3].trim(),
+											apellido_2 : cols[4].trim(),
+											email : cols[5].trim(),
+											telefono : cols[6].trim(),
+
+    									} );
+
+		    		}
+
+		    	}
+
+                axiosR.get(`/api/users/0?dni=${ preContent.map( x=> x.dni).join(',') }`)		
+				.then( (response) =>{
+
+                        preContent.forEach( x =>{
+
+                        	const data_person = response.data.data.filter( y => y.numero_documento == x.dni )[0];
+                        	console.log(x)
+							this.contentFile.push( { 
+
+        							'dni' : x.dni,
+									'nombres' : ( typeof data_person != 'undefined' ? data_person.nombres : x.nombres ),
+									'apellido_1' : ( typeof data_person != 'undefined' ? data_person.apellido_paterno : '' ),
+									'apellido_2' : ( typeof data_person != 'undefined' ? data_person.apellido_materno : '' ),
+									'pertenece_muestra_persona' : ( typeof data_person != 'undefined' ? ( data_person.id_muestra ? true : false ): false ) ,
+									'pertenece_muestra_ie' : ( typeof data_ie != 'undefined' ? ( data_ie.pertenece_muestra ? true : false) : false )
+
+    							 } );
+
+                        });
+
+						this.payload = this.removeDuplicates( this.contentFile
+																	.filter( x => x.pertenece_muestra_persona && x.pertenece_muestra_ie )
+																	.map( x => { return  { 'dni' : x.dni } } ) , 'dni' );
+console.log(this.contentFile)
+						this.payload = this.payload.map( x => {
+
+							return {
+										'numero_documento' : x.dni,
+										'codmod' : this.contentFile.filter( y  => y.dni == x.dni ).map( z => z.codmod ),
+									}
+
+						});
+
+
+					});
+			},
 			removeDuplicates: function (originalArray, prop) 
 			{
 

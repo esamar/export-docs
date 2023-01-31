@@ -7674,6 +7674,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -7961,6 +7962,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -7996,7 +8001,7 @@ __webpack_require__.r(__webpack_exports__);
           break;
 
         case "4":
-          this.titleMode = "Registrar nuevas personas por archivo CSV";
+          this.titleMode = "Importar nuevos usuarios por archivo CSV";
           break;
       }
     }
@@ -8013,7 +8018,7 @@ __webpack_require__.r(__webpack_exports__);
           numOkItem = this.contentFile.filter(function (x) {
             return x.estado_muestra && x.id_persona;
           }).length;
-          msg = totalItem == numOkItem ? "Se agregar\xE1 ".concat(numOkItem, " Usuarios a la muestra actual. Presione el boton <b>\"Procesar\"</b> para registrar.") : "Se ha encontrado problemas con <b>".concat(totalItem - numOkItem, "</b> Usuarios. Solo se puede agregar ").concat(numOkItem, " usuarios de la lista. Presione el boton <b>\"Procesar\"</b> para ignorar y continuar.");
+          msg = totalItem == numOkItem ? "Se agregar\xE1 ".concat(numOkItem, " Usuarios a la muestra actual. Presione el boton <b>\"Procesar\"</b> para registrar.") : "Se ha encontrado  <b>".concat(totalItem - numOkItem, "</b> usuarios nuevos. Se registrar\xE1n y agregar\xE1n ").concat(numOkItem, " usuarios a la muestra. Presione el boton <b>\"Procesar\"</b> para continuar.");
           info = totalItem == numOkItem;
           break;
 
@@ -8050,7 +8055,7 @@ __webpack_require__.r(__webpack_exports__);
       var file = e.target.files[0];
       this.nameCsv = file.name;
 
-      if (file.type === 'application/vnd.ms-excel') {
+      if (file.type === 'application/vnd.ms-excel' || file.type === 'text/csv') {
         var reader = new FileReader();
 
         reader.onloadend = function () {
@@ -8064,6 +8069,11 @@ __webpack_require__.r(__webpack_exports__);
 
             case "2":
               _this.processFileIesToUser(lines);
+
+              break;
+
+            case "4":
+              _this.processFileAddUsers(lines);
 
               break;
           }
@@ -8095,10 +8105,13 @@ __webpack_require__.r(__webpack_exports__);
           var cols = lines[i].trim().split(',');
           preContent.push({
             dni: cols[0],
-            rol_mod1: cols[1],
-            rol_mod2: cols[2],
-            usuario: cols[3],
-            password: cols[4]
+            nombres: cols[1],
+            apellido_1: cols[2],
+            apellido_2: cols[3],
+            rol_mod1: cols[4],
+            rol_mod2: cols[5],
+            usuario: cols[6],
+            password: cols[7]
           });
         }
       }
@@ -8106,25 +8119,30 @@ __webpack_require__.r(__webpack_exports__);
       axiosR.get("/api/users/0?dni=".concat(preContent.map(function (x) {
         return x.dni;
       }).join(','))).then(function (response) {
+        console.log(preContent, response);
         preContent.forEach(function (x) {
           var data_person = response.data.data.filter(function (y) {
             return y.numero_documento == x.dni;
           })[0];
+          var estado_muestra = typeof data_person == 'undefined' ? true : data_person.id_muestra == _this2.sample ? false : true;
 
           _this2.contentFile.push({
             'dni': x.dni,
-            'nombres': typeof data_person != 'undefined' ? data_person.apellido_paterno + data_person.apellido_materno + ', ' + data_person.nombres : '',
+            'nombres': typeof data_person != 'undefined' ? data_person.nombres : x.nombres,
+            'apellido_1': typeof data_person != 'undefined' ? data_person.apellido_paterno : x.apellido_1,
+            'apellido_2': typeof data_person != 'undefined' ? data_person.apellido_materno : x.apellido_2,
             'rol_mod1': x.rol_mod1,
             'rol_mod2': x.rol_mod2,
             'usuario': x.usuario,
             'password': x.password,
             'id_persona': typeof data_person != 'undefined' ? true : false,
-            'estado_muestra': data_person.id_muestra == _this2.sample ? false : true
+            estado_muestra: estado_muestra
           });
         });
         _this2.payload = _this2.contentFile.filter(function (x) {
-          return x.estado_muestra && x.id_persona;
+          return x.estado_muestra;
         });
+        console.log(_this2.payload);
       });
     },
     processFileIesToUser: function processFileIesToUser(lines) {
@@ -8186,6 +8204,64 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
     },
+    processFileAddUsers: function processFileAddUsers(lines) {
+      var _this4 = this;
+
+      var preContent = new Array();
+
+      for (var i = 1; i < lines.length; i++) {
+        if (lines[i]) {
+          var cols = lines[i].trim().split(',');
+          preContent.push({
+            tipo_documento: cols[0].trim(),
+            numero: cols[1].trim(),
+            Nombres: cols[2].trim(),
+            apellido_1: cols[3].trim(),
+            apellido_2: cols[4].trim(),
+            email: cols[5].trim(),
+            telefono: cols[6].trim()
+          });
+        }
+      }
+
+      axiosR.get("/api/users/0?dni=".concat(preContent.map(function (x) {
+        return x.dni;
+      }).join(','))).then(function (response) {
+        preContent.forEach(function (x) {
+          var data_person = response.data.data.filter(function (y) {
+            return y.numero_documento == x.dni;
+          })[0];
+          console.log(x);
+
+          _this4.contentFile.push({
+            'dni': x.dni,
+            'nombres': typeof data_person != 'undefined' ? data_person.nombres : x.nombres,
+            'apellido_1': typeof data_person != 'undefined' ? data_person.apellido_paterno : '',
+            'apellido_2': typeof data_person != 'undefined' ? data_person.apellido_materno : '',
+            'pertenece_muestra_persona': typeof data_person != 'undefined' ? data_person.id_muestra ? true : false : false,
+            'pertenece_muestra_ie': typeof data_ie != 'undefined' ? data_ie.pertenece_muestra ? true : false : false
+          });
+        });
+        _this4.payload = _this4.removeDuplicates(_this4.contentFile.filter(function (x) {
+          return x.pertenece_muestra_persona && x.pertenece_muestra_ie;
+        }).map(function (x) {
+          return {
+            'dni': x.dni
+          };
+        }), 'dni');
+        console.log(_this4.contentFile);
+        _this4.payload = _this4.payload.map(function (x) {
+          return {
+            'numero_documento': x.dni,
+            'codmod': _this4.contentFile.filter(function (y) {
+              return y.dni == x.dni;
+            }).map(function (z) {
+              return z.codmod;
+            })
+          };
+        });
+      });
+    },
     removeDuplicates: function removeDuplicates(originalArray, prop) {
       var newArray = [];
       var lookupObject = {};
@@ -8201,23 +8277,9 @@ __webpack_require__.r(__webpack_exports__);
       return newArray;
     },
     addUserToSample: function addUserToSample() {
-      var _this4 = this;
-
-      axiosR.post("/api/users/".concat(this.sample, "/setUserToSample"), this.payload).then(function (response) {
-        if (response.data.resp) {
-          _this4.msgOk = response.data.msg;
-          _this4.okModal = true;
-          eventBus.$emit('updateUsers', true);
-        } else {
-          _this4.msgError = response.data.msg;
-          _this4.errModal = true;
-        }
-      });
-    },
-    addIeToUser: function addIeToUser() {
       var _this5 = this;
 
-      axiosR.post("/api/users/".concat(this.sample, "/setIeToUser"), this.payload).then(function (response) {
+      axiosR.post("/api/users/".concat(this.sample, "/setUserToSample"), this.payload).then(function (response) {
         if (response.data.resp) {
           _this5.msgOk = response.data.msg;
           _this5.okModal = true;
@@ -8225,6 +8287,20 @@ __webpack_require__.r(__webpack_exports__);
         } else {
           _this5.msgError = response.data.msg;
           _this5.errModal = true;
+        }
+      });
+    },
+    addIeToUser: function addIeToUser() {
+      var _this6 = this;
+
+      axiosR.post("/api/users/".concat(this.sample, "/setIeToUser"), this.payload).then(function (response) {
+        if (response.data.resp) {
+          _this6.msgOk = response.data.msg;
+          _this6.okModal = true;
+          eventBus.$emit('updateUsers', true);
+        } else {
+          _this6.msgError = response.data.msg;
+          _this6.errModal = true;
         }
       })["catch"](function (err) {
         console.log(err);
@@ -82263,7 +82339,7 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Registrar nuevas personas")]
+                  [_vm._v("Actualizar/Importar nuevos usuarios")]
                 )
               ]),
               _vm._v(" "),
@@ -82283,7 +82359,9 @@ var render = function() {
                   },
                   [_vm._v("Descargar asignaciones de usuarios")]
                 )
-              ])
+              ]),
+              _vm._v(" "),
+              _vm._m(5)
             ])
           ]),
           _vm._v(" "),
@@ -82554,7 +82632,7 @@ var render = function() {
         },
         [
           _c("table", { staticClass: "table table-hover small" }, [
-            _vm._m(5),
+            _vm._m(6),
             _vm._v(" "),
             _c(
               "tbody",
@@ -82743,7 +82821,7 @@ var render = function() {
       )
     ]),
     _vm._v(" "),
-    _vm._m(6)
+    _vm._m(7)
   ])
 }
 var staticRenderFns = [
@@ -82798,6 +82876,24 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("li", [_c("hr", { staticClass: "dropdown-divider" })])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", [
+      _c(
+        "a",
+        {
+          staticClass: "dropdown-item",
+          attrs: {
+            href: "/export-docs/storage/plantillas/importacion/usuarios.zip",
+            disabled: ""
+          }
+        },
+        [_vm._v("Descargar plantillas de importación .csv")]
+      )
+    ])
   },
   function() {
     var _vm = this
@@ -83255,6 +83351,22 @@ var render = function() {
                                         {
                                           staticStyle: { "text-align": "left" }
                                         },
+                                        [_vm._v(_vm._s(user.apellido_1))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(user.apellido_2))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
                                         [_vm._v(_vm._s(user.rol_mod1))]
                                       ),
                                       _vm._v(" "),
@@ -83308,7 +83420,7 @@ var render = function() {
                                                       _vm._s(
                                                         user.id_persona
                                                           ? "Correcto"
-                                                          : "No existe"
+                                                          : "Nuevo"
                                                       ) +
                                                       "\n\t\t\t\t\t                      \t\t"
                                                   )
@@ -83492,6 +83604,18 @@ var staticRenderFns = [
           "th",
           { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
           [_vm._v("Nombres")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Apellido_1")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Apellido_2")]
         ),
         _vm._v(" "),
         _c(

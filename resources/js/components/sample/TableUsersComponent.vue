@@ -34,9 +34,10 @@
                         <li><a class="dropdown-item" href="#" @click="confOperationCSV('2')">Asignar carga IE a usuarios</a></li>
                         <li><a class="dropdown-item" href="#" @click="confOperationCSV('3')" disabled>Desasignar carga IE a usuarios</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" @click="confOperationCSV('4')">Registrar nuevas personas</a></li>
+                        <li><a class="dropdown-item" href="#" @click="confOperationCSV('4')">Actualizar/Importar nuevos usuarios</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#" @click="confOperationCSV('5')" disabled>Descargar asignaciones de usuarios</a></li>
+                        <li><a class="dropdown-item" href="/export-docs/storage/plantillas/importacion/usuarios.zip" disabled>Descargar plantillas de importación .csv</a></li>
 
                     </ul>
 
