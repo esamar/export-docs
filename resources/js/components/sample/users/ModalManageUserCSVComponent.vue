@@ -159,7 +159,81 @@
 					                  </tbody>
 
 					                </table>
-						        </div>
+
+									<table class="table table-hover small" v-if="mode=='4'">
+										<thead>
+											<tr>
+												<th scope="col" style="text-align: left;width: 80px;">Tipo</th>
+												<th scope="col" style="text-align: left;width: 80px;">Número</th>
+												<th scope="col" style="text-align: left;">Nombres</th>
+												<th scope="col" style="text-align: left;">Apellido_1</th>
+												<th scope="col" style="text-align: left;">Apellido_2</th>
+												<th scope="col" style="text-align: left;">Email</th>
+												<th scope="col" style="text-align: left;">Teléfono</th>
+												<th scope="col" style="text-align: left;">Rol</th>
+												<th scope="col" style="text-align: left;">Estado</th>
+											</tr>
+										</thead>
+										<tbody>
+
+											<tr v-for="usuario in contentFile">
+
+												<th scope="row" style="text-align: left;width: 80px;">{{ usuario.tipo ? "DNI" : "Otro" }}</th>
+												<th style="text-align: left;">{{ usuario.numero }}</th>
+												<td style="text-align: left;">{{ usuario.nombres }}</td>
+												<td style="text-align: left;">{{ usuario.apellido_1 }}</td>
+												<td style="text-align: left;">{{ usuario.apellido_2 }}</td>
+												<td style="text-align: left;">{{ usuario.email }}</td>
+												<td style="text-align: left;">{{ usuario.telefono }}</td>
+												<td style="text-align: left;">{{ usuario.rol }}</td>
+												<td style="text-align: left;">
+													<span :class="'badge bg-' + ( usuario.existe === 1 ? 'primary' : 'danger' ) + ' text-light p-2'">
+														{{ usuario.existe === 1 ? 'Actualizar' : 'Nuevo'}}
+													</span>
+												</td>
+
+											</tr>
+
+										</tbody>
+
+									</table>
+
+									<table class="table table-hover small" v-if="mode=='5'">
+										<thead>
+											<tr>
+												<th scope="col" style="text-align: left;width: 80px;">Número</th>
+												<th scope="col" style="text-align: left;">Nombres</th>
+												<th scope="col" style="text-align: left;">Usuario</th>
+												<th scope="col" style="text-align: left;">Password</th>
+												<th scope="col" style="text-align: left;">rol_mod_1</th>
+												<th scope="col" style="text-align: left;">rol_mod_1</th>
+												<th scope="col" style="text-align: left;">Estado</th>
+											</tr>
+										</thead>
+										<tbody>
+
+											<tr v-for="usuario in contentFile">
+
+												<th scope="row" style="text-align: left;width: 80px;">{{ usuario.numero }}</th>
+												<td style="text-align: left;">{{ usuario.nombres }}</td>
+												<td style="text-align: left;">{{ usuario.usuario }}</td>
+												<td style="text-align: left;">{{ usuario.password }}</td>
+												<td style="text-align: left;">{{ usuario.rol_mod1 }}</td>
+												<td style="text-align: left;">{{ usuario.rol_mod2 }}</td>
+												<td style="text-align: left;">
+													<span :class="'badge bg-' + ( usuario.existe === 1 ? 'primary' : 'danger' ) + ' text-light p-2'">
+														{{ usuario.existe === 1 ? 'Actualizar' : 'No existe'}}
+													</span>{{usuario.existe}}
+												</td>
+
+											</tr>
+
+										</tbody>
+
+									</table>
+
+
+								</div>
 
 							</div>
 
@@ -173,11 +247,11 @@
 
 			<div class="modal-footer">
 	        
-	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cleanForm">Cerrar</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cleanForm">Cerrar</button>
 
-	        <!-- <button v-if="mode==1" type="button" class="btn btn-primary" @click="addIeSample" :disabled ="!addBotton">Agregar</button> -->
+				<!-- <button v-if="mode==1" type="button" class="btn btn-primary" @click="addIeSample" :disabled ="!addBotton">Agregar</button> -->
 
-	        <button type="button" class="btn btn-primary" @click="processFile" :disabled = "!contentFile.length || okModal">Procesar</button>
+				<button type="button" class="btn btn-primary" @click="processFile" :disabled = "!contentFile.length || okModal">Procesar</button>
 
 	      </div>
 
@@ -221,13 +295,12 @@
 				
 				switch ( this.mode ) 
 				{
-					case "1": this.titleMode ="Asignar usuarios a la muestra por archivo CSV"; break;
-					case "2": this.titleMode ="Asignar carga IE para usuarios por archivo CSV"; break;
-					case "3": this.titleMode ="Desasignar carga IE a usuarios por archivo CSV"; break;
-					case "4": this.titleMode ="Importar nuevos usuarios por archivo CSV"; break;
-
+					case "1": this.titleMode ="Asignar usuarios a la muestra por lotes"; break;
+					case "2": this.titleMode ="Asignar carga IE para usuarios por lotes"; break;
+					case "3": this.titleMode ="Desasignar carga IE a usuarios por lotes"; break;
+					case "4": this.titleMode ="Actualizar datos de persona por lotes"; break;
+					case "5": this.titleMode ="Actualizar datos de usuario por lotes"; break;
 				}
-
 
         	}
 
@@ -275,9 +348,30 @@
 						info = (totalItem == numOkItem);
 
 					break;
+
+					case "4": 						
+						
+						numOkItem = this.contentFile.length;
+						
+						msg = `Se va ha Registrar/Actualizar ${numOkItem} usuarios de la lista. Presione el boton <b>"Procesar"</b> para continuar.`;
+
+						info = numOkItem; 
 					
-					// case "3": msg =""; break;
-					// case "4": msg =""; break;
+					break;
+
+					case "5": 
+						
+						numOkItem = this.contentFile.filter(x=> x.existe ).length;
+						
+						msg = ( totalItem == numOkItem 
+
+							? `Se actualizará la información de ${numOkItem} usuarios de la lista. Presione el boton <b>"Procesar"</b> para registrar.`
+						
+							: `Se ha encontrado <b>${totalItem - numOkItem}</b> usuarios que no pertenecen a la muestra. Se actualizará ${numOkItem} usuarios de la lista. Presione el boton <b>"Procesar"</b> para ignorar y continuar.` );
+
+						info = (totalItem == numOkItem);
+
+					break;
 
 				}
 
@@ -329,8 +423,10 @@
 
 							case "2": this.processFileIesToUser( lines ); break;
 
-							case "4": this.processFileAddUsers( lines ); break;
+							case "4": this.processFileUpdatePersonalInformation( lines ); break;
 
+							case "5": this.processFileUpdateUsersInformation( lines ); break;
+							
 						}
 
 					};
@@ -353,15 +449,21 @@
 		    	{
 
 		    		case "1": 
-							this.addUserToSample();
-
+						this.addUserToSample();
 		    		break;
 
 		    		case "2": 
-							this.addIeToUser();
-
+						this.addIeToUser();
 		    		break;
 
+		    		case "4": 
+						this.updatePersonalInformation();
+		    		break;
+					
+		    		case "5": 
+						this.updateUserInformation();
+		    		break;
+					
 		    	}
 
         	},
@@ -396,7 +498,7 @@
 
                 axiosR.get(`/api/users/0?dni=${ preContent.map( x=> x.dni).join(',') }`)
                     .then( (response) => {
-console.log(preContent,response);
+
                         preContent.forEach( x => {
 
                         	const data_person = response.data.data.filter( y => y.numero_documento == x.dni )[0];
@@ -490,7 +592,7 @@ console.log(preContent,response);
                 	});
 
             },
-			processFileAddUsers : function (lines)
+			processFileUpdatePersonalInformation : function (lines)
 			{
 
 		    	let preContent = new Array();
@@ -505,9 +607,9 @@ console.log(preContent,response);
 
 		    			preContent.push( { 
 
-											tipo_documento : cols[0].trim(),
+											tipo : cols[0].trim(),
 											numero : cols[1].trim(),
-											Nombres : cols[2].trim(),
+											nombres : cols[2].trim(),
 											apellido_1 : cols[3].trim(),
 											apellido_2 : cols[4].trim(),
 											email : cols[5].trim(),
@@ -519,42 +621,104 @@ console.log(preContent,response);
 
 		    	}
 
-                axiosR.get(`/api/users/0?dni=${ preContent.map( x=> x.dni).join(',') }`)		
+                axiosR.get(`/api/users/0?dni=${ preContent.map( x=> x.numero).join(',') }`)		
 				.then( (response) =>{
 
                         preContent.forEach( x =>{
 
-                        	const data_person = response.data.data.filter( y => y.numero_documento == x.dni )[0];
-                        	console.log(x)
-							this.contentFile.push( { 
+                        	const data_person = response.data.data.filter( y => y.numero_documento == x.numero )[0];
 
-        							'dni' : x.dni,
+
+                        	console.log(x);
+							console.log(data_person);
+
+							this.contentFile.push({ 
+
+        							'tipo' : x.tipo,
+        							'numero' : x.numero,
 									'nombres' : ( typeof data_person != 'undefined' ? data_person.nombres : x.nombres ),
-									'apellido_1' : ( typeof data_person != 'undefined' ? data_person.apellido_paterno : '' ),
-									'apellido_2' : ( typeof data_person != 'undefined' ? data_person.apellido_materno : '' ),
-									'pertenece_muestra_persona' : ( typeof data_person != 'undefined' ? ( data_person.id_muestra ? true : false ): false ) ,
-									'pertenece_muestra_ie' : ( typeof data_ie != 'undefined' ? ( data_ie.pertenece_muestra ? true : false) : false )
+									'apellido_1' : ( typeof data_person != 'undefined' ? data_person.apellido_paterno : x.apellido_1 ),
+									'apellido_2' : ( typeof data_person != 'undefined' ? data_person.apellido_materno : x.apellido_2 ),
+									'email' : ( typeof data_person != 'undefined' ? data_person.email : x.email ), 
+									'telefono' : ( typeof data_person != 'undefined' ? data_person.telefono : x.telefono ), 
+									'existe' : ( typeof data_person != 'undefined' ? ( data_person.numero === x.numero ? 1 : 0 ) : 0 )
 
-    							 } );
+    							});
+
+                        });
+
+						this.payload = this.contentFile ;
+
+						console.log(this.payload)
+
+					});
+			},
+			processFileUpdateUsersInformation : function (lines)
+			{
+
+		    	let preContent = new Array();
+
+		    	for (var i = 1; i < lines.length; i++) 
+		    	{
+
+		    		if ( lines[i] )
+		    		{
+		    			
+		    			const cols = lines[i].trim().split(',');
+
+		    			preContent.push( { 
+
+											numero : cols[0].trim(),
+											usuario : cols[1].trim(),
+											password : cols[2].trim(),
+											rol_mod1 : cols[3].trim(),
+											rol_mod2 : cols[4].trim(),
+
+    									} );
+
+		    		}
+
+		    	}
+
+                axiosR.get(`/api/users/0?dni=${ preContent.map( x=> x.numero).join(',') }`)		
+				.then( (response) =>{
+
+						preContent.forEach( x =>{
+
+                        	const data_user = response.data.data.filter( y => y.numero_documento == x.numero )[0];
+
+							this.contentFile.push({ 
+
+        							'numero' : x.numero,
+									'nombres' : ( typeof data_user != 'undefined' ? data_user.nombres : ''),
+									'usuario' : x.usuario,
+									'password' : x.password,
+									'rol_mod1' : x.rol_mod1,
+									'rol_mod2' : x.rol_mod2,
+									'existe' : ( typeof data_user != 'undefined' ? 1 : 0 )
+
+    							});
 
                         });
 
 						this.payload = this.removeDuplicates( this.contentFile
-																	.filter( x => x.pertenece_muestra_persona && x.pertenece_muestra_ie )
-																	.map( x => { return  { 'dni' : x.dni } } ) , 'dni' );
-console.log(this.contentFile)
+																	.filter( x => x.existe )
+																	.map( x => { return  { 'numero' : x.numero } } ) , 'numero' );
+
 						this.payload = this.payload.map( x => {
 
 							return {
-										'numero_documento' : x.dni,
-										'codmod' : this.contentFile.filter( y  => y.dni == x.dni ).map( z => z.codmod ),
+										'usuario' : this.contentFile.filter( y  => y.numero == x.numero )[0].usuario,
+										'password' : this.contentFile.filter( y  => y.numero == x.numero )[0].password,
+										'rol_mod1' : this.contentFile.filter( y  => y.numero == x.numero )[0].rol_mod1,
+										'rol_mod2' : this.contentFile.filter( y  => y.numero == x.numero )[0].rol_mod2,
 									}
 
 						});
 
-
 					});
 			},
+
 			removeDuplicates: function (originalArray, prop) 
 			{
 
@@ -634,7 +798,72 @@ console.log(this.contentFile)
                 });
 
             },
+			updatePersonalInformation : function ()
+			{
 
+				axiosR.post(`/api/users/${this.sample}/addUpdatePersonalInfo`, this.payload )
+                    .then( (response) => {
+
+						if ( response.data.resp )
+                    	{
+
+                    		this.msgOk = response.data.msg;
+
+                    		this.okModal = true;
+
+                    		eventBus.$emit('updateUsers' , true);
+
+                    	}
+                    	else
+                    	{
+							
+							this.msgError = response.data.msg;	
+
+                    		this.errModal = true;                    		
+
+                    	}
+
+                })
+                .catch( err => {
+
+                	console.log(err);
+
+                });
+
+			},
+			updateUserInformation : function ()
+			{
+
+				axiosR.post(`/api/users/${this.sample}/addUpdateUserInfo`, this.payload )
+                    .then( (response) => {
+debugger;
+						if ( response.data.resp )
+                    	{
+
+                    		this.msgOk = response.data.msg;
+
+                    		this.okModal = true;
+
+                    		eventBus.$emit('updateUsers' , true);
+
+                    	}
+                    	else
+                    	{
+							
+							this.msgError = response.data.msg;	
+
+                    		this.errModal = true;                    		
+
+                    	}
+
+                })
+                .catch( err => {
+
+                	console.log(err);
+
+                });
+
+			}
         }
     }
 

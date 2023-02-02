@@ -1646,7 +1646,7 @@ class PersonController extends Controller
 
                         }
 
-                    break;
+                        break;
 
                     case '5':
                     case 'CUE':
@@ -1663,6 +1663,8 @@ class PersonController extends Controller
                             $e_dni = 1;
 
                         }
+                    
+                    break;
 
                     default:
 

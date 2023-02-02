@@ -131,11 +131,12 @@
                               </div>
                             </div>
 
-                            <div class="card border-light m-0" v-if="conection" >
+                            <!-- <div class="card border-light m-0" v-if="conection" > -->
+                            <div class="card border-light m-0" >
 
                               <div class="card-header">
 
-                                Configuración de sincronizacion de BD
+                                Configuración de tabla de Institución Educativa
 
                               </div>
 
@@ -191,7 +192,159 @@
 
                             </div>
 
-                        </div>
+
+                            <div class="card border-light m-0" >
+
+                                <div class="card-header">
+
+                                Configuración de tabla de Personas
+
+                                </div>
+
+                                <div class="card-body">
+
+                                <p class="card-text">Seleccione la tabla de destino </p>
+                                    
+                                <div class="card" >
+
+                                    <div class="card-header">
+                                    
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-table mr-2"></i>  
+                                                    Tabla servicio
+                                                    <span class="spinner-border spinner-border-sm ml-2" role="status" aria-hidden="true" v-if="loadColumns"></span>
+                                                </span>
+                                            </div>
+                                            <select class="form-control" v-model:value="form.Table" @change="getColumnsServices($event)">
+                                                <option v-for="Table in Tables">{{Table}}</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+                                    <ul class="list-group list-group-flush">
+
+                                    <li v-for="columnLocalPersona, key in columnsLocalPersons" class="list-group-item mr-1 ml-1 p-2">
+
+                                        <div class="input-group input-group-sm">
+                                            
+                                            <div class="input-group-prepend" >
+                                                <span class="input-group-text" style="background: white; width: 150px;">
+                                                    <i class="fa fa-columns mr-2"></i>  <b>{{columnLocalPersona}}</b>
+                                                </span>
+                                            </div>
+
+                                            <select class="form-control" v-model:value="columnsServiceSelected[key]" @change="selectColumns">
+
+                                                <option v-for="columnService in columnsService">{{columnService }}</option>
+
+                                            </select>
+
+                                        </div>
+
+                                    </li>
+
+                                    </ul>
+
+                                </div>
+
+                                </div>
+
+                                </div>
+
+
+                            </div>
+
+
+
+
+
+
+
+
+
+                            <div class="card border-light m-0" >
+
+                                <div class="card-header">
+
+                                Configuración de tabla de Usuarios
+
+                                </div>
+
+                                <div class="card-body">
+
+                                <p class="card-text">Seleccione la tabla de destino </p>
+                                    
+                                <div class="card" >
+
+                                    <div class="card-header">
+                                    
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fa fa-table mr-2"></i>  
+                                                    Tabla servicio
+                                                    <span class="spinner-border spinner-border-sm ml-2" role="status" aria-hidden="true" v-if="loadColumns"></span>
+                                                </span>
+                                            </div>
+                                            <select class="form-control" v-model:value="form.Table" @change="getColumnsServices($event)">
+                                                <option v-for="Table in Tables">{{Table}}</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+                                    <ul class="list-group list-group-flush">
+
+                                    <li v-for="columnLocalUser, key in columnsLocalUsers" class="list-group-item mr-1 ml-1 p-2">
+
+                                        <div class="input-group input-group-sm">
+                                            
+                                            <div class="input-group-prepend" >
+                                                <span class="input-group-text" style="background: white; width: 150px;">
+                                                    <i class="fa fa-columns mr-2"></i>  <b>{{columnLocalUser}}</b>
+                                                </span>
+                                            </div>
+
+                                            <select class="form-control" v-model:value="columnsServiceSelected[key]" @change="selectColumns">
+
+                                                <option v-for="columnService in columnsService">{{columnService }}</option>
+
+                                            </select>
+
+                                        </div>
+
+                                    </li>
+
+                                    </ul>
+
+                                </div>
+
+                                </div>
+
+                                </div>
+
+
+                                <!-- </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                         <div class="modal-footer">
                             
@@ -315,6 +468,8 @@
                 },
                 Tables : [],
                 columnsLocal : [],
+                columnsLocalPersons : [],
+                columnsLocalUsers : [],
                 columnsService : [],
                 columnsServiceSelected : [],
                 errConection : "",
@@ -337,8 +492,11 @@
 
             this.getServices();
 
-            this.getColumns();
+            this.getColumnsIe();
 
+            this.getColumnsPersons();
+            this.getColumnsUsers();
+            
         },
         methods:
         {
@@ -388,7 +546,7 @@
 
             },
 
-            getColumns : function () 
+            getColumnsIe : function () 
             {
 
                 axios.get(`http://localhost:3000/api/ies/1/columns-local`)
@@ -399,7 +557,28 @@
                 });
 
             },
+            getColumnsPersons : function ()
+            {
 
+                axios.get(`http://localhost:3000/api/users/columns-local-persons`)
+                    .then( (response) => {
+
+                        this.columnsLocalPersons = response.data.data;
+
+                });   
+
+            },
+            getColumnsUsers : function ()
+            {
+
+                axios.get(`http://localhost:3000/api/users/columns-local-users`)
+                    .then( (response) => {
+
+                        this.columnsLocalUsers = response.data.data;
+
+                });   
+
+            },
             getColumnsServices : function (event)
             {
 

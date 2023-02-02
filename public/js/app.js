@@ -7286,6 +7286,159 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -7296,6 +7449,8 @@ __webpack_require__.r(__webpack_exports__);
       },
       Tables: [],
       columnsLocal: [],
+      columnsLocalPersons: [],
+      columnsLocalUsers: [],
       columnsService: [],
       columnsServiceSelected: [],
       errConection: "",
@@ -7312,7 +7467,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.getServices();
-    this.getColumns();
+    this.getColumnsIe();
+    this.getColumnsPersons();
+    this.getColumnsUsers();
   },
   methods: {
     testConection: function testConection(event) {
@@ -7337,22 +7494,36 @@ __webpack_require__.r(__webpack_exports__);
         _this2.services = response.data.data;
       });
     },
-    getColumns: function getColumns() {
+    getColumnsIe: function getColumnsIe() {
       var _this3 = this;
 
       axios.get("http://localhost:3000/api/ies/1/columns-local").then(function (response) {
         _this3.columnsLocal = response.data.data;
       });
     },
-    getColumnsServices: function getColumnsServices(event) {
+    getColumnsPersons: function getColumnsPersons() {
       var _this4 = this;
+
+      axios.get("http://localhost:3000/api/users/columns-local-persons").then(function (response) {
+        _this4.columnsLocalPersons = response.data.data;
+      });
+    },
+    getColumnsUsers: function getColumnsUsers() {
+      var _this5 = this;
+
+      axios.get("http://localhost:3000/api/users/columns-local-users").then(function (response) {
+        _this5.columnsLocalUsers = response.data.data;
+      });
+    },
+    getColumnsServices: function getColumnsServices(event) {
+      var _this6 = this;
 
       this.loadColumns = true;
       axios.post('http://localhost:3000/api/service/1/columns-mysql', this.form).then(function (response) {
         var pre_columns = new Array();
         pre_columns.push("No usar");
-        _this4.columnsService = pre_columns.concat(response.data.data);
-        _this4.loadColumns = false;
+        _this6.columnsService = pre_columns.concat(response.data.data);
+        _this6.loadColumns = false;
       });
     },
     selectColumns: function selectColumns() {
@@ -7371,7 +7542,7 @@ __webpack_require__.r(__webpack_exports__);
       this.conection = false;
     },
     createService: function createService() {
-      var _this5 = this;
+      var _this7 = this;
 
       this.createtingService = true;
       var columnsService = new Array();
@@ -7388,26 +7559,26 @@ __webpack_require__.r(__webpack_exports__);
       this.form['columns'] = columnsService;
       axios.post("http://localhost:3000/api/service/".concat(this.sample, "/create/").concat(this.form.nameProfile), this.form).then(function (response) {
         if (response.data.resp) {
-          _this5.createtingService = false;
+          _this7.createtingService = false;
 
-          _this5.services.push({
-            bd_perfil: _this5.form.nameProfile,
+          _this7.services.push({
+            bd_perfil: _this7.form.nameProfile,
             id_servicio: response.data.id_servicio,
-            nombre_servicio: _this5.form.nameService,
+            nombre_servicio: _this7.form.nameService,
             state: 0,
-            url: _this5.form.urlService,
+            url: _this7.form.urlService,
             action: ''
           });
 
           document.getElementById('close_modal_service').click();
           eventBus.$emit('updateDescribe', true);
 
-          _this5.cleanForm();
+          _this7.cleanForm();
         }
       });
     },
     syncService: function syncService(id_service) {
-      var _this6 = this;
+      var _this8 = this;
 
       var perfil = this.services.find(function (x) {
         return x.id_servicio == id_service;
@@ -7427,7 +7598,7 @@ __webpack_require__.r(__webpack_exports__);
           perfil.state = 2;
         }
       })["catch"](function (err) {
-        _this6.infoErrorsSync = err;
+        _this8.infoErrorsSync = err;
         $('#modal_errors').modal('show');
         perfil.action = "Error";
         perfil.state = 2;
@@ -7459,6 +7630,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _users_ModalManageUserComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./users/ModalManageUserComponent.vue */ "./resources/js/components/sample/users/ModalManageUserComponent.vue");
 /* harmony import */ var _users_ModalManageUserCSVComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./users/ModalManageUserCSVComponent.vue */ "./resources/js/components/sample/users/ModalManageUserCSVComponent.vue");
+//
+//
 //
 //
 //
@@ -7966,6 +8139,80 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -7989,19 +8236,23 @@ __webpack_require__.r(__webpack_exports__);
     mode: function mode() {
       switch (this.mode) {
         case "1":
-          this.titleMode = "Asignar usuarios a la muestra por archivo CSV";
+          this.titleMode = "Asignar usuarios a la muestra por lotes";
           break;
 
         case "2":
-          this.titleMode = "Asignar carga IE para usuarios por archivo CSV";
+          this.titleMode = "Asignar carga IE para usuarios por lotes";
           break;
 
         case "3":
-          this.titleMode = "Desasignar carga IE a usuarios por archivo CSV";
+          this.titleMode = "Desasignar carga IE a usuarios por lotes";
           break;
 
         case "4":
-          this.titleMode = "Importar nuevos usuarios por archivo CSV";
+          this.titleMode = "Actualizar datos de persona por lotes";
+          break;
+
+        case "5":
+          this.titleMode = "Actualizar datos de usuario por lotes";
           break;
       }
     }
@@ -8029,8 +8280,20 @@ __webpack_require__.r(__webpack_exports__);
           msg = totalItem == numOkItem ? "Se agregar\xE1 ".concat(numOkItem, " IEs a los usuarios de la lista. Presione el boton <b>\"Procesar\"</b> para registrar.") : "Se ha encontrado <b>".concat(totalItem - numOkItem, "</b> items que no pertenecen a la muestra. Solo se puede agregar ").concat(numOkItem, " IEs a los usuarios de la lista. Presione el boton <b>\"Procesar\"</b> para ignorar y continuar.");
           info = totalItem == numOkItem;
           break;
-        // case "3": msg =""; break;
-        // case "4": msg =""; break;
+
+        case "4":
+          numOkItem = this.contentFile.length;
+          msg = "Se va ha Registrar/Actualizar ".concat(numOkItem, " usuarios de la lista. Presione el boton <b>\"Procesar\"</b> para continuar.");
+          info = numOkItem;
+          break;
+
+        case "5":
+          numOkItem = this.contentFile.filter(function (x) {
+            return x.existe;
+          }).length;
+          msg = totalItem == numOkItem ? "Se actualizar\xE1 la informaci\xF3n de ".concat(numOkItem, " usuarios de la lista. Presione el boton <b>\"Procesar\"</b> para registrar.") : "Se ha encontrado <b>".concat(totalItem - numOkItem, "</b> usuarios que no pertenecen a la muestra. Se actualizar\xE1 ").concat(numOkItem, " usuarios de la lista. Presione el boton <b>\"Procesar\"</b> para ignorar y continuar.");
+          info = totalItem == numOkItem;
+          break;
       }
 
       return {
@@ -8073,7 +8336,12 @@ __webpack_require__.r(__webpack_exports__);
               break;
 
             case "4":
-              _this.processFileAddUsers(lines);
+              _this.processFileUpdatePersonalInformation(lines);
+
+              break;
+
+            case "5":
+              _this.processFileUpdateUsersInformation(lines);
 
               break;
           }
@@ -8092,6 +8360,14 @@ __webpack_require__.r(__webpack_exports__);
 
         case "2":
           this.addIeToUser();
+          break;
+
+        case "4":
+          this.updatePersonalInformation();
+          break;
+
+        case "5":
+          this.updateUserInformation();
           break;
       }
     },
@@ -8119,7 +8395,6 @@ __webpack_require__.r(__webpack_exports__);
       axiosR.get("/api/users/0?dni=".concat(preContent.map(function (x) {
         return x.dni;
       }).join(','))).then(function (response) {
-        console.log(preContent, response);
         preContent.forEach(function (x) {
           var data_person = response.data.data.filter(function (y) {
             return y.numero_documento == x.dni;
@@ -8204,7 +8479,7 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
     },
-    processFileAddUsers: function processFileAddUsers(lines) {
+    processFileUpdatePersonalInformation: function processFileUpdatePersonalInformation(lines) {
       var _this4 = this;
 
       var preContent = new Array();
@@ -8213,9 +8488,9 @@ __webpack_require__.r(__webpack_exports__);
         if (lines[i]) {
           var cols = lines[i].trim().split(',');
           preContent.push({
-            tipo_documento: cols[0].trim(),
+            tipo: cols[0].trim(),
             numero: cols[1].trim(),
-            Nombres: cols[2].trim(),
+            nombres: cols[2].trim(),
             apellido_1: cols[3].trim(),
             apellido_2: cols[4].trim(),
             email: cols[5].trim(),
@@ -8225,39 +8500,87 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       axiosR.get("/api/users/0?dni=".concat(preContent.map(function (x) {
-        return x.dni;
+        return x.numero;
       }).join(','))).then(function (response) {
         preContent.forEach(function (x) {
           var data_person = response.data.data.filter(function (y) {
-            return y.numero_documento == x.dni;
+            return y.numero_documento == x.numero;
           })[0];
           console.log(x);
+          console.log(data_person);
 
           _this4.contentFile.push({
-            'dni': x.dni,
+            'tipo': x.tipo,
+            'numero': x.numero,
             'nombres': typeof data_person != 'undefined' ? data_person.nombres : x.nombres,
-            'apellido_1': typeof data_person != 'undefined' ? data_person.apellido_paterno : '',
-            'apellido_2': typeof data_person != 'undefined' ? data_person.apellido_materno : '',
-            'pertenece_muestra_persona': typeof data_person != 'undefined' ? data_person.id_muestra ? true : false : false,
-            'pertenece_muestra_ie': typeof data_ie != 'undefined' ? data_ie.pertenece_muestra ? true : false : false
+            'apellido_1': typeof data_person != 'undefined' ? data_person.apellido_paterno : x.apellido_1,
+            'apellido_2': typeof data_person != 'undefined' ? data_person.apellido_materno : x.apellido_2,
+            'email': typeof data_person != 'undefined' ? data_person.email : x.email,
+            'telefono': typeof data_person != 'undefined' ? data_person.telefono : x.telefono,
+            'existe': typeof data_person != 'undefined' ? data_person.numero === x.numero ? 1 : 0 : 0
           });
         });
-        _this4.payload = _this4.removeDuplicates(_this4.contentFile.filter(function (x) {
-          return x.pertenece_muestra_persona && x.pertenece_muestra_ie;
+        _this4.payload = _this4.contentFile;
+        console.log(_this4.payload);
+      });
+    },
+    processFileUpdateUsersInformation: function processFileUpdateUsersInformation(lines) {
+      var _this5 = this;
+
+      var preContent = new Array();
+
+      for (var i = 1; i < lines.length; i++) {
+        if (lines[i]) {
+          var cols = lines[i].trim().split(',');
+          preContent.push({
+            numero: cols[0].trim(),
+            usuario: cols[1].trim(),
+            password: cols[2].trim(),
+            rol_mod1: cols[3].trim(),
+            rol_mod2: cols[4].trim()
+          });
+        }
+      }
+
+      axiosR.get("/api/users/0?dni=".concat(preContent.map(function (x) {
+        return x.numero;
+      }).join(','))).then(function (response) {
+        preContent.forEach(function (x) {
+          var data_user = response.data.data.filter(function (y) {
+            return y.numero_documento == x.numero;
+          })[0];
+
+          _this5.contentFile.push({
+            'numero': x.numero,
+            'nombres': typeof data_user != 'undefined' ? data_user.nombres : '',
+            'usuario': x.usuario,
+            'password': x.password,
+            'rol_mod1': x.rol_mod1,
+            'rol_mod2': x.rol_mod2,
+            'existe': typeof data_user != 'undefined' ? 1 : 0
+          });
+        });
+        _this5.payload = _this5.removeDuplicates(_this5.contentFile.filter(function (x) {
+          return x.existe;
         }).map(function (x) {
           return {
-            'dni': x.dni
+            'numero': x.numero
           };
-        }), 'dni');
-        console.log(_this4.contentFile);
-        _this4.payload = _this4.payload.map(function (x) {
+        }), 'numero');
+        _this5.payload = _this5.payload.map(function (x) {
           return {
-            'numero_documento': x.dni,
-            'codmod': _this4.contentFile.filter(function (y) {
-              return y.dni == x.dni;
-            }).map(function (z) {
-              return z.codmod;
-            })
+            'usuario': _this5.contentFile.filter(function (y) {
+              return y.numero == x.numero;
+            })[0].usuario,
+            'password': _this5.contentFile.filter(function (y) {
+              return y.numero == x.numero;
+            })[0].password,
+            'rol_mod1': _this5.contentFile.filter(function (y) {
+              return y.numero == x.numero;
+            })[0].rol_mod1,
+            'rol_mod2': _this5.contentFile.filter(function (y) {
+              return y.numero == x.numero;
+            })[0].rol_mod2
           };
         });
       });
@@ -8277,23 +8600,9 @@ __webpack_require__.r(__webpack_exports__);
       return newArray;
     },
     addUserToSample: function addUserToSample() {
-      var _this5 = this;
-
-      axiosR.post("/api/users/".concat(this.sample, "/setUserToSample"), this.payload).then(function (response) {
-        if (response.data.resp) {
-          _this5.msgOk = response.data.msg;
-          _this5.okModal = true;
-          eventBus.$emit('updateUsers', true);
-        } else {
-          _this5.msgError = response.data.msg;
-          _this5.errModal = true;
-        }
-      });
-    },
-    addIeToUser: function addIeToUser() {
       var _this6 = this;
 
-      axiosR.post("/api/users/".concat(this.sample, "/setIeToUser"), this.payload).then(function (response) {
+      axiosR.post("/api/users/".concat(this.sample, "/setUserToSample"), this.payload).then(function (response) {
         if (response.data.resp) {
           _this6.msgOk = response.data.msg;
           _this6.okModal = true;
@@ -8301,6 +8610,54 @@ __webpack_require__.r(__webpack_exports__);
         } else {
           _this6.msgError = response.data.msg;
           _this6.errModal = true;
+        }
+      });
+    },
+    addIeToUser: function addIeToUser() {
+      var _this7 = this;
+
+      axiosR.post("/api/users/".concat(this.sample, "/setIeToUser"), this.payload).then(function (response) {
+        if (response.data.resp) {
+          _this7.msgOk = response.data.msg;
+          _this7.okModal = true;
+          eventBus.$emit('updateUsers', true);
+        } else {
+          _this7.msgError = response.data.msg;
+          _this7.errModal = true;
+        }
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    updatePersonalInformation: function updatePersonalInformation() {
+      var _this8 = this;
+
+      axiosR.post("/api/users/".concat(this.sample, "/addUpdatePersonalInfo"), this.payload).then(function (response) {
+        if (response.data.resp) {
+          _this8.msgOk = response.data.msg;
+          _this8.okModal = true;
+          eventBus.$emit('updateUsers', true);
+        } else {
+          _this8.msgError = response.data.msg;
+          _this8.errModal = true;
+        }
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    updateUserInformation: function updateUserInformation() {
+      var _this9 = this;
+
+      axiosR.post("/api/users/".concat(this.sample, "/addUpdateUserInfo"), this.payload).then(function (response) {
+        debugger;
+
+        if (response.data.resp) {
+          _this9.msgOk = response.data.msg;
+          _this9.okModal = true;
+          eventBus.$emit('updateUsers', true);
+        } else {
+          _this9.msgError = response.data.msg;
+          _this9.errModal = true;
         }
       })["catch"](function (err) {
         console.log(err);
@@ -81614,21 +81971,537 @@ var render = function() {
                         )
                       : _vm._e(),
                     _vm._v(" "),
-                    _vm.conection
-                      ? _c("div", { staticClass: "card border-light m-0" }, [
+                    _c("div", { staticClass: "card border-light m-0" }, [
+                      _c("div", { staticClass: "card-header" }, [
+                        _vm._v(
+                          "\n\n                            Configuración de tabla de Institución Educativa\n\n                          "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "card-body" }, [
+                        _c("p", { staticClass: "card-text" }, [
+                          _vm._v("Seleccione la tabla de destino ")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "card" }, [
                           _c("div", { staticClass: "card-header" }, [
-                            _vm._v(
-                              "\n\n                            Configuración de sincronizacion de BD\n\n                          "
+                            _c(
+                              "div",
+                              { staticClass: "input-group input-group-sm" },
+                              [
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group-prepend" },
+                                  [
+                                    _c(
+                                      "span",
+                                      { staticClass: "input-group-text" },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fa fa-table mr-2"
+                                        }),
+                                        _vm._v(
+                                          "  \n                                            Tabla servicio\n                                            "
+                                        ),
+                                        _vm.loadColumns
+                                          ? _c("span", {
+                                              staticClass:
+                                                "spinner-border spinner-border-sm ml-2",
+                                              attrs: {
+                                                role: "status",
+                                                "aria-hidden": "true"
+                                              }
+                                            })
+                                          : _vm._e()
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "select",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model:value",
+                                        value: _vm.form.Table,
+                                        expression: "form.Table",
+                                        arg: "value"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    on: {
+                                      change: [
+                                        function($event) {
+                                          var $$selectedVal = Array.prototype.filter
+                                            .call(
+                                              $event.target.options,
+                                              function(o) {
+                                                return o.selected
+                                              }
+                                            )
+                                            .map(function(o) {
+                                              var val =
+                                                "_value" in o
+                                                  ? o._value
+                                                  : o.value
+                                              return val
+                                            })
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Table",
+                                            $event.target.multiple
+                                              ? $$selectedVal
+                                              : $$selectedVal[0]
+                                          )
+                                        },
+                                        function($event) {
+                                          return _vm.getColumnsServices($event)
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  _vm._l(_vm.Tables, function(Table) {
+                                    return _c("option", [_vm._v(_vm._s(Table))])
+                                  }),
+                                  0
+                                )
+                              ]
                             )
                           ]),
                           _vm._v(" "),
-                          _c("div", { staticClass: "card-body" }, [
-                            _c("p", { staticClass: "card-text" }, [
-                              _vm._v("Seleccione la tabla de destino ")
-                            ]),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "card" }, [
-                              _c("div", { staticClass: "card-header" }, [
+                          _c(
+                            "ul",
+                            { staticClass: "list-group list-group-flush" },
+                            _vm._l(_vm.columnsLocal, function(
+                              columnLocal,
+                              key
+                            ) {
+                              return _c(
+                                "li",
+                                {
+                                  staticClass: "list-group-item mr-1 ml-1 p-2"
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        { staticClass: "input-group-prepend" },
+                                        [
+                                          _c(
+                                            "span",
+                                            {
+                                              staticClass: "input-group-text",
+                                              staticStyle: {
+                                                background: "white",
+                                                width: "150px"
+                                              }
+                                            },
+                                            [
+                                              _c("i", {
+                                                staticClass:
+                                                  "fa fa-columns mr-2"
+                                              }),
+                                              _vm._v(" "),
+                                              _c("b", [
+                                                _vm._v(_vm._s(columnLocal))
+                                              ])
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "select",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model:value",
+                                              value:
+                                                _vm.columnsServiceSelected[key],
+                                              expression:
+                                                "columnsServiceSelected[key]",
+                                              arg: "value"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          on: {
+                                            change: [
+                                              function($event) {
+                                                var $$selectedVal = Array.prototype.filter
+                                                  .call(
+                                                    $event.target.options,
+                                                    function(o) {
+                                                      return o.selected
+                                                    }
+                                                  )
+                                                  .map(function(o) {
+                                                    var val =
+                                                      "_value" in o
+                                                        ? o._value
+                                                        : o.value
+                                                    return val
+                                                  })
+                                                _vm.$set(
+                                                  _vm.columnsServiceSelected,
+                                                  key,
+                                                  $event.target.multiple
+                                                    ? $$selectedVal
+                                                    : $$selectedVal[0]
+                                                )
+                                              },
+                                              _vm.selectColumns
+                                            ]
+                                          }
+                                        },
+                                        _vm._l(_vm.columnsService, function(
+                                          columnService
+                                        ) {
+                                          return _c("option", [
+                                            _vm._v(_vm._s(columnService))
+                                          ])
+                                        }),
+                                        0
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            }),
+                            0
+                          )
+                        ])
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "card border-light m-0" }, [
+                      _c("div", { staticClass: "card-header" }, [
+                        _vm._v(
+                          "\n\n                            Configuración de tabla de Personas\n\n                            "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "card-body" }, [
+                        _c("p", { staticClass: "card-text" }, [
+                          _vm._v("Seleccione la tabla de destino ")
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "card" }, [
+                          _c("div", { staticClass: "card-header" }, [
+                            _c(
+                              "div",
+                              { staticClass: "input-group input-group-sm" },
+                              [
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group-prepend" },
+                                  [
+                                    _c(
+                                      "span",
+                                      { staticClass: "input-group-text" },
+                                      [
+                                        _c("i", {
+                                          staticClass: "fa fa-table mr-2"
+                                        }),
+                                        _vm._v(
+                                          "  \n                                                Tabla servicio\n                                                "
+                                        ),
+                                        _vm.loadColumns
+                                          ? _c("span", {
+                                              staticClass:
+                                                "spinner-border spinner-border-sm ml-2",
+                                              attrs: {
+                                                role: "status",
+                                                "aria-hidden": "true"
+                                              }
+                                            })
+                                          : _vm._e()
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "select",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model:value",
+                                        value: _vm.form.Table,
+                                        expression: "form.Table",
+                                        arg: "value"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    on: {
+                                      change: [
+                                        function($event) {
+                                          var $$selectedVal = Array.prototype.filter
+                                            .call(
+                                              $event.target.options,
+                                              function(o) {
+                                                return o.selected
+                                              }
+                                            )
+                                            .map(function(o) {
+                                              var val =
+                                                "_value" in o
+                                                  ? o._value
+                                                  : o.value
+                                              return val
+                                            })
+                                          _vm.$set(
+                                            _vm.form,
+                                            "Table",
+                                            $event.target.multiple
+                                              ? $$selectedVal
+                                              : $$selectedVal[0]
+                                          )
+                                        },
+                                        function($event) {
+                                          return _vm.getColumnsServices($event)
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  _vm._l(_vm.Tables, function(Table) {
+                                    return _c("option", [_vm._v(_vm._s(Table))])
+                                  }),
+                                  0
+                                )
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "ul",
+                            { staticClass: "list-group list-group-flush" },
+                            _vm._l(_vm.columnsLocalPersons, function(
+                              columnLocalPersona,
+                              key
+                            ) {
+                              return _c(
+                                "li",
+                                {
+                                  staticClass: "list-group-item mr-1 ml-1 p-2"
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        { staticClass: "input-group-prepend" },
+                                        [
+                                          _c(
+                                            "span",
+                                            {
+                                              staticClass: "input-group-text",
+                                              staticStyle: {
+                                                background: "white",
+                                                width: "150px"
+                                              }
+                                            },
+                                            [
+                                              _c("i", {
+                                                staticClass:
+                                                  "fa fa-columns mr-2"
+                                              }),
+                                              _vm._v(" "),
+                                              _c("b", [
+                                                _vm._v(
+                                                  _vm._s(columnLocalPersona)
+                                                )
+                                              ])
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "select",
+                                        {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model:value",
+                                              value:
+                                                _vm.columnsServiceSelected[key],
+                                              expression:
+                                                "columnsServiceSelected[key]",
+                                              arg: "value"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          on: {
+                                            change: [
+                                              function($event) {
+                                                var $$selectedVal = Array.prototype.filter
+                                                  .call(
+                                                    $event.target.options,
+                                                    function(o) {
+                                                      return o.selected
+                                                    }
+                                                  )
+                                                  .map(function(o) {
+                                                    var val =
+                                                      "_value" in o
+                                                        ? o._value
+                                                        : o.value
+                                                    return val
+                                                  })
+                                                _vm.$set(
+                                                  _vm.columnsServiceSelected,
+                                                  key,
+                                                  $event.target.multiple
+                                                    ? $$selectedVal
+                                                    : $$selectedVal[0]
+                                                )
+                                              },
+                                              _vm.selectColumns
+                                            ]
+                                          }
+                                        },
+                                        _vm._l(_vm.columnsService, function(
+                                          columnService
+                                        ) {
+                                          return _c("option", [
+                                            _vm._v(_vm._s(columnService))
+                                          ])
+                                        }),
+                                        0
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            }),
+                            0
+                          )
+                        ])
+                      ])
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "card border-light m-0" }, [
+                    _c("div", { staticClass: "card-header" }, [
+                      _vm._v(
+                        "\n\n                            Configuración de tabla de Usuarios\n\n                            "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "card-body" }, [
+                      _c("p", { staticClass: "card-text" }, [
+                        _vm._v("Seleccione la tabla de destino ")
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "card" }, [
+                        _c("div", { staticClass: "card-header" }, [
+                          _c(
+                            "div",
+                            { staticClass: "input-group input-group-sm" },
+                            [
+                              _c(
+                                "div",
+                                { staticClass: "input-group-prepend" },
+                                [
+                                  _c(
+                                    "span",
+                                    { staticClass: "input-group-text" },
+                                    [
+                                      _c("i", {
+                                        staticClass: "fa fa-table mr-2"
+                                      }),
+                                      _vm._v(
+                                        "  \n                                                Tabla servicio\n                                                "
+                                      ),
+                                      _vm.loadColumns
+                                        ? _c("span", {
+                                            staticClass:
+                                              "spinner-border spinner-border-sm ml-2",
+                                            attrs: {
+                                              role: "status",
+                                              "aria-hidden": "true"
+                                            }
+                                          })
+                                        : _vm._e()
+                                    ]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "select",
+                                {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model:value",
+                                      value: _vm.form.Table,
+                                      expression: "form.Table",
+                                      arg: "value"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  on: {
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.$set(
+                                          _vm.form,
+                                          "Table",
+                                          $event.target.multiple
+                                            ? $$selectedVal
+                                            : $$selectedVal[0]
+                                        )
+                                      },
+                                      function($event) {
+                                        return _vm.getColumnsServices($event)
+                                      }
+                                    ]
+                                  }
+                                },
+                                _vm._l(_vm.Tables, function(Table) {
+                                  return _c("option", [_vm._v(_vm._s(Table))])
+                                }),
+                                0
+                              )
+                            ]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "ul",
+                          { staticClass: "list-group list-group-flush" },
+                          _vm._l(_vm.columnsLocalUsers, function(
+                            columnLocalUser,
+                            key
+                          ) {
+                            return _c(
+                              "li",
+                              { staticClass: "list-group-item mr-1 ml-1 p-2" },
+                              [
                                 _c(
                                   "div",
                                   { staticClass: "input-group input-group-sm" },
@@ -81639,24 +82512,21 @@ var render = function() {
                                       [
                                         _c(
                                           "span",
-                                          { staticClass: "input-group-text" },
+                                          {
+                                            staticClass: "input-group-text",
+                                            staticStyle: {
+                                              background: "white",
+                                              width: "150px"
+                                            }
+                                          },
                                           [
                                             _c("i", {
-                                              staticClass: "fa fa-table mr-2"
+                                              staticClass: "fa fa-columns mr-2"
                                             }),
-                                            _vm._v(
-                                              "  \n                                            Tabla servicio\n                                            "
-                                            ),
-                                            _vm.loadColumns
-                                              ? _c("span", {
-                                                  staticClass:
-                                                    "spinner-border spinner-border-sm ml-2",
-                                                  attrs: {
-                                                    role: "status",
-                                                    "aria-hidden": "true"
-                                                  }
-                                                })
-                                              : _vm._e()
+                                            _vm._v(" "),
+                                            _c("b", [
+                                              _vm._v(_vm._s(columnLocalUser))
+                                            ])
                                           ]
                                         )
                                       ]
@@ -81669,8 +82539,10 @@ var render = function() {
                                           {
                                             name: "model",
                                             rawName: "v-model:value",
-                                            value: _vm.form.Table,
-                                            expression: "form.Table",
+                                            value:
+                                              _vm.columnsServiceSelected[key],
+                                            expression:
+                                              "columnsServiceSelected[key]",
                                             arg: "value"
                                           }
                                         ],
@@ -81693,149 +82565,35 @@ var render = function() {
                                                   return val
                                                 })
                                               _vm.$set(
-                                                _vm.form,
-                                                "Table",
+                                                _vm.columnsServiceSelected,
+                                                key,
                                                 $event.target.multiple
                                                   ? $$selectedVal
                                                   : $$selectedVal[0]
                                               )
                                             },
-                                            function($event) {
-                                              return _vm.getColumnsServices(
-                                                $event
-                                              )
-                                            }
+                                            _vm.selectColumns
                                           ]
                                         }
                                       },
-                                      _vm._l(_vm.Tables, function(Table) {
+                                      _vm._l(_vm.columnsService, function(
+                                        columnService
+                                      ) {
                                         return _c("option", [
-                                          _vm._v(_vm._s(Table))
+                                          _vm._v(_vm._s(columnService))
                                         ])
                                       }),
                                       0
                                     )
                                   ]
                                 )
-                              ]),
-                              _vm._v(" "),
-                              _c(
-                                "ul",
-                                { staticClass: "list-group list-group-flush" },
-                                _vm._l(_vm.columnsLocal, function(
-                                  columnLocal,
-                                  key
-                                ) {
-                                  return _c(
-                                    "li",
-                                    {
-                                      staticClass:
-                                        "list-group-item mr-1 ml-1 p-2"
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "input-group input-group-sm"
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass: "input-group-prepend"
-                                            },
-                                            [
-                                              _c(
-                                                "span",
-                                                {
-                                                  staticClass:
-                                                    "input-group-text",
-                                                  staticStyle: {
-                                                    background: "white",
-                                                    width: "150px"
-                                                  }
-                                                },
-                                                [
-                                                  _c("i", {
-                                                    staticClass:
-                                                      "fa fa-columns mr-2"
-                                                  }),
-                                                  _vm._v(" "),
-                                                  _c("b", [
-                                                    _vm._v(_vm._s(columnLocal))
-                                                  ])
-                                                ]
-                                              )
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "select",
-                                            {
-                                              directives: [
-                                                {
-                                                  name: "model",
-                                                  rawName: "v-model:value",
-                                                  value:
-                                                    _vm.columnsServiceSelected[
-                                                      key
-                                                    ],
-                                                  expression:
-                                                    "columnsServiceSelected[key]",
-                                                  arg: "value"
-                                                }
-                                              ],
-                                              staticClass: "form-control",
-                                              on: {
-                                                change: [
-                                                  function($event) {
-                                                    var $$selectedVal = Array.prototype.filter
-                                                      .call(
-                                                        $event.target.options,
-                                                        function(o) {
-                                                          return o.selected
-                                                        }
-                                                      )
-                                                      .map(function(o) {
-                                                        var val =
-                                                          "_value" in o
-                                                            ? o._value
-                                                            : o.value
-                                                        return val
-                                                      })
-                                                    _vm.$set(
-                                                      _vm.columnsServiceSelected,
-                                                      key,
-                                                      $event.target.multiple
-                                                        ? $$selectedVal
-                                                        : $$selectedVal[0]
-                                                    )
-                                                  },
-                                                  _vm.selectColumns
-                                                ]
-                                              }
-                                            },
-                                            _vm._l(_vm.columnsService, function(
-                                              columnService
-                                            ) {
-                                              return _c("option", [
-                                                _vm._v(_vm._s(columnService))
-                                              ])
-                                            }),
-                                            0
-                                          )
-                                        ]
-                                      )
-                                    ]
-                                  )
-                                }),
-                                0
-                              )
-                            ])
-                          ])
-                        ])
-                      : _vm._e()
+                              ]
+                            )
+                          }),
+                          0
+                        )
+                      ])
+                    ])
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-footer" }, [
@@ -82339,7 +83097,23 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Actualizar/Importar nuevos usuarios")]
+                  [_vm._v("Actualizar datos de personas")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("li", [
+                _c(
+                  "a",
+                  {
+                    staticClass: "dropdown-item",
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        return _vm.confOperationCSV("5")
+                      }
+                    }
+                  },
+                  [_vm._v("Actualizar datos de usuarios")]
                 )
               ]),
               _vm._v(" "),
@@ -82842,7 +83616,7 @@ var staticRenderFns = [
       { staticClass: "btn btn-secondary btn-sm", attrs: { type: "button" } },
       [
         _c("i", { staticClass: "fa fa-file-text mr-2" }),
-        _vm._v("\n\n                    Operación masiva "),
+        _vm._v("\n\n                    Operación por lotes "),
         _c("b", [_vm._v(".csv")])
       ]
     )
@@ -83546,6 +84320,234 @@ var render = function() {
                                 )
                               ]
                             )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm.mode == "4"
+                          ? _c(
+                              "table",
+                              { staticClass: "table table-hover small" },
+                              [
+                                _vm._m(2),
+                                _vm._v(" "),
+                                _c(
+                                  "tbody",
+                                  _vm._l(_vm.contentFile, function(usuario) {
+                                    return _c("tr", [
+                                      _c(
+                                        "th",
+                                        {
+                                          staticStyle: {
+                                            "text-align": "left",
+                                            width: "80px"
+                                          },
+                                          attrs: { scope: "row" }
+                                        },
+                                        [
+                                          _vm._v(
+                                            _vm._s(
+                                              usuario.tipo ? "DNI" : "Otro"
+                                            )
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "th",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.numero))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.nombres))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.apellido_1))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.apellido_2))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.email))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.telefono))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.rol))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [
+                                          _c(
+                                            "span",
+                                            {
+                                              class:
+                                                "badge bg-" +
+                                                (usuario.existe === 1
+                                                  ? "primary"
+                                                  : "danger") +
+                                                " text-light p-2"
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t" +
+                                                  _vm._s(
+                                                    usuario.existe === 1
+                                                      ? "Actualizar"
+                                                      : "Nuevo"
+                                                  ) +
+                                                  "\n\t\t\t\t\t\t\t\t\t\t\t\t\t"
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ])
+                                  }),
+                                  0
+                                )
+                              ]
+                            )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm.mode == "5"
+                          ? _c(
+                              "table",
+                              { staticClass: "table table-hover small" },
+                              [
+                                _vm._m(3),
+                                _vm._v(" "),
+                                _c(
+                                  "tbody",
+                                  _vm._l(_vm.contentFile, function(usuario) {
+                                    return _c("tr", [
+                                      _c(
+                                        "th",
+                                        {
+                                          staticStyle: {
+                                            "text-align": "left",
+                                            width: "80px"
+                                          },
+                                          attrs: { scope: "row" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.numero))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.nombres))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.usuario))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.password))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.rol_mod1))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [_vm._v(_vm._s(usuario.rol_mod2))]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "td",
+                                        {
+                                          staticStyle: { "text-align": "left" }
+                                        },
+                                        [
+                                          _c(
+                                            "span",
+                                            {
+                                              class:
+                                                "badge bg-" +
+                                                (usuario.existe === 1
+                                                  ? "primary"
+                                                  : "danger") +
+                                                " text-light p-2"
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t" +
+                                                  _vm._s(
+                                                    usuario.existe === 1
+                                                      ? "Actualizar"
+                                                      : "No existe"
+                                                  ) +
+                                                  "\n\t\t\t\t\t\t\t\t\t\t\t\t\t"
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(
+                                            _vm._s(usuario.existe) +
+                                              "\n\t\t\t\t\t\t\t\t\t\t\t\t"
+                                          )
+                                        ]
+                                      )
+                                    ])
+                                  }),
+                                  0
+                                )
+                              ]
+                            )
                           : _vm._e()
                       ]
                     )
@@ -83690,6 +84692,127 @@ var staticRenderFns = [
           "th",
           { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
           [_vm._v("Nivel")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Estado")]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c(
+          "th",
+          {
+            staticStyle: { "text-align": "left", width: "80px" },
+            attrs: { scope: "col" }
+          },
+          [_vm._v("Tipo")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          {
+            staticStyle: { "text-align": "left", width: "80px" },
+            attrs: { scope: "col" }
+          },
+          [_vm._v("Número")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Nombres")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Apellido_1")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Apellido_2")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Email")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Teléfono")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Rol")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Estado")]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c(
+          "th",
+          {
+            staticStyle: { "text-align": "left", width: "80px" },
+            attrs: { scope: "col" }
+          },
+          [_vm._v("Número")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Nombres")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Usuario")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("Password")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("rol_mod_1")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
+          [_vm._v("rol_mod_1")]
         ),
         _vm._v(" "),
         _c(
