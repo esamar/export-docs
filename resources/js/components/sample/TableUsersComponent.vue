@@ -132,21 +132,22 @@
                   <tbody>
                     <tr v-for="user in users">
 
-                        <td>                   
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" :value="user.usuario" v-model = "listUsers">
-                            </div>
-                        </td>
+                      <td scope="row">                   
+                          <!-- <div class="form-check"> -->
+                            <input type="checkbox" :value="user.usuario" v-model = "listUsers">
+                          <!-- </div> -->
+                      </td>
 
                       <th scope="row" style="text-align: left;width: 130px;">
                         
                         <a >
-                          <svg class="bi mr-2" width="16" height="16"><use xlink:href="#people-circle"/></svg> {{user.usuario}}
+                          <!-- <svg class="bi mr-2" width="16" height="16"><use xlink:href="#people-circle"/></svg> {{user.usuario}} -->
+                          {{user.usuario}}
                         </a>
 
                       </th>
                       <td style="text-align: left;">{{user.numero_documento}}</td>
-                      <td style="text-align: left;">{{user.nombres + ', ' + user.apellido_paterno + ' ' + user.apellido_materno }}</td>
+                      <td style="text-align: left;">{{user.nombres + ', ' + user.apellido_1 + ' ' + user.apellido_2 }}</td>
                       
                       <td style="text-align: left;">{{user.email}}</td>
                       <td style="text-align: left;">{{user.telefono}}</td>

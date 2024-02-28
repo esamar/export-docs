@@ -202,11 +202,11 @@
 										<thead>
 											<tr>
 												<th scope="col" style="text-align: left;width: 80px;">Número</th>
-												<th scope="col" style="text-align: left;">Nombres</th>
-												<th scope="col" style="text-align: left;">Usuario</th>
+												<th scope="col" style="text-align: left;">Nombres Persona</th>
+												<th scope="col" style="text-align: left;">Nombre Usuario</th>
 												<th scope="col" style="text-align: left;">Password</th>
-												<th scope="col" style="text-align: left;">rol_mod_1</th>
-												<th scope="col" style="text-align: left;">rol_mod_1</th>
+												<th scope="col" style="text-align: left;">Rol módulo 1</th>
+												<th scope="col" style="text-align: left;">Rol módulo 2</th>
 												<th scope="col" style="text-align: left;">Estado</th>
 											</tr>
 										</thead>
@@ -223,7 +223,7 @@
 												<td style="text-align: left;">
 													<span :class="'badge bg-' + ( usuario.existe === 1 ? 'primary' : 'danger' ) + ' text-light p-2'">
 														{{ usuario.existe === 1 ? 'Actualizar' : 'No existe'}}
-													</span>{{usuario.existe}}
+													</span>
 												</td>
 
 											</tr>
@@ -442,7 +442,7 @@
 				}
 
         	},
-        	processFile : function (  )
+        	processFile : function ()
         	{
 
 				switch (this.mode)
@@ -592,7 +592,7 @@
                 	});
 
             },
-			processFileUpdatePersonalInformation : function (lines)
+			processFileUpdatePersonalInformation : function ( lines )
 			{
 
 		    	let preContent = new Array();
@@ -653,7 +653,7 @@
 
 					});
 			},
-			processFileUpdateUsersInformation : function (lines)
+			processFileUpdateUsersInformation : function ( lines )
 			{
 
 		    	let preContent = new Array();
@@ -689,6 +689,7 @@
 
 							this.contentFile.push({ 
 
+        							'id_persona' : ( typeof data_user != 'undefined' ? data_user.id_persona : ''),
         							'numero' : x.numero,
 									'nombres' : ( typeof data_user != 'undefined' ? data_user.nombres : ''),
 									'usuario' : x.usuario,
@@ -708,6 +709,7 @@
 						this.payload = this.payload.map( x => {
 
 							return {
+										'id' : this.contentFile.filter( y  => y.numero == x.numero )[0].id_persona,
 										'usuario' : this.contentFile.filter( y  => y.numero == x.numero )[0].usuario,
 										'password' : this.contentFile.filter( y  => y.numero == x.numero )[0].password,
 										'rol_mod1' : this.contentFile.filter( y  => y.numero == x.numero )[0].rol_mod1,

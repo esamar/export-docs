@@ -144,7 +144,7 @@
 											class="form-control font-weight-bold" 
 											aria-label="Nombre de muestra" 
 											aria-describedby="button-addon2"  
-											v-model="user.apellido_paterno" 
+											v-model="user.apellido_1" 
 											:disabled="mode==1">
 
 				                </div>
@@ -165,7 +165,7 @@
 											class="form-control font-weight-bold" 
 											aria-label="Nombre de muestra" 
 											aria-describedby="button-addon2"  
-											v-model="user.apellido_materno" 
+											v-model="user.apellido_2" 
 											:disabled="mode==1">
 
 
@@ -512,7 +512,7 @@
                 	tab2 : false
                 },
 
-                textCodmod : "02018890,02071260,02071670,02084620,02092700,02093870,02110600,02144290,02145510,02145690,02194020,02240630,02246340,02303420,02314230,02349480,02361580,02366200,02367600,02386750,02402000,02422890,02431880,02478330,02523610,02558020,02567350,02590100,02591190,02591840,02623780,02624770,02625680,02629560,02689610,02729300,02736070,02737480,02738620,02757270,02765920,02774830,02782590,02783330",
+                textCodmod : "",
             };
 
         },
@@ -580,7 +580,7 @@
 
             },
 
-            getUser : function ( ) 
+            getUser : function () 
             {
 
                	this.errModal = false;
@@ -662,7 +662,7 @@
 							{
 
 								case 'ER_DUP_ENTRY': 
-									this.msgError = 'El DNI ingresado ya ha sido registrado como usuario de la aplicación';
+									this.msgError = 'El DNI ingresado ya ha sido registrado como usuario del servicio';
 								break;
 								
 								default:
@@ -680,23 +680,30 @@
             UpdateUserSample : function ()
             {
 
-                axiosR.put(`/api/users/0/${this.dni}`, this.user )
+				axiosR.put(`/api/users/0/${this.dni}`, this.user )
 				.then( response => {
 
 					eventBus.$emit('updateUsers' , true);
 
-					if ( resp_person && resp_user )
+					if ( response.data.resp )
 					{
 
 						this.okModal = true;
 						
-						this.msgOk = `<li>Se ha actualizado la información correctamente</li>`;
+						this.msgOk = `<li>Se ha actualizado la información personal correctamente</li>`;
 
 						return 1 ;
 
 					}
+					else{
+
+						this.msgError = `<li>Error al actualizar información personal</li>`;
+
+						return 0;
+
+					}
 					
-					return response.data;
+					// return response.data;
 
 				})
 				.then( response_person => {
@@ -706,9 +713,7 @@
 
 						eventBus.$emit('updateUsers' , true);
 	
-						console.log(response_user.data);
-
-						const resp_person = response_person.resp;
+						const resp_person = response_person;
 
 						const resp_user = response_user.data.resp;
 
@@ -717,28 +722,35 @@
 
 							this.okModal = true;
 							
-							this.msgOk = `<li>Se ha actualizado la información correctamente</li>`;
+							this.msgOk += `<li>Se ha actualizado la información de usuario correctamente</li>`;
 
 							return 1 ;
 
+						}
+						else
+						{
+							return 0;
 						}
 
 					});
 
 				})
-				.then(resp_user =>{
-					
+				.then(resp_person_user =>{
+
 					axiosR.post(`/api/users/${this.sample}/setIeToUser`, [this.userPayload] )
 					.then( (response_ie) => {
 
-						console.log(response_ie);
-
-						this.okModal = true;
+						if ( response_ie.data.resp )
+						{
 							
-						this.msgOk += `<li>Se ha actualizado la carga IE asignada</li>`;
-
+							this.okModal = true;
+							
+							this.msgOk += `<li>Se ha actualizado la carga IE asignada</li>`;
+					
+						}
+							
 					});
-
+						
 				})
 				.catch( err =>{
 
@@ -855,7 +867,7 @@
         	fullNames: function ()
         	{
         	
-        		return this.user.apellido_paterno + " " + this.user.apellido_materno + ", " + this.user.nombres;
+        		return this.user.apellido_1 + " " + this.user.apellido_1 + ", " + this.user.nombres;
         	
         	}
         }

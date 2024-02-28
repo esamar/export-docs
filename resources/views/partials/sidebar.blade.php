@@ -1,4 +1,19 @@
-<div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 72px;height: calc(100vh - 56px);">
+<!-- <div class="d-flex flex-column flex-shrink-0 bg-light" > -->
+<!-- <div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 50px;height: calc(100vh - 56px);"> -->
+<div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 50px;height: calc(100vh - 0px);overflow: hidden;">
+    
+    <a class="navbar-brand pl-1" href="{{ url('/') }}" 
+        style=" padding: 11px;
+                padding-left: 11px!important;
+                background: white;
+                width: 50px;
+                box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%) !important;">
+
+      <img src="{{ asset('images/sireg-logo-28.png') }}" alt="sireg-logo" class="mr-md-4">
+
+      {{ config('app.name', 'SatakControl') }}
+
+    </a>
 
     <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
       <li class="nav-item">
@@ -53,11 +68,10 @@
         <img src="https://github.com/mdo.png" alt="mdo" width="16" height="16" class="rounded-circle">
       </a>
       <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser3">
-        <li><a class="dropdown-item" href="#">New project...</a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <!-- <li><a class="dropdown-item" href="#">New project...</a></li> -->
+        <li><a class="dropdown-item" href="#">Configuración</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
       </ul>
     </div>
   </div>

@@ -1,6 +1,17 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./node_modules/@babel/runtime/regenerator/index.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
+  \**********************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/regenerator-runtime/runtime.js");
+
+
+/***/ }),
+
 /***/ "./node_modules/@popperjs/core/lib/createPopper.js":
 /*!*********************************************************!*\
   !*** ./node_modules/@popperjs/core/lib/createPopper.js ***!
@@ -6982,6 +6993,76 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -7443,23 +7524,48 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       services: [],
+      stepFormSuscription: 0,
       form: {
+        // Port : "3306",
+        // Chunk : "3500",
+        Chunk: "3500",
+        Host: "localhost",
+        Name: "admin_rnee_temp",
+        Password: "",
         Port: "3306",
-        Chunk: "3500"
+        User: "root",
+        nameProfile: "PERFIL-DESARROLLO",
+        nameService: "PRUEBA",
+        urlService: "WWW"
       },
       Tables: [],
       columnsLocal: [],
       columnsLocalPersons: [],
       columnsLocalUsers: [],
       columnsService: [],
+      columnsPersonsService: [],
+      columnsUsersService: [],
       columnsServiceSelected: [],
+      columnsPersonsServiceSelected: [],
+      columnsUsersServiceSelected: [],
+      modelsDistribution: [],
       errConection: "",
+      errCreationService: "",
       conection: false,
       loadTables: false,
       loadColumns: false,
+      loadModelColumns: false,
+      loadPersonsColumns: false,
+      loadUsersColumns: false,
       disableCreate: false,
       createtingService: false,
-      infoErrorsSync: ""
+      infoErrorsSync: "",
+      stateRunUserService: 1,
+      stateRunSampleService: 1,
+      stateRunModelService: 1,
+      prevButton: 0,
+      suscribeButton: 0,
+      nextButton: 1
     };
   },
   props: {
@@ -7470,8 +7576,23 @@ __webpack_require__.r(__webpack_exports__);
     this.getColumnsIe();
     this.getColumnsPersons();
     this.getColumnsUsers();
+    this.getModels();
   },
   methods: {
+    nextStep: function nextStep(step) {
+      this.stepFormSuscription = this.stepFormSuscription + step;
+
+      if (this.stepFormSuscription === 0) {
+        this.prevButton = 0;
+      } else if (this.stepFormSuscription == 4) {
+        this.suscribeButton = 1;
+        this.nextButton = 0;
+      } else {
+        this.suscribeButton = 0;
+        this.nextButton = 1;
+        this.prevButton = 1;
+      }
+    },
     testConection: function testConection(event) {
       var _this = this;
 
@@ -7487,47 +7608,77 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    getServices: function getServices() {
+    getModels: function getModels() {
       var _this2 = this;
 
+      axios.get("http://localhost:3000/api/service/models-distrib").then(function (response) {
+        _this2.modelsDistribution = response.data.data;
+      });
+    },
+    getServices: function getServices() {
+      var _this3 = this;
+
       axios.get("http://localhost:3000/api/service/".concat(this.sample)).then(function (response) {
-        _this2.services = response.data.data;
+        _this3.services = response.data.data;
       });
     },
     getColumnsIe: function getColumnsIe() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.get("http://localhost:3000/api/ies/1/columns-local").then(function (response) {
-        _this3.columnsLocal = response.data.data;
+        _this4.columnsLocal = response.data.data;
       });
     },
     getColumnsPersons: function getColumnsPersons() {
-      var _this4 = this;
+      var _this5 = this;
 
       axios.get("http://localhost:3000/api/users/columns-local-persons").then(function (response) {
-        _this4.columnsLocalPersons = response.data.data;
+        _this5.columnsLocalPersons = response.data.data;
       });
     },
     getColumnsUsers: function getColumnsUsers() {
-      var _this5 = this;
-
-      axios.get("http://localhost:3000/api/users/columns-local-users").then(function (response) {
-        _this5.columnsLocalUsers = response.data.data;
-      });
-    },
-    getColumnsServices: function getColumnsServices(event) {
       var _this6 = this;
 
+      axios.get("http://localhost:3000/api/users/columns-local-users").then(function (response) {
+        _this6.columnsLocalUsers = response.data.data;
+      });
+    },
+    getColumnsServicesTable: function getColumnsServicesTable(event, step) {
+      var _this7 = this;
+
+      var table = event.target.value;
       this.loadColumns = true;
-      axios.post('http://localhost:3000/api/service/1/columns-mysql', this.form).then(function (response) {
+      var payload = {
+        Host: this.form.Host,
+        Name: this.form.Name,
+        Password: this.form.Password,
+        Port: this.form.Port,
+        Table: table,
+        User: this.form.User
+      };
+      axios.post('http://localhost:3000/api/service/1/columns-mysql', payload).then(function (response) {
         var pre_columns = new Array();
         pre_columns.push("No usar");
-        _this6.columnsService = pre_columns.concat(response.data.data);
-        _this6.loadColumns = false;
+
+        switch (step) {
+          case 1:
+            _this7.columnsService = pre_columns.concat(response.data.data);
+            break;
+
+          case 2:
+            _this7.columnsPersonsService = pre_columns.concat(response.data.data);
+            break;
+
+          case 3:
+            _this7.columnsUsersService = pre_columns.concat(response.data.data);
+            break;
+        }
+
+        _this7.loadColumns = false;
       });
     },
     selectColumns: function selectColumns() {
-      if (this.columnsServiceSelected.length) {
+      if (this.columnsServiceSelected.length && this.columnsPersonsServiceSelected.length && this.columnsUsersServiceSelected.length && this.form.modelo) {
         this.disableCreate = true;
       }
     },
@@ -7542,7 +7693,7 @@ __webpack_require__.r(__webpack_exports__);
       this.conection = false;
     },
     createService: function createService() {
-      var _this7 = this;
+      var _this8 = this;
 
       this.createtingService = true;
       var columnsService = new Array();
@@ -7556,54 +7707,246 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
 
+      var columnsPersonsService = new Array();
+
+      for (var i = 0; i < this.columnsPersonsServiceSelected.length; i++) {
+        if (typeof this.columnsPersonsServiceSelected[i] != 'undefined' && this.columnsPersonsServiceSelected[i] != 'No usar') {
+          columnsPersonsService.push({
+            index: i,
+            col: this.columnsPersonsServiceSelected[i]
+          });
+        }
+      }
+
+      var columnsUsersService = new Array();
+
+      for (var i = 0; i < this.columnsUsersServiceSelected.length; i++) {
+        if (typeof this.columnsUsersServiceSelected[i] != 'undefined' && this.columnsUsersServiceSelected[i] != 'No usar') {
+          columnsUsersService.push({
+            index: i,
+            col: this.columnsUsersServiceSelected[i]
+          });
+        }
+      }
+
       this.form['columns'] = columnsService;
+      this.form['columnsPersons'] = columnsPersonsService;
+      this.form['columnsUsers'] = columnsUsersService;
+      this.errCreationService = "";
       axios.post("http://localhost:3000/api/service/".concat(this.sample, "/create/").concat(this.form.nameProfile), this.form).then(function (response) {
         if (response.data.resp) {
-          _this7.createtingService = false;
+          _this8.createtingService = false;
 
-          _this7.services.push({
-            bd_perfil: _this7.form.nameProfile,
+          _this8.services.push({
+            bd_perfil: _this8.form.nameProfile,
             id_servicio: response.data.id_servicio,
-            nombre_servicio: _this7.form.nameService,
+            nombre_servicio: _this8.form.nameService,
             state: 0,
-            url: _this7.form.urlService,
+            url: _this8.form.urlService,
             action: ''
           });
 
           document.getElementById('close_modal_service').click();
-          eventBus.$emit('updateDescribe', true);
-
-          _this7.cleanForm();
+          eventBus.$emit('updateDescribe', true); // this.cleanForm();
+        } else {
+          _this8.errCreationService = response.data.msg;
         }
       });
     },
     syncService: function syncService(id_service) {
-      var _this8 = this;
+      var _this9 = this;
 
-      var perfil = this.services.find(function (x) {
-        return x.id_servicio == id_service;
-      });
-      perfil.action = "";
-      perfil.state = 0;
-      perfil.action = "Sincronizando";
-      axios.get("http://localhost:3000/api/service/".concat(this.sample, "/run-sync/").concat(perfil.bd_perfil)).then(function (response) {
-        if (response.data.resp === 1) {
-          perfil.action = "Actualizado";
-          perfil.state = 1;
-          perfil["updated"] = response.data.success;
-          eventBus.$emit('updateDescribe', true);
-        } else if (response.data.resp == 2) {
-          perfil["errors"] = response.data.err;
-          perfil.action = "Error";
-          perfil.state = 2;
-        }
-      })["catch"](function (err) {
-        _this8.infoErrorsSync = err;
-        $('#modal_errors').modal('show');
-        perfil.action = "Error";
-        perfil.state = 2;
+      this.stateRunSampleService = 0;
+      this.stateRunUserService = 0;
+      this.stateRunModelService = 0;
+      this.syncSampleService(id_service).then(function (resp_sample) {
+        return _this9.syncUserService(id_service).then(function (resp) {
+          return Array(resp_sample, resp);
+        });
+      }).then(function (resp_user) {
+        return _this9.syncModelService(id_service).then(function (resp) {
+          return resp_user.concat(resp);
+        });
+      }).then(function (resp_all) {
+        console.log(resp_all);
+
+        if (resp_all[0].resp && resp_all[1].resp && resp_all[2].resp) {} else {}
       });
     },
+    syncSampleService: function () {
+      var _syncSampleService = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(id_service) {
+        var _this10 = this;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                return _context.abrupt("return", new Promise(function (resolve, reject) {
+                  _this10.stateRunSampleService = 2;
+
+                  var perfil = _this10.services.find(function (x) {
+                    return x.id_servicio == id_service;
+                  }); // perfil.action = "";
+                  // perfil.state = 0;
+                  // perfil.action = "Sincronizando";
+
+
+                  // perfil.action = "";
+                  // perfil.state = 0;
+                  // perfil.action = "Sincronizando";
+                  axios.get("http://localhost:3000/api/service/".concat(_this10.sample, "/run-sync-sample/").concat(perfil.bd_perfil)).then(function (response) {
+                    if (response.data.resp === 1) {
+                      _this10.stateRunSampleService = 1;
+                      resolve(response.data);
+                      perfil.action = "Actualizado";
+                      perfil.state = 1;
+                      perfil["updated"] = response.data.success;
+                      eventBus.$emit('updateDescribe', true);
+                    } else if (response.data.resp == 2) {
+                      perfil["errors"] = response.data.err;
+                      perfil.action = "Error";
+                      perfil.state = 2;
+                    }
+                  })["catch"](function (err) {
+                    _this10.infoErrorsSync = err;
+                    $('#modal_errors').modal('show');
+                    perfil.action = "Error";
+                    perfil.state = 2;
+                  });
+                }));
+
+              case 1:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+
+      function syncSampleService(_x) {
+        return _syncSampleService.apply(this, arguments);
+      }
+
+      return syncSampleService;
+    }(),
+    syncUserService: function () {
+      var _syncUserService = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(id_service) {
+        var _this11 = this;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                return _context2.abrupt("return", new Promise(function (resolve, reject) {
+                  _this11.stateRunUserService = 2;
+
+                  var perfil = _this11.services.find(function (x) {
+                    return x.id_servicio == id_service;
+                  }); // perfil.action = "";
+                  // perfil.state = 0;
+                  // perfil.action = "Sincronizando";
+
+
+                  // perfil.action = "";
+                  // perfil.state = 0;
+                  // perfil.action = "Sincronizando";
+                  axios.get("http://localhost:3000/api/service/".concat(_this11.sample, "/run-sync-user/").concat(perfil.bd_perfil)).then(function (response) {
+                    resolve(response.data);
+
+                    if (response.data.resp === 1) {
+                      _this11.stateRunUserService = 1; // perfil.action = "Actualizado";
+                      // perfil.state = 1;
+                      // perfil["updated"] = response.data.success;
+
+                      // perfil.action = "Actualizado";
+                      // perfil.state = 1;
+                      // perfil["updated"] = response.data.success;
+                      eventBus.$emit('updateDescribe', true);
+                    } else if (response.data.resp == 2) {// perfil["errors"] = response.data.err;
+                      // perfil.action = "Error";
+                      // perfil.state = 2;
+                    }
+                  })["catch"](function (err) {
+                    _this11.infoErrorsSync = err;
+                    $('#modal_errors').modal('show');
+                    perfil.action = "Error";
+                    perfil.state = 2;
+                  });
+                }));
+
+              case 1:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      function syncUserService(_x2) {
+        return _syncUserService.apply(this, arguments);
+      }
+
+      return syncUserService;
+    }(),
+    syncModelService: function () {
+      var _syncModelService = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(id_service) {
+        var _this12 = this;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                return _context3.abrupt("return", new Promise(function (resolve, reject) {
+                  _this12.stateRunModelService = 2;
+
+                  var perfil = _this12.services.find(function (x) {
+                    return x.id_servicio == id_service;
+                  }); // perfil.action = "";
+                  // perfil.state = 0;
+                  // perfil.action = "Sincronizando";
+
+
+                  // perfil.action = "";
+                  // perfil.state = 0;
+                  // perfil.action = "Sincronizando";
+                  axios.get("http://localhost:3000/api/service/".concat(_this12.sample, "/run-sync-model/").concat(perfil.bd_perfil)).then(function (response) {
+                    resolve(response.data);
+
+                    if (response.data.resp === 1) {
+                      _this12.stateRunModelService = 1; // perfil.action = "Actualizado";
+                      // perfil.state = 1;
+                      // perfil["updated"] = response.data.success;
+
+                      // perfil.action = "Actualizado";
+                      // perfil.state = 1;
+                      // perfil["updated"] = response.data.success;
+                      eventBus.$emit('updateDescribe', true);
+                    } else if (response.data.resp == 2) {// perfil["errors"] = response.data.err;
+                      // perfil.action = "Error";
+                      // perfil.state = 2;
+                    }
+                  })["catch"](function (err) {
+                    _this12.infoErrorsSync = err;
+                    $('#modal_errors').modal('show');
+                    perfil.action = "Error";
+                    perfil.state = 2;
+                  });
+                }));
+
+              case 1:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      function syncModelService(_x3) {
+        return _syncModelService.apply(this, arguments);
+      }
+
+      return syncModelService;
+    }(),
     syncAllServices: function syncAllServices() {
       for (var i = 0; i < this.services.length; i++) {
         this.syncService(this.services[i].id_servicio);
@@ -7611,6 +7954,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     errorsSync: function errorsSync(info) {
       this.infoErrorsSync = JSON.stringify(info);
+    }
+  },
+  watch: {
+    "form.nameService": function formNameService(nVal) {
+      var temp = nVal.replaceAll(" ", "-").toUpperCase();
+      return this.form.nameProfile = temp.replaceAll("--", "-");
     }
   }
 });
@@ -7630,6 +7979,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _users_ModalManageUserComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./users/ModalManageUserComponent.vue */ "./resources/js/components/sample/users/ModalManageUserComponent.vue");
 /* harmony import */ var _users_ModalManageUserCSVComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./users/ModalManageUserCSVComponent.vue */ "./resources/js/components/sample/users/ModalManageUserCSVComponent.vue");
+//
 //
 //
 //
@@ -8551,6 +8901,7 @@ __webpack_require__.r(__webpack_exports__);
           })[0];
 
           _this5.contentFile.push({
+            'id_persona': typeof data_user != 'undefined' ? data_user.id_persona : '',
             'numero': x.numero,
             'nombres': typeof data_user != 'undefined' ? data_user.nombres : '',
             'usuario': x.usuario,
@@ -8569,6 +8920,9 @@ __webpack_require__.r(__webpack_exports__);
         }), 'numero');
         _this5.payload = _this5.payload.map(function (x) {
           return {
+            'id': _this5.contentFile.filter(function (y) {
+              return y.numero == x.numero;
+            })[0].id_persona,
             'usuario': _this5.contentFile.filter(function (y) {
               return y.numero == x.numero;
             })[0].usuario,
@@ -9187,7 +9541,7 @@ __webpack_require__.r(__webpack_exports__);
         tab1: false,
         tab2: false
       },
-      textCodmod: "02018890,02071260,02071670,02084620,02092700,02093870,02110600,02144290,02145510,02145690,02194020,02240630,02246340,02303420,02314230,02349480,02361580,02366200,02367600,02386750,02402000,02422890,02431880,02478330,02523610,02558020,02567350,02590100,02591190,02591840,02623780,02624770,02625680,02629560,02689610,02729300,02736070,02737480,02738620,02757270,02765920,02774830,02782590,02783330"
+      textCodmod: ""
     };
   },
   props: {
@@ -9267,7 +9621,7 @@ __webpack_require__.r(__webpack_exports__);
         } else {
           switch (response.data.msg) {
             case 'ER_DUP_ENTRY':
-              _this4.msgError = 'El DNI ingresado ya ha sido registrado como usuario de la aplicación';
+              _this4.msgError = 'El DNI ingresado ya ha sido registrado como usuario del servicio';
               break;
 
             default:
@@ -9284,31 +9638,35 @@ __webpack_require__.r(__webpack_exports__);
       axiosR.put("/api/users/0/".concat(this.dni), this.user).then(function (response) {
         eventBus.$emit('updateUsers', true);
 
-        if (resp_person && resp_user) {
+        if (response.data.resp) {
           _this5.okModal = true;
-          _this5.msgOk = "<li>Se ha actualizado la informaci\xF3n correctamente</li>";
+          _this5.msgOk = "<li>Se ha actualizado la informaci\xF3n personal correctamente</li>";
           return 1;
-        }
+        } else {
+          _this5.msgError = "<li>Error al actualizar informaci\xF3n personal</li>";
+          return 0;
+        } // return response.data;
 
-        return response.data;
       }).then(function (response_person) {
         return axiosR.put("/api/users/".concat(_this5.sample, "/").concat(_this5.dni, "/updateUser"), _this5.userPayload).then(function (response_user) {
           eventBus.$emit('updateUsers', true);
-          console.log(response_user.data);
-          var resp_person = response_person.resp;
+          var resp_person = response_person;
           var resp_user = response_user.data.resp;
 
           if (resp_person && resp_user) {
             _this5.okModal = true;
-            _this5.msgOk = "<li>Se ha actualizado la informaci\xF3n correctamente</li>";
+            _this5.msgOk += "<li>Se ha actualizado la informaci\xF3n de usuario correctamente</li>";
             return 1;
+          } else {
+            return 0;
           }
         });
-      }).then(function (resp_user) {
+      }).then(function (resp_person_user) {
         axiosR.post("/api/users/".concat(_this5.sample, "/setIeToUser"), [_this5.userPayload]).then(function (response_ie) {
-          console.log(response_ie);
-          _this5.okModal = true;
-          _this5.msgOk += "<li>Se ha actualizado la carga IE asignada</li>";
+          if (response_ie.data.resp) {
+            _this5.okModal = true;
+            _this5.msgOk += "<li>Se ha actualizado la carga IE asignada</li>";
+          }
         });
       })["catch"](function (err) {
         console.log(err);
@@ -9368,7 +9726,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     fullNames: function fullNames() {
-      return this.user.apellido_paterno + " " + this.user.apellido_materno + ", " + this.user.nombres;
+      return this.user.apellido_1 + " " + this.user.apellido_1 + ", " + this.user.nombres;
     }
   }
 });
@@ -14478,6 +14836,30 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, "\nthead tr th { \n    position: sticky;\n    top: -1px;\n    z-index: 10;\n    background: #e9ecef;\n}\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.success-process{\n    color:#65b115;\n}\n.spinner-gear {\n    color: #046ec5;\n    -webkit-animation-iteration-count: infinite;\n            animation-iteration-count: infinite;\n    -webkit-animation-timing-function: linear;\n            animation-timing-function: linear;\n    -webkit-animation-duration: .8s;\n            animation-duration: .8s;\n    -webkit-animation-name: spinner-loading;\n            animation-name: spinner-loading\n}\n@-webkit-keyframes spinner-loading{\n0% {\n    transform: rotate(0deg)\n}\nto {\n    transform: rotate(1turn)\n}\n}\n@keyframes spinner-loading{\n0% {\n    transform: rotate(0deg)\n}\nto {\n    transform: rotate(1turn)\n}\n}\n\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -67036,6 +67418,764 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/regenerator-runtime/runtime.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/regenerator-runtime/runtime.js ***!
+  \*****************************************************/
+/***/ ((module) => {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var runtime = (function (exports) {
+  "use strict";
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  function define(obj, key, value) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+    return obj[key];
+  }
+  try {
+    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
+    define({}, "");
+  } catch (err) {
+    define = function(obj, key, value) {
+      return obj[key] = value;
+    };
+  }
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  exports.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
+  }
+
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  IteratorPrototype[iteratorSymbol] = function () {
+    return this;
+  };
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
+  }
+
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+  GeneratorFunction.displayName = define(
+    GeneratorFunctionPrototype,
+    toStringTagSymbol,
+    "GeneratorFunction"
+  );
+
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      define(prototype, method, function(arg) {
+        return this._invoke(method, arg);
+      });
+    });
+  }
+
+  exports.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
+
+  exports.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      define(genFun, toStringTagSymbol, "GeneratorFunction");
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  exports.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator, PromiseImpl) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return PromiseImpl.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return PromiseImpl.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new PromiseImpl(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
+  }
+
+  defineIteratorMethods(AsyncIterator.prototype);
+  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+    return this;
+  };
+  exports.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+    if (PromiseImpl === void 0) PromiseImpl = Promise;
+
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList),
+      PromiseImpl
+    );
+
+    return exports.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        // Note: ["return"] must be used for ES3 parsing compatibility.
+        if (delegate.iterator["return"]) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  define(Gp, toStringTagSymbol, "Generator");
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  Gp[iteratorSymbol] = function() {
+    return this;
+  };
+
+  Gp.toString = function() {
+    return "[object Generator]";
+  };
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  exports.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  exports.values = values;
+
+  function doneResult() {
+    return { value: undefined, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+
+  // Regardless of whether this script is executing as a CommonJS module
+  // or not, return the runtime object so that we can declare the variable
+  // regeneratorRuntime in the outer scope, which allows this module to be
+  // injected easily by `bin/regenerator --include-runtime script.js`.
+  return exports;
+
+}(
+  // If this script is executing as a CommonJS module, use module.exports
+  // as the regeneratorRuntime namespace. Otherwise create a new empty
+  // object. Either way, the resulting object will be used to initialize
+  // the regeneratorRuntime variable at the top of this file.
+   true ? module.exports : 0
+));
+
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  // This module should not be running in strict mode, so the above
+  // assignment should always work unless something is misconfigured. Just
+  // in case runtime.js accidentally runs in strict mode, we can escape
+  // strict mode using a global Function call. This could conceivably fail
+  // if a Content Security Policy forbids using Function, but in that case
+  // the proper solution is to fix the accidental strict mode problem. If
+  // you've misconfigured your bundler to force strict mode and applied a
+  // CSP to forbid Function, and you're not willing to fix either of those
+  // problems, please detail your unique predicament in a GitHub issue.
+  Function("r", "regeneratorRuntime = r")(runtime);
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-hotel-datepicker/dist/vueHotelDatepicker.css":
 /*!***********************************************************************!*\
   !*** ./node_modules/vue-hotel-datepicker/dist/vueHotelDatepicker.css ***!
@@ -67093,6 +68233,36 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TableSampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TableServiceComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TableServiceComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css&");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TableServiceComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TableServiceComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
 
 /***/ }),
 
@@ -77078,15 +78248,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _TableServiceComponent_vue_vue_type_template_id_5a57ec3c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TableServiceComponent.vue?vue&type=template&id=5a57ec3c& */ "./resources/js/components/sample/TableServiceComponent.vue?vue&type=template&id=5a57ec3c&");
 /* harmony import */ var _TableServiceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TableServiceComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/sample/TableServiceComponent.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _TableServiceComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TableServiceComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
+;
 
 
 /* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__.default)(
   _TableServiceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
   _TableServiceComponent_vue_vue_type_template_id_5a57ec3c___WEBPACK_IMPORTED_MODULE_0__.render,
   _TableServiceComponent_vue_vue_type_template_id_5a57ec3c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
@@ -77456,6 +78628,19 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TableSampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TableSampleComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sample/TableSampleComponent.vue?vue&type=style&index=0&lang=css&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css&":
+/*!***************************************************************************************************!*\
+  !*** ./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_8_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TableServiceComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TableServiceComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-8[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sample/TableServiceComponent.vue?vue&type=style&index=0&lang=css&");
 
 
 /***/ }),
@@ -81463,37 +82648,8 @@ var render = function() {
           }
         },
         [
-          _c("div", { staticClass: "modal-dialog" }, [
+          _c("div", { staticClass: "modal-dialog modal-lg" }, [
             _c("div", { staticClass: "modal-content" }, [
-              _c("div", { staticClass: "modal-header" }, [
-                _c(
-                  "h5",
-                  {
-                    staticClass: "modal-title",
-                    attrs: { id: "staticBackdropLabel" }
-                  },
-                  [_vm._v("Suscribir un servicio")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "close",
-                    attrs: {
-                      type: "button",
-                      "data-bs-dismiss": "modal",
-                      "aria-label": "Close"
-                    },
-                    on: { click: _vm.cleanForm }
-                  },
-                  [
-                    _c("span", { attrs: { "aria-hidden": "true" } }, [
-                      _vm._v("×")
-                    ])
-                  ]
-                )
-              ]),
-              _vm._v(" "),
               _c(
                 "form",
                 {
@@ -81507,1001 +82663,602 @@ var render = function() {
                   }
                 },
                 [
-                  _c("div", { staticClass: "modal-body text-left" }, [
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(1),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.nameService,
-                              expression: "form.nameService"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            id: "nombre_servicio",
-                            placeholder: "Ingrese el nombre del servicio",
-                            "aria-label": "Nombre del servicio",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.nameService },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.form,
-                                "nameService",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(2),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.nameProfile,
-                              expression: "form.nameProfile"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            id: "nombre_perfil",
-                            placeholder:
-                              "Ingrese el nombre del perfil de servicio",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.nameProfile },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.form,
-                                "nameProfile",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c("label", [_vm._v("Perfil de conexión")]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(3),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.urlService,
-                              expression: "form.urlService"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            id: "url_servicio",
-                            placeholder: "Ingrese la URL del servicio",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.urlService },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.form,
-                                "urlService",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(4),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Port,
-                              expression: "form.Port"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            id: "puerto_servicio",
-                            placeholder: "Ingrese el Puerto de conexión",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2",
-                            disabled: "disabled"
-                          },
-                          domProps: { value: _vm.form.Port },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(_vm.form, "Port", $event.target.value)
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(5),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Host,
-                              expression: "form.Host"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            id: "host_servicio",
-                            placeholder: "Ingrese el Host de conexión BD",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.Host },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(_vm.form, "Host", $event.target.value)
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(6),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Name,
-                              expression: "form.Name"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            id: "esquema_servicio",
-                            placeholder: "Ingrese el Nombre de BD",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.Name },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(_vm.form, "Name", $event.target.value)
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(7),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Chunk,
-                              expression: "form.Chunk"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            id: "chunk_servicio",
-                            placeholder:
-                              "Ingrese número máximo de filas por paquete",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.Chunk },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(_vm.form, "Chunk", $event.target.value)
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(8),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.User,
-                              expression: "form.User"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            required: "",
-                            type: "text",
-                            autocomplete: "false",
-                            id: "usuario_servicio",
-                            placeholder: "Ingrese el Usuario de BD",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.User },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(_vm.form, "User", $event.target.value)
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      { staticClass: "input-group input-group-sm mb-3" },
-                      [
-                        _vm._m(9),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.form.Password,
-                              expression: "form.Password"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "password",
-                            autocomplete: "false",
-                            id: "password_servicio",
-                            placeholder: "Ingrese el Password de BD",
-                            "aria-label": "Nombre de la muestra",
-                            "aria-describedby": "button-addon2"
-                          },
-                          domProps: { value: _vm.form.Password },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.form,
-                                "Password",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]
-                    ),
-                    _vm._v(" "),
-                    !_vm.conection
-                      ? _c("div", { staticClass: "text-center" }, [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-primary btn-sm mb-3",
-                              staticStyle: { width: "60%" },
-                              attrs: { type: "submit" }
-                            },
-                            [
-                              _vm.loadTables
-                                ? _c("span", {
-                                    staticClass:
-                                      "spinner-border spinner-border-sm",
-                                    attrs: {
-                                      role: "status",
-                                      "aria-hidden": "true"
+                  _c(
+                    "div",
+                    {
+                      staticClass: "modal-body text-left",
+                      staticStyle: { padding: "0!important" }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticClass: "card border-light m-0",
+                          attrs: { hidden: _vm.stepFormSuscription != 0 }
+                        },
+                        [
+                          _c("div", { staticClass: "card-header" }, [
+                            _vm._v(
+                              "Configuración de base de datos del servicio"
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "card-body" }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
+                              [
+                                _vm._m(1),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.nameService,
+                                      expression: "form.nameService"
                                     }
-                                  })
-                                : _vm._e(),
-                              _vm._v(
-                                "\n                                Conectar a BD\n                            "
-                              )
-                            ]
-                          )
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.conection
-                      ? _c(
-                          "div",
-                          {
-                            staticClass:
-                              "alert alert-success d-flex align-items-center",
-                            attrs: { role: "alert" }
-                          },
-                          [
-                            _c(
-                              "svg",
-                              {
-                                staticClass: "bi flex-shrink-0 mr-2",
-                                attrs: {
-                                  width: "24",
-                                  height: "24",
-                                  role: "img",
-                                  "aria-label": "Success:"
-                                }
-                              },
-                              [
-                                _c("use", {
-                                  attrs: { "xlink:href": "#check-circle-fill" }
-                                })
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c("div", [
-                              _vm._v(
-                                "\n                            Se ha establecido conexión con " +
-                                  _vm._s(_vm.form.Host) +
-                                  ":" +
-                                  _vm._s(_vm.form.Port) +
-                                  "\n                          "
-                              )
-                            ])
-                          ]
-                        )
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.errConection
-                      ? _c(
-                          "div",
-                          {
-                            staticClass:
-                              "alert alert-danger d-flex align-items-center",
-                            attrs: { role: "alert" }
-                          },
-                          [
-                            _c(
-                              "svg",
-                              {
-                                staticClass: "bi flex-shrink-0 mr-2",
-                                attrs: {
-                                  width: "24",
-                                  height: "24",
-                                  role: "img",
-                                  "aria-label": "Danger:"
-                                }
-                              },
-                              [
-                                _c("use", {
+                                  ],
+                                  staticClass: "form-control",
                                   attrs: {
-                                    "xlink:href": "#exclamation-triangle-fill"
+                                    required: "",
+                                    type: "text",
+                                    id: "nombre_servicio",
+                                    placeholder:
+                                      "Ingrese el nombre del servicio",
+                                    "aria-label": "Nombre del servicio",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.nameService },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "nameService",
+                                        $event.target.value
+                                      )
+                                    }
                                   }
                                 })
                               ]
                             ),
                             _vm._v(" "),
-                            _c("div", [
-                              _vm._v(
-                                "\n                            No se puedo conectar con la BD. Se ha presentado el siguiente error : " +
-                                  _vm._s(_vm.errConection) +
-                                  "\n                          "
-                              )
-                            ])
-                          ]
-                        )
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "card border-light m-0" }, [
-                      _c("div", { staticClass: "card-header" }, [
-                        _vm._v(
-                          "\n\n                            Configuración de tabla de Institución Educativa\n\n                          "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "card-body" }, [
-                        _c("p", { staticClass: "card-text" }, [
-                          _vm._v("Seleccione la tabla de destino ")
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "card" }, [
-                          _c("div", { staticClass: "card-header" }, [
                             _c(
                               "div",
-                              { staticClass: "input-group input-group-sm" },
+                              {
+                                staticClass: "input-group input-group-sm mb-3",
+                                attrs: { disabled: "" }
+                              },
                               [
-                                _c(
-                                  "div",
-                                  { staticClass: "input-group-prepend" },
-                                  [
-                                    _c(
-                                      "span",
-                                      { staticClass: "input-group-text" },
-                                      [
-                                        _c("i", {
-                                          staticClass: "fa fa-table mr-2"
-                                        }),
-                                        _vm._v(
-                                          "  \n                                            Tabla servicio\n                                            "
-                                        ),
-                                        _vm.loadColumns
-                                          ? _c("span", {
-                                              staticClass:
-                                                "spinner-border spinner-border-sm ml-2",
-                                              attrs: {
-                                                role: "status",
-                                                "aria-hidden": "true"
-                                              }
-                                            })
-                                          : _vm._e()
-                                      ]
-                                    )
-                                  ]
-                                ),
+                                _vm._m(2),
                                 _vm._v(" "),
-                                _c(
-                                  "select",
-                                  {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model:value",
-                                        value: _vm.form.Table,
-                                        expression: "form.Table",
-                                        arg: "value"
-                                      }
-                                    ],
-                                    staticClass: "form-control",
-                                    on: {
-                                      change: [
-                                        function($event) {
-                                          var $$selectedVal = Array.prototype.filter
-                                            .call(
-                                              $event.target.options,
-                                              function(o) {
-                                                return o.selected
-                                              }
-                                            )
-                                            .map(function(o) {
-                                              var val =
-                                                "_value" in o
-                                                  ? o._value
-                                                  : o.value
-                                              return val
-                                            })
-                                          _vm.$set(
-                                            _vm.form,
-                                            "Table",
-                                            $event.target.multiple
-                                              ? $$selectedVal
-                                              : $$selectedVal[0]
-                                          )
-                                        },
-                                        function($event) {
-                                          return _vm.getColumnsServices($event)
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  _vm._l(_vm.Tables, function(Table) {
-                                    return _c("option", [_vm._v(_vm._s(Table))])
-                                  }),
-                                  0
-                                )
-                              ]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "ul",
-                            { staticClass: "list-group list-group-flush" },
-                            _vm._l(_vm.columnsLocal, function(
-                              columnLocal,
-                              key
-                            ) {
-                              return _c(
-                                "li",
-                                {
-                                  staticClass: "list-group-item mr-1 ml-1 p-2"
-                                },
-                                [
-                                  _c(
-                                    "div",
+                                _c("input", {
+                                  directives: [
                                     {
-                                      staticClass: "input-group input-group-sm"
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        { staticClass: "input-group-prepend" },
-                                        [
-                                          _c(
-                                            "span",
-                                            {
-                                              staticClass: "input-group-text",
-                                              staticStyle: {
-                                                background: "white",
-                                                width: "150px"
-                                              }
-                                            },
-                                            [
-                                              _c("i", {
-                                                staticClass:
-                                                  "fa fa-columns mr-2"
-                                              }),
-                                              _vm._v(" "),
-                                              _c("b", [
-                                                _vm._v(_vm._s(columnLocal))
-                                              ])
-                                            ]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "select",
-                                        {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model:value",
-                                              value:
-                                                _vm.columnsServiceSelected[key],
-                                              expression:
-                                                "columnsServiceSelected[key]",
-                                              arg: "value"
-                                            }
-                                          ],
-                                          staticClass: "form-control",
-                                          on: {
-                                            change: [
-                                              function($event) {
-                                                var $$selectedVal = Array.prototype.filter
-                                                  .call(
-                                                    $event.target.options,
-                                                    function(o) {
-                                                      return o.selected
-                                                    }
-                                                  )
-                                                  .map(function(o) {
-                                                    var val =
-                                                      "_value" in o
-                                                        ? o._value
-                                                        : o.value
-                                                    return val
-                                                  })
-                                                _vm.$set(
-                                                  _vm.columnsServiceSelected,
-                                                  key,
-                                                  $event.target.multiple
-                                                    ? $$selectedVal
-                                                    : $$selectedVal[0]
-                                                )
-                                              },
-                                              _vm.selectColumns
-                                            ]
-                                          }
-                                        },
-                                        _vm._l(_vm.columnsService, function(
-                                          columnService
-                                        ) {
-                                          return _c("option", [
-                                            _vm._v(_vm._s(columnService))
-                                          ])
-                                        }),
-                                        0
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.nameProfile,
+                                      expression: "form.nameProfile"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    required: "",
+                                    type: "text",
+                                    id: "nombre_perfil",
+                                    placeholder:
+                                      "Ingrese el nombre del perfil de servicio",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2",
+                                    disabled: ""
+                                  },
+                                  domProps: { value: _vm.form.nameProfile },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "nameProfile",
+                                        $event.target.value
                                       )
-                                    ]
-                                  )
-                                ]
-                              )
-                            }),
-                            0
-                          )
-                        ])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "card border-light m-0" }, [
-                      _c("div", { staticClass: "card-header" }, [
-                        _vm._v(
-                          "\n\n                            Configuración de tabla de Personas\n\n                            "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "card-body" }, [
-                        _c("p", { staticClass: "card-text" }, [
-                          _vm._v("Seleccione la tabla de destino ")
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "card" }, [
-                          _c("div", { staticClass: "card-header" }, [
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
                             _c(
                               "div",
-                              { staticClass: "input-group input-group-sm" },
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
                               [
-                                _c(
-                                  "div",
-                                  { staticClass: "input-group-prepend" },
-                                  [
-                                    _c(
-                                      "span",
-                                      { staticClass: "input-group-text" },
-                                      [
-                                        _c("i", {
-                                          staticClass: "fa fa-table mr-2"
-                                        }),
-                                        _vm._v(
-                                          "  \n                                                Tabla servicio\n                                                "
-                                        ),
-                                        _vm.loadColumns
-                                          ? _c("span", {
-                                              staticClass:
-                                                "spinner-border spinner-border-sm ml-2",
-                                              attrs: {
-                                                role: "status",
-                                                "aria-hidden": "true"
-                                              }
-                                            })
-                                          : _vm._e()
-                                      ]
-                                    )
-                                  ]
-                                ),
+                                _vm._m(3),
                                 _vm._v(" "),
-                                _c(
-                                  "select",
-                                  {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model:value",
-                                        value: _vm.form.Table,
-                                        expression: "form.Table",
-                                        arg: "value"
-                                      }
-                                    ],
-                                    staticClass: "form-control",
-                                    on: {
-                                      change: [
-                                        function($event) {
-                                          var $$selectedVal = Array.prototype.filter
-                                            .call(
-                                              $event.target.options,
-                                              function(o) {
-                                                return o.selected
-                                              }
-                                            )
-                                            .map(function(o) {
-                                              var val =
-                                                "_value" in o
-                                                  ? o._value
-                                                  : o.value
-                                              return val
-                                            })
-                                          _vm.$set(
-                                            _vm.form,
-                                            "Table",
-                                            $event.target.multiple
-                                              ? $$selectedVal
-                                              : $$selectedVal[0]
-                                          )
-                                        },
-                                        function($event) {
-                                          return _vm.getColumnsServices($event)
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  _vm._l(_vm.Tables, function(Table) {
-                                    return _c("option", [_vm._v(_vm._s(Table))])
-                                  }),
-                                  0
-                                )
-                              ]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "ul",
-                            { staticClass: "list-group list-group-flush" },
-                            _vm._l(_vm.columnsLocalPersons, function(
-                              columnLocalPersona,
-                              key
-                            ) {
-                              return _c(
-                                "li",
-                                {
-                                  staticClass: "list-group-item mr-1 ml-1 p-2"
-                                },
-                                [
-                                  _c(
-                                    "div",
+                                _c("input", {
+                                  directives: [
                                     {
-                                      staticClass: "input-group input-group-sm"
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.urlService,
+                                      expression: "form.urlService"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    required: "",
+                                    type: "text",
+                                    id: "url_servicio",
+                                    placeholder: "Ingrese la URL del servicio",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.urlService },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "urlService",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("label", [_vm._v("Perfil de conexión")]),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
+                              [
+                                _vm._m(4),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.Host,
+                                      expression: "form.Host"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    required: "",
+                                    type: "text",
+                                    id: "host_servicio",
+                                    placeholder:
+                                      "Ingrese el Host de conexión BD",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.Host },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "Host",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
+                              [
+                                _vm._m(5),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.Port,
+                                      expression: "form.Port"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    required: "",
+                                    type: "text",
+                                    id: "puerto_servicio",
+                                    placeholder:
+                                      "Ingrese el Puerto de conexión",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.Port },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "Port",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
+                              [
+                                _vm._m(6),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.Name,
+                                      expression: "form.Name"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    required: "",
+                                    type: "text",
+                                    id: "esquema_servicio",
+                                    placeholder: "Ingrese el Nombre de BD",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.Name },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "Name",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
+                              [
+                                _vm._m(7),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.User,
+                                      expression: "form.User"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    required: "",
+                                    type: "text",
+                                    autocomplete: "false",
+                                    id: "usuario_servicio",
+                                    placeholder: "Ingrese el Usuario de BD",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.User },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "User",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
+                              [
+                                _vm._m(8),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.Password,
+                                      expression: "form.Password"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    type: "password",
+                                    autocomplete: "false",
+                                    id: "password_servicio",
+                                    placeholder: "Ingrese el Password de BD",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.Password },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "Password",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("label", [
+                              _vm._v("Tamaño de registro por transaccion")
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "input-group input-group-sm mb-3"
+                              },
+                              [
+                                _vm._m(9),
+                                _vm._v(" "),
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.form.Chunk,
+                                      expression: "form.Chunk"
+                                    }
+                                  ],
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    required: "",
+                                    type: "text",
+                                    id: "chunk_servicio",
+                                    placeholder:
+                                      "Ingrese número máximo de filas por paquete",
+                                    "aria-label": "Nombre de la muestra",
+                                    "aria-describedby": "button-addon2"
+                                  },
+                                  domProps: { value: _vm.form.Chunk },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.form,
+                                        "Chunk",
+                                        $event.target.value
+                                      )
+                                    }
+                                  }
+                                })
+                              ]
+                            ),
+                            _vm._v(" "),
+                            !_vm.conection
+                              ? _c("div", { staticClass: "text-center" }, [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-primary btn-sm m-0",
+                                      staticStyle: { width: "60%" },
+                                      attrs: { type: "submit" }
                                     },
                                     [
-                                      _c(
-                                        "div",
-                                        { staticClass: "input-group-prepend" },
-                                        [
-                                          _c(
-                                            "span",
-                                            {
-                                              staticClass: "input-group-text",
-                                              staticStyle: {
-                                                background: "white",
-                                                width: "150px"
-                                              }
-                                            },
-                                            [
-                                              _c("i", {
-                                                staticClass:
-                                                  "fa fa-columns mr-2"
-                                              }),
-                                              _vm._v(" "),
-                                              _c("b", [
-                                                _vm._v(
-                                                  _vm._s(columnLocalPersona)
-                                                )
-                                              ])
-                                            ]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "select",
-                                        {
-                                          directives: [
-                                            {
-                                              name: "model",
-                                              rawName: "v-model:value",
-                                              value:
-                                                _vm.columnsServiceSelected[key],
-                                              expression:
-                                                "columnsServiceSelected[key]",
-                                              arg: "value"
-                                            }
-                                          ],
-                                          staticClass: "form-control",
-                                          on: {
-                                            change: [
-                                              function($event) {
-                                                var $$selectedVal = Array.prototype.filter
-                                                  .call(
-                                                    $event.target.options,
-                                                    function(o) {
-                                                      return o.selected
-                                                    }
-                                                  )
-                                                  .map(function(o) {
-                                                    var val =
-                                                      "_value" in o
-                                                        ? o._value
-                                                        : o.value
-                                                    return val
-                                                  })
-                                                _vm.$set(
-                                                  _vm.columnsServiceSelected,
-                                                  key,
-                                                  $event.target.multiple
-                                                    ? $$selectedVal
-                                                    : $$selectedVal[0]
-                                                )
-                                              },
-                                              _vm.selectColumns
-                                            ]
-                                          }
-                                        },
-                                        _vm._l(_vm.columnsService, function(
-                                          columnService
-                                        ) {
-                                          return _c("option", [
-                                            _vm._v(_vm._s(columnService))
-                                          ])
-                                        }),
-                                        0
-                                      )
-                                    ]
-                                  )
-                                ]
-                              )
-                            }),
-                            0
-                          )
-                        ])
-                      ])
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "card border-light m-0" }, [
-                    _c("div", { staticClass: "card-header" }, [
-                      _vm._v(
-                        "\n\n                            Configuración de tabla de Usuarios\n\n                            "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "card-body" }, [
-                      _c("p", { staticClass: "card-text" }, [
-                        _vm._v("Seleccione la tabla de destino ")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "card" }, [
-                        _c("div", { staticClass: "card-header" }, [
-                          _c(
-                            "div",
-                            { staticClass: "input-group input-group-sm" },
-                            [
-                              _c(
-                                "div",
-                                { staticClass: "input-group-prepend" },
-                                [
-                                  _c(
-                                    "span",
-                                    { staticClass: "input-group-text" },
-                                    [
-                                      _c("i", {
-                                        staticClass: "fa fa-table mr-2"
-                                      }),
-                                      _vm._v(
-                                        "  \n                                                Tabla servicio\n                                                "
-                                      ),
-                                      _vm.loadColumns
+                                      _vm.loadTables
                                         ? _c("span", {
                                             staticClass:
-                                              "spinner-border spinner-border-sm ml-2",
+                                              "spinner-border spinner-border-sm",
                                             attrs: {
                                               role: "status",
                                               "aria-hidden": "true"
                                             }
                                           })
-                                        : _vm._e()
+                                        : _vm._e(),
+                                      _vm._v(
+                                        "\n                                        Conectar a BD\n                                    "
+                                      )
                                     ]
                                   )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.conection
+                              ? _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "alert alert-success d-flex align-items-center m-0",
+                                    attrs: { role: "alert" }
+                                  },
+                                  [
+                                    _c(
+                                      "svg",
+                                      {
+                                        staticClass: "bi flex-shrink-0 mr-2",
+                                        attrs: {
+                                          width: "24",
+                                          height: "24",
+                                          role: "img",
+                                          "aria-label": "Success:"
+                                        }
+                                      },
+                                      [
+                                        _c("use", {
+                                          attrs: {
+                                            "xlink:href": "#check-circle-fill"
+                                          }
+                                        })
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("div", [
+                                      _vm._v(
+                                        "\n                                        Se ha establecido conexión con " +
+                                          _vm._s(_vm.form.Host) +
+                                          ":" +
+                                          _vm._s(_vm.form.Port) +
+                                          "\n                                    "
+                                      )
+                                    ])
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.errConection
+                              ? _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "alert alert-danger d-flex align-items-center m-0 mt-3",
+                                    attrs: { role: "alert" }
+                                  },
+                                  [
+                                    _c(
+                                      "svg",
+                                      {
+                                        staticClass: "bi flex-shrink-0 mr-2",
+                                        attrs: {
+                                          width: "24",
+                                          height: "24",
+                                          role: "img",
+                                          "aria-label": "Danger:"
+                                        }
+                                      },
+                                      [
+                                        _c("use", {
+                                          attrs: {
+                                            "xlink:href":
+                                              "#exclamation-triangle-fill"
+                                          }
+                                        })
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c("div", [
+                                      _vm._v(
+                                        "\n                                        No se puedo conectar con la BD. Se ha presentado el siguiente error : " +
+                                          _vm._s(_vm.errConection) +
+                                          "\n                                    "
+                                      )
+                                    ])
+                                  ]
+                                )
+                              : _vm._e()
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _vm.errCreationService
+                        ? _c(
+                            "div",
+                            {
+                              staticClass:
+                                "alert alert-danger d-flex align-items-center",
+                              attrs: { role: "alert" }
+                            },
+                            [
+                              _c(
+                                "svg",
+                                {
+                                  staticClass: "bi flex-shrink-0 mr-2",
+                                  attrs: {
+                                    width: "24",
+                                    height: "24",
+                                    role: "img",
+                                    "aria-label": "Danger:"
+                                  }
+                                },
+                                [
+                                  _c("use", {
+                                    attrs: {
+                                      "xlink:href": "#exclamation-triangle-fill"
+                                    }
+                                  })
                                 ]
                               ),
                               _vm._v(" "),
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model:value",
-                                      value: _vm.form.Table,
-                                      expression: "form.Table",
-                                      arg: "value"
-                                    }
-                                  ],
-                                  staticClass: "form-control",
-                                  on: {
-                                    change: [
-                                      function($event) {
-                                        var $$selectedVal = Array.prototype.filter
-                                          .call($event.target.options, function(
-                                            o
-                                          ) {
-                                            return o.selected
-                                          })
-                                          .map(function(o) {
-                                            var val =
-                                              "_value" in o ? o._value : o.value
-                                            return val
-                                          })
-                                        _vm.$set(
-                                          _vm.form,
-                                          "Table",
-                                          $event.target.multiple
-                                            ? $$selectedVal
-                                            : $$selectedVal[0]
-                                        )
-                                      },
-                                      function($event) {
-                                        return _vm.getColumnsServices($event)
-                                      }
-                                    ]
-                                  }
-                                },
-                                _vm._l(_vm.Tables, function(Table) {
-                                  return _c("option", [_vm._v(_vm._s(Table))])
-                                }),
-                                0
-                              )
+                              _c("div", [
+                                _vm._v(
+                                  "\n                            No se puedo crear el servicio: " +
+                                    _vm._s(_vm.errCreationService) +
+                                    "\n                          "
+                                )
+                              ])
                             ]
                           )
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "ul",
-                          { staticClass: "list-group list-group-flush" },
-                          _vm._l(_vm.columnsLocalUsers, function(
-                            columnLocalUser,
-                            key
-                          ) {
-                            return _c(
-                              "li",
-                              { staticClass: "list-group-item mr-1 ml-1 p-2" },
-                              [
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "card border-light m-0",
+                          attrs: { hidden: _vm.stepFormSuscription != 1 }
+                        },
+                        [
+                          _c("div", { staticClass: "card-header" }, [
+                            _vm._v(
+                              "\n\n                            Configuración de tabla de Institución Educativa\n\n                          "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "card-body" }, [
+                            _c("p", { staticClass: "card-text" }, [
+                              _vm._v("Seleccione la tabla de destino ")
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "card" }, [
+                              _c("div", { staticClass: "card-header" }, [
                                 _c(
                                   "div",
                                   { staticClass: "input-group input-group-sm" },
@@ -82512,21 +83269,24 @@ var render = function() {
                                       [
                                         _c(
                                           "span",
-                                          {
-                                            staticClass: "input-group-text",
-                                            staticStyle: {
-                                              background: "white",
-                                              width: "150px"
-                                            }
-                                          },
+                                          { staticClass: "input-group-text" },
                                           [
                                             _c("i", {
-                                              staticClass: "fa fa-columns mr-2"
+                                              staticClass: "fa fa-table mr-2"
                                             }),
-                                            _vm._v(" "),
-                                            _c("b", [
-                                              _vm._v(_vm._s(columnLocalUser))
-                                            ])
+                                            _vm._v(
+                                              "  \n                                            Tabla servicio\n                                            "
+                                            ),
+                                            _vm.loadColumns
+                                              ? _c("span", {
+                                                  staticClass:
+                                                    "spinner-border spinner-border-sm ml-2",
+                                                  attrs: {
+                                                    role: "status",
+                                                    "aria-hidden": "true"
+                                                  }
+                                                })
+                                              : _vm._e()
                                           ]
                                         )
                                       ]
@@ -82538,12 +83298,9 @@ var render = function() {
                                         directives: [
                                           {
                                             name: "model",
-                                            rawName: "v-model:value",
-                                            value:
-                                              _vm.columnsServiceSelected[key],
-                                            expression:
-                                              "columnsServiceSelected[key]",
-                                            arg: "value"
+                                            rawName: "v-model",
+                                            value: _vm.form.Table,
+                                            expression: "form.Table"
                                           }
                                         ],
                                         staticClass: "form-control",
@@ -82565,73 +83322,806 @@ var render = function() {
                                                   return val
                                                 })
                                               _vm.$set(
-                                                _vm.columnsServiceSelected,
-                                                key,
+                                                _vm.form,
+                                                "Table",
                                                 $event.target.multiple
                                                   ? $$selectedVal
                                                   : $$selectedVal[0]
                                               )
                                             },
-                                            _vm.selectColumns
+                                            function($event) {
+                                              return _vm.getColumnsServicesTable(
+                                                $event,
+                                                1
+                                              )
+                                            }
                                           ]
                                         }
                                       },
-                                      _vm._l(_vm.columnsService, function(
-                                        columnService
-                                      ) {
+                                      _vm._l(_vm.Tables, function(Table) {
                                         return _c("option", [
-                                          _vm._v(_vm._s(columnService))
+                                          _vm._v(_vm._s(Table))
                                         ])
                                       }),
                                       0
                                     )
                                   ]
                                 )
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "ul",
+                                { staticClass: "list-group list-group-flush" },
+                                _vm._l(_vm.columnsLocal, function(
+                                  columnLocal,
+                                  key
+                                ) {
+                                  return _c(
+                                    "li",
+                                    {
+                                      staticClass:
+                                        "list-group-item mr-1 ml-1 p-2"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "input-group input-group-sm"
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass: "input-group-prepend"
+                                            },
+                                            [
+                                              _c(
+                                                "span",
+                                                {
+                                                  staticClass:
+                                                    "input-group-text",
+                                                  staticStyle: {
+                                                    background: "white",
+                                                    width: "150px"
+                                                  }
+                                                },
+                                                [
+                                                  _c("i", {
+                                                    staticClass:
+                                                      "fa fa-columns mr-2"
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c("b", [
+                                                    _vm._v(_vm._s(columnLocal))
+                                                  ])
+                                                ]
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "select",
+                                            {
+                                              directives: [
+                                                {
+                                                  name: "model",
+                                                  rawName: "v-model",
+                                                  value:
+                                                    _vm.columnsServiceSelected[
+                                                      key
+                                                    ],
+                                                  expression:
+                                                    "columnsServiceSelected[key]"
+                                                }
+                                              ],
+                                              staticClass: "form-control",
+                                              on: {
+                                                change: [
+                                                  function($event) {
+                                                    var $$selectedVal = Array.prototype.filter
+                                                      .call(
+                                                        $event.target.options,
+                                                        function(o) {
+                                                          return o.selected
+                                                        }
+                                                      )
+                                                      .map(function(o) {
+                                                        var val =
+                                                          "_value" in o
+                                                            ? o._value
+                                                            : o.value
+                                                        return val
+                                                      })
+                                                    _vm.$set(
+                                                      _vm.columnsServiceSelected,
+                                                      key,
+                                                      $event.target.multiple
+                                                        ? $$selectedVal
+                                                        : $$selectedVal[0]
+                                                    )
+                                                  },
+                                                  _vm.selectColumns
+                                                ]
+                                              }
+                                            },
+                                            _vm._l(_vm.columnsService, function(
+                                              columnService
+                                            ) {
+                                              return _c("option", [
+                                                _vm._v(_vm._s(columnService))
+                                              ])
+                                            }),
+                                            0
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                }),
+                                0
+                              )
+                            ])
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "card border-light m-0",
+                          attrs: { hidden: _vm.stepFormSuscription != 2 }
+                        },
+                        [
+                          _c("div", { staticClass: "card-header" }, [
+                            _vm._v(
+                              "\n\n                                Configuración de tabla de Personas\n\n                            "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "card-body" }, [
+                            _c("p", { staticClass: "card-text" }, [
+                              _vm._v("Seleccione la tabla de destino ")
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "card" }, [
+                              _c("div", { staticClass: "card-header" }, [
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group input-group-sm" },
+                                  [
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group-prepend" },
+                                      [
+                                        _c(
+                                          "span",
+                                          { staticClass: "input-group-text" },
+                                          [
+                                            _c("i", {
+                                              staticClass: "fa fa-table mr-2"
+                                            }),
+                                            _vm._v(
+                                              "  \n                                                    Tabla servicio\n                                                    "
+                                            ),
+                                            _vm.loadPersonsColumns
+                                              ? _c("span", {
+                                                  staticClass:
+                                                    "spinner-border spinner-border-sm ml-2",
+                                                  attrs: {
+                                                    role: "status",
+                                                    "aria-hidden": "true"
+                                                  }
+                                                })
+                                              : _vm._e()
+                                          ]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.TablePerson,
+                                            expression: "form.TablePerson"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        on: {
+                                          change: [
+                                            function($event) {
+                                              var $$selectedVal = Array.prototype.filter
+                                                .call(
+                                                  $event.target.options,
+                                                  function(o) {
+                                                    return o.selected
+                                                  }
+                                                )
+                                                .map(function(o) {
+                                                  var val =
+                                                    "_value" in o
+                                                      ? o._value
+                                                      : o.value
+                                                  return val
+                                                })
+                                              _vm.$set(
+                                                _vm.form,
+                                                "TablePerson",
+                                                $event.target.multiple
+                                                  ? $$selectedVal
+                                                  : $$selectedVal[0]
+                                              )
+                                            },
+                                            function($event) {
+                                              return _vm.getColumnsServicesTable(
+                                                $event,
+                                                2
+                                              )
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      _vm._l(_vm.Tables, function(Table) {
+                                        return _c("option", [
+                                          _vm._v(_vm._s(Table))
+                                        ])
+                                      }),
+                                      0
+                                    )
+                                  ]
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "ul",
+                                { staticClass: "list-group list-group-flush" },
+                                _vm._l(_vm.columnsLocalPersons, function(
+                                  columnLocalPerson,
+                                  key
+                                ) {
+                                  return _c(
+                                    "li",
+                                    {
+                                      staticClass:
+                                        "list-group-item mr-1 ml-1 p-2"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "input-group input-group-sm"
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass: "input-group-prepend"
+                                            },
+                                            [
+                                              _c(
+                                                "span",
+                                                {
+                                                  staticClass:
+                                                    "input-group-text",
+                                                  staticStyle: {
+                                                    background: "white",
+                                                    width: "150px"
+                                                  }
+                                                },
+                                                [
+                                                  _c("i", {
+                                                    staticClass:
+                                                      "fa fa-columns mr-2"
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c("b", [
+                                                    _vm._v(
+                                                      _vm._s(columnLocalPerson)
+                                                    )
+                                                  ])
+                                                ]
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "select",
+                                            {
+                                              directives: [
+                                                {
+                                                  name: "model",
+                                                  rawName: "v-model",
+                                                  value:
+                                                    _vm
+                                                      .columnsPersonsServiceSelected[
+                                                      key
+                                                    ],
+                                                  expression:
+                                                    "columnsPersonsServiceSelected[key]"
+                                                }
+                                              ],
+                                              staticClass: "form-control",
+                                              on: {
+                                                change: [
+                                                  function($event) {
+                                                    var $$selectedVal = Array.prototype.filter
+                                                      .call(
+                                                        $event.target.options,
+                                                        function(o) {
+                                                          return o.selected
+                                                        }
+                                                      )
+                                                      .map(function(o) {
+                                                        var val =
+                                                          "_value" in o
+                                                            ? o._value
+                                                            : o.value
+                                                        return val
+                                                      })
+                                                    _vm.$set(
+                                                      _vm.columnsPersonsServiceSelected,
+                                                      key,
+                                                      $event.target.multiple
+                                                        ? $$selectedVal
+                                                        : $$selectedVal[0]
+                                                    )
+                                                  },
+                                                  _vm.selectColumns
+                                                ]
+                                              }
+                                            },
+                                            _vm._l(
+                                              _vm.columnsPersonsService,
+                                              function(column) {
+                                                return _c("option", [
+                                                  _vm._v(_vm._s(column))
+                                                ])
+                                              }
+                                            ),
+                                            0
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                }),
+                                0
+                              )
+                            ])
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "card border-light m-0",
+                          attrs: { hidden: _vm.stepFormSuscription != 3 }
+                        },
+                        [
+                          _c("div", { staticClass: "card-header" }, [
+                            _vm._v(
+                              "\n\n                                Configuración de tabla de Usuarios\n\n                            "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "card-body" }, [
+                            _c("p", { staticClass: "card-text" }, [
+                              _vm._v("Seleccione la tabla de destino ")
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "card" }, [
+                              _c("div", { staticClass: "card-header" }, [
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group input-group-sm" },
+                                  [
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group-prepend" },
+                                      [
+                                        _c(
+                                          "span",
+                                          { staticClass: "input-group-text" },
+                                          [
+                                            _c("i", {
+                                              staticClass: "fa fa-table mr-2"
+                                            }),
+                                            _vm._v(
+                                              "  \n                                                    Tabla servicio\n                                                    "
+                                            ),
+                                            _vm.loadUsersColumns
+                                              ? _c("span", {
+                                                  staticClass:
+                                                    "spinner-border spinner-border-sm ml-2",
+                                                  attrs: {
+                                                    role: "status",
+                                                    "aria-hidden": "true"
+                                                  }
+                                                })
+                                              : _vm._e()
+                                          ]
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "select",
+                                      {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value: _vm.form.TableUsers,
+                                            expression: "form.TableUsers"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        on: {
+                                          change: [
+                                            function($event) {
+                                              var $$selectedVal = Array.prototype.filter
+                                                .call(
+                                                  $event.target.options,
+                                                  function(o) {
+                                                    return o.selected
+                                                  }
+                                                )
+                                                .map(function(o) {
+                                                  var val =
+                                                    "_value" in o
+                                                      ? o._value
+                                                      : o.value
+                                                  return val
+                                                })
+                                              _vm.$set(
+                                                _vm.form,
+                                                "TableUsers",
+                                                $event.target.multiple
+                                                  ? $$selectedVal
+                                                  : $$selectedVal[0]
+                                              )
+                                            },
+                                            function($event) {
+                                              return _vm.getColumnsServicesTable(
+                                                $event,
+                                                3
+                                              )
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      _vm._l(_vm.Tables, function(Table) {
+                                        return _c("option", [
+                                          _vm._v(_vm._s(Table))
+                                        ])
+                                      }),
+                                      0
+                                    )
+                                  ]
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "ul",
+                                { staticClass: "list-group list-group-flush" },
+                                _vm._l(_vm.columnsLocalUsers, function(
+                                  columnLocalUser,
+                                  key
+                                ) {
+                                  return _c(
+                                    "li",
+                                    {
+                                      staticClass:
+                                        "list-group-item mr-1 ml-1 p-2"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "input-group input-group-sm"
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass: "input-group-prepend"
+                                            },
+                                            [
+                                              _c(
+                                                "span",
+                                                {
+                                                  staticClass:
+                                                    "input-group-text",
+                                                  staticStyle: {
+                                                    background: "white",
+                                                    width: "150px"
+                                                  }
+                                                },
+                                                [
+                                                  _c("i", {
+                                                    staticClass:
+                                                      "fa fa-columns mr-2"
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c("b", [
+                                                    _vm._v(
+                                                      _vm._s(columnLocalUser)
+                                                    )
+                                                  ])
+                                                ]
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "select",
+                                            {
+                                              directives: [
+                                                {
+                                                  name: "model",
+                                                  rawName: "v-model",
+                                                  value:
+                                                    _vm
+                                                      .columnsUsersServiceSelected[
+                                                      key
+                                                    ],
+                                                  expression:
+                                                    "columnsUsersServiceSelected[key]"
+                                                }
+                                              ],
+                                              staticClass: "form-control",
+                                              on: {
+                                                change: [
+                                                  function($event) {
+                                                    var $$selectedVal = Array.prototype.filter
+                                                      .call(
+                                                        $event.target.options,
+                                                        function(o) {
+                                                          return o.selected
+                                                        }
+                                                      )
+                                                      .map(function(o) {
+                                                        var val =
+                                                          "_value" in o
+                                                            ? o._value
+                                                            : o.value
+                                                        return val
+                                                      })
+                                                    _vm.$set(
+                                                      _vm.columnsUsersServiceSelected,
+                                                      key,
+                                                      $event.target.multiple
+                                                        ? $$selectedVal
+                                                        : $$selectedVal[0]
+                                                    )
+                                                  },
+                                                  _vm.selectColumns
+                                                ]
+                                              }
+                                            },
+                                            _vm._l(
+                                              _vm.columnsUsersService,
+                                              function(column) {
+                                                return _c("option", [
+                                                  _vm._v(_vm._s(column))
+                                                ])
+                                              }
+                                            ),
+                                            0
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                }),
+                                0
+                              )
+                            ])
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "card border-light m-0",
+                          attrs: { hidden: _vm.stepFormSuscription != 4 }
+                        },
+                        [
+                          _c("div", { staticClass: "card-header" }, [
+                            _vm._v(
+                              "\n\n                                Selección del modelo de distribución de asignaciones\n\n                            "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "card-body" }, [
+                            _c(
+                              "div",
+                              { staticClass: "input-group input-group-sm" },
+                              [
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group-prepend" },
+                                  [
+                                    _c(
+                                      "span",
+                                      { staticClass: "input-group-text" },
+                                      [
+                                        _c("i", {
+                                          staticClass:
+                                            "fa fa-connectdevelop mr-2"
+                                        }),
+                                        _vm._v(
+                                          "  \n                                                    Modelo distribución:\n                                                    "
+                                        ),
+                                        _vm.loadModelColumns
+                                          ? _c("span", {
+                                              staticClass:
+                                                "spinner-border spinner-border-sm ml-2",
+                                              attrs: {
+                                                role: "status",
+                                                "aria-hidden": "true"
+                                              }
+                                            })
+                                          : _vm._e()
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "select",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.form.modelo,
+                                        expression: "form.modelo"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    on: {
+                                      change: [
+                                        function($event) {
+                                          var $$selectedVal = Array.prototype.filter
+                                            .call(
+                                              $event.target.options,
+                                              function(o) {
+                                                return o.selected
+                                              }
+                                            )
+                                            .map(function(o) {
+                                              var val =
+                                                "_value" in o
+                                                  ? o._value
+                                                  : o.value
+                                              return val
+                                            })
+                                          _vm.$set(
+                                            _vm.form,
+                                            "modelo",
+                                            $event.target.multiple
+                                              ? $$selectedVal
+                                              : $$selectedVal[0]
+                                          )
+                                        },
+                                        _vm.selectColumns
+                                      ]
+                                    }
+                                  },
+                                  _vm._l(_vm.modelsDistribution, function(
+                                    model
+                                  ) {
+                                    return _c(
+                                      "option",
+                                      { domProps: { value: model.id } },
+                                      [_vm._v(_vm._s(model.modelo))]
+                                    )
+                                  }),
+                                  0
+                                )
                               ]
                             )
-                          }),
-                          0
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "modal-footer" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary btn-sm",
+                            attrs: {
+                              type: "button",
+                              id: "close_modal_service",
+                              "data-bs-dismiss": "modal"
+                            },
+                            on: { click: _vm.cleanForm }
+                          },
+                          [_vm._v("Cancelar")]
+                        ),
+                        _vm._v(" "),
+                        _vm.prevButton == 1
+                          ? _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary btn-sm",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.nextStep(-1)
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Atras\n                            "
+                                )
+                              ]
+                            )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm.nextButton == 1
+                          ? _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary btn-sm",
+                                attrs: {
+                                  type: "button",
+                                  disabled: !_vm.conection
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.nextStep(1)
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                Siguiente\n                            "
+                                )
+                              ]
+                            )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary btn-sm",
+                            attrs: {
+                              type: "submit",
+                              disabled: !_vm.disableCreate,
+                              hidden: _vm.suscribeButton != 1
+                            },
+                            on: { click: _vm.createService }
+                          },
+                          [
+                            _vm.createtingService
+                              ? _c("span", {
+                                  staticClass:
+                                    "spinner-border spinner-border-sm ml-2",
+                                  attrs: {
+                                    role: "status",
+                                    "aria-hidden": "true"
+                                  }
+                                })
+                              : _vm._e(),
+                            _vm._v(
+                              "\n                                Suscribir\n                            "
+                            )
+                          ]
                         )
                       ])
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "modal-footer" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-secondary btn-sm",
-                        attrs: {
-                          type: "button",
-                          id: "close_modal_service",
-                          "data-bs-dismiss": "modal"
-                        },
-                        on: { click: _vm.cleanForm }
-                      },
-                      [_vm._v("Cancelar")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-primary btn-sm",
-                        attrs: { type: "submit", disabled: !_vm.disableCreate },
-                        on: { click: _vm.createService }
-                      },
-                      [
-                        _vm.createtingService
-                          ? _c("span", {
-                              staticClass:
-                                "spinner-border spinner-border-sm ml-2",
-                              attrs: { role: "status", "aria-hidden": "true" }
-                            })
-                          : _vm._e(),
-                        _vm._v(
-                          "\n                            Suscribir\n                        "
-                        )
-                      ]
-                    )
-                  ])
+                    ]
+                  )
                 ]
               )
             ])
@@ -82648,6 +84138,17 @@ var render = function() {
           "tbody",
           _vm._l(_vm.services, function(service) {
             return _c("tr", { key: service.id_servicio }, [
+              _c("th", [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2",
+                    attrs: { width: "16", height: "16" }
+                  },
+                  [_c("use", { attrs: { "xlink:href": "#heading" } })]
+                )
+              ]),
+              _vm._v(" "),
               _c(
                 "th",
                 {
@@ -82655,73 +84156,169 @@ var render = function() {
                   attrs: { scope: "row" }
                 },
                 [
-                  _c(
-                    "svg",
-                    {
-                      staticClass: "bi mr-2",
-                      attrs: { width: "16", height: "16" }
-                    },
-                    [_c("use", { attrs: { "xlink:href": "#heading" } })]
-                  ),
                   _vm._v(
-                    " " + _vm._s(service.nombre_servicio) + "\n              "
+                    "\n                " +
+                      _vm._s(service.bd_perfil) +
+                      "\n            "
                   )
                 ]
               ),
               _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(service.bd_perfil))]),
-              _vm._v(" "),
               _c("td", [_vm._v(_vm._s(service.url))]),
               _vm._v(" "),
-              _c("td", [_vm._v("Modelo")]),
+              _c("td", [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2 spinner-gear",
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunSampleService != 2
+                    }
+                  },
+                  [
+                    _c("use", {
+                      attrs: { "xlink:href": "#bi-gear-wide-connected" }
+                    })
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2 success-process",
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunSampleService != 1
+                    }
+                  },
+                  [_c("use", { attrs: { "xlink:href": "#check-circle-fill" } })]
+                ),
+                _vm._v(" "),
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2",
+                    staticStyle: { color: "lightgray" },
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunSampleService != 0
+                    }
+                  },
+                  [
+                    _c("use", {
+                      attrs: { "xlink:href": "#bi-gear-wide-connected" }
+                    })
+                  ]
+                )
+              ]),
               _vm._v(" "),
               _c("td", [
-                service.state === 0
-                  ? _c("span", { staticClass: "badge bg-light p-2" }, [
-                      _vm._v("Pendiente")
-                    ])
-                  : _vm._e(),
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2 spinner-gear",
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunUserService != 2
+                    }
+                  },
+                  [
+                    _c("use", {
+                      attrs: { "xlink:href": "#bi-gear-wide-connected" }
+                    })
+                  ]
+                ),
                 _vm._v(" "),
-                service.state === 1
-                  ? _c("span", { staticClass: "badge badge-primary p-2" }, [
-                      _vm._v("Actualizado " + _vm._s(service.updated))
-                    ])
-                  : _vm._e(),
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2 success-process",
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunUserService != 1
+                    }
+                  },
+                  [_c("use", { attrs: { "xlink:href": "#check-circle-fill" } })]
+                ),
                 _vm._v(" "),
-                service.state === 2
-                  ? _c("span", { staticClass: "badge badge-danger p-2" }, [
-                      _vm._v(
-                        "\n                    Desfasado\n\n                    "
-                      ),
-                      service.errors
-                        ? _c(
-                            "span",
-                            {
-                              staticClass: "btn badge bg-light text-dark",
-                              attrs: {
-                                "data-bs-toggle": "modal",
-                                "data-bs-target": "#modal_errors"
-                              },
-                              on: {
-                                click: function($event) {
-                                  return _vm.errorsSync(service.errors)
-                                }
-                              }
-                            },
-                            [
-                              _vm._v(
-                                _vm._s(service.errors.length) + " errores "
-                              )
-                            ]
-                          )
-                        : _vm._e()
-                    ])
-                  : _vm._e()
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2",
+                    staticStyle: { color: "lightgray" },
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunUserService != 0
+                    }
+                  },
+                  [
+                    _c("use", {
+                      attrs: { "xlink:href": "#bi-gear-wide-connected" }
+                    })
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("td", [
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2 spinner-gear",
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunModelService != 2
+                    }
+                  },
+                  [
+                    _c("use", {
+                      attrs: { "xlink:href": "#bi-gear-wide-connected" }
+                    })
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2 success-process",
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunModelService != 1
+                    }
+                  },
+                  [_c("use", { attrs: { "xlink:href": "#check-circle-fill" } })]
+                ),
+                _vm._v(" "),
+                _c(
+                  "svg",
+                  {
+                    staticClass: "bi mr-2",
+                    staticStyle: { color: "lightgray" },
+                    attrs: {
+                      width: "18",
+                      height: "18",
+                      hidden: _vm.stateRunModelService != 0
+                    }
+                  },
+                  [
+                    _c("use", {
+                      attrs: { "xlink:href": "#bi-gear-wide-connected" }
+                    })
+                  ]
+                )
               ]),
               _vm._v(" "),
               _c(
                 "td",
-                { staticStyle: { "text-align": "right", width: "130px" } },
+                { staticStyle: { "text-align": "right", width: "80px" } },
                 [
                   service.state == 2 || !service.state
                     ? _c(
@@ -82829,7 +84426,7 @@ var staticRenderFns = [
       _c(
         "span",
         { staticClass: "input-group-text", staticStyle: { width: "110px" } },
-        [_c("b", [_vm._v("Nombre servicio:")])]
+        [_c("b", [_vm._v("Nombre perfil:")])]
       )
     ])
   },
@@ -82861,16 +84458,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "input-group-prepend" }, [
       _c("span", { staticClass: "input-group-text" }, [
-        _c("i", { staticClass: "fa fa-puzzle-piece" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-prepend" }, [
-      _c("span", { staticClass: "input-group-text" }, [
         _c("i", { staticClass: "fa fa-server" })
       ])
     ])
@@ -82881,7 +84468,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "input-group-prepend" }, [
       _c("span", { staticClass: "input-group-text" }, [
-        _c("i", { staticClass: "fa fa-database" })
+        _c("i", { staticClass: "fa fa-plug" })
       ])
     ])
   },
@@ -82891,8 +84478,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "input-group-prepend" }, [
       _c("span", { staticClass: "input-group-text" }, [
-        _c("i", { staticClass: "fa fa-cubes" }),
-        _vm._v(" Chunk\n                                ")
+        _c("i", { staticClass: "fa fa-database" })
       ])
     ])
   },
@@ -82920,21 +84506,42 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _c("i", { staticClass: "fa fa-cubes" }),
+        _vm._v(" Tamaño\n                                        ")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th"),
+        _vm._v(" "),
         _c(
           "th",
           { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
           [_vm._v("Servicio")]
         ),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Perfil")]),
-        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("URL")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Modelo Usuarios")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Muestra")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Estado")]),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "center" }, attrs: { scope: "col" } },
+          [_vm._v("Usuarios")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticStyle: { "text-align": "center" }, attrs: { scope: "col" } },
+          [_vm._v("Asignación ")]
+        ),
         _vm._v(" "),
         _c("th", {
           staticStyle: { "text-align": "right" },
@@ -83412,48 +85019,45 @@ var render = function() {
               "tbody",
               _vm._l(_vm.users, function(user) {
                 return _c("tr", [
-                  _c("td", [
-                    _c("div", { staticClass: "form-check" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.listUsers,
-                            expression: "listUsers"
-                          }
-                        ],
-                        staticClass: "form-check-input",
-                        attrs: { type: "checkbox" },
-                        domProps: {
-                          value: user.usuario,
-                          checked: Array.isArray(_vm.listUsers)
-                            ? _vm._i(_vm.listUsers, user.usuario) > -1
-                            : _vm.listUsers
-                        },
-                        on: {
-                          change: function($event) {
-                            var $$a = _vm.listUsers,
-                              $$el = $event.target,
-                              $$c = $$el.checked ? true : false
-                            if (Array.isArray($$a)) {
-                              var $$v = user.usuario,
-                                $$i = _vm._i($$a, $$v)
-                              if ($$el.checked) {
-                                $$i < 0 && (_vm.listUsers = $$a.concat([$$v]))
-                              } else {
-                                $$i > -1 &&
-                                  (_vm.listUsers = $$a
-                                    .slice(0, $$i)
-                                    .concat($$a.slice($$i + 1)))
-                              }
+                  _c("td", { attrs: { scope: "row" } }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.listUsers,
+                          expression: "listUsers"
+                        }
+                      ],
+                      attrs: { type: "checkbox" },
+                      domProps: {
+                        value: user.usuario,
+                        checked: Array.isArray(_vm.listUsers)
+                          ? _vm._i(_vm.listUsers, user.usuario) > -1
+                          : _vm.listUsers
+                      },
+                      on: {
+                        change: function($event) {
+                          var $$a = _vm.listUsers,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = user.usuario,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 && (_vm.listUsers = $$a.concat([$$v]))
                             } else {
-                              _vm.listUsers = $$c
+                              $$i > -1 &&
+                                (_vm.listUsers = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
                             }
+                          } else {
+                            _vm.listUsers = $$c
                           }
                         }
-                      })
-                    ])
+                      }
+                    })
                   ]),
                   _vm._v(" "),
                   _c(
@@ -83464,20 +85068,10 @@ var render = function() {
                     },
                     [
                       _c("a", [
-                        _c(
-                          "svg",
-                          {
-                            staticClass: "bi mr-2",
-                            attrs: { width: "16", height: "16" }
-                          },
-                          [
-                            _c("use", {
-                              attrs: { "xlink:href": "#people-circle" }
-                            })
-                          ]
-                        ),
                         _vm._v(
-                          " " + _vm._s(user.usuario) + "\n                    "
+                          "\n                      " +
+                            _vm._s(user.usuario) +
+                            "\n                    "
                         )
                       ])
                     ]
@@ -83492,9 +85086,9 @@ var render = function() {
                       _vm._s(
                         user.nombres +
                           ", " +
-                          user.apellido_paterno +
+                          user.apellido_1 +
                           " " +
-                          user.apellido_materno
+                          user.apellido_2
                       )
                     )
                   ]),
@@ -84535,10 +86129,6 @@ var render = function() {
                                                   "\n\t\t\t\t\t\t\t\t\t\t\t\t\t"
                                               )
                                             ]
-                                          ),
-                                          _vm._v(
-                                            _vm._s(usuario.existe) +
-                                              "\n\t\t\t\t\t\t\t\t\t\t\t\t"
                                           )
                                         ]
                                       )
@@ -84788,13 +86378,13 @@ var staticRenderFns = [
         _c(
           "th",
           { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
-          [_vm._v("Nombres")]
+          [_vm._v("Nombres Persona")]
         ),
         _vm._v(" "),
         _c(
           "th",
           { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
-          [_vm._v("Usuario")]
+          [_vm._v("Nombre Usuario")]
         ),
         _vm._v(" "),
         _c(
@@ -84806,13 +86396,13 @@ var staticRenderFns = [
         _c(
           "th",
           { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
-          [_vm._v("rol_mod_1")]
+          [_vm._v("Rol módulo 1")]
         ),
         _vm._v(" "),
         _c(
           "th",
           { staticStyle: { "text-align": "left" }, attrs: { scope: "col" } },
-          [_vm._v("rol_mod_1")]
+          [_vm._v("Rol módulo 2")]
         ),
         _vm._v(" "),
         _c(
@@ -85245,8 +86835,8 @@ var render = function() {
                                           {
                                             name: "model",
                                             rawName: "v-model",
-                                            value: _vm.user.apellido_paterno,
-                                            expression: "user.apellido_paterno"
+                                            value: _vm.user.apellido_1,
+                                            expression: "user.apellido_1"
                                           }
                                         ],
                                         staticClass:
@@ -85258,7 +86848,7 @@ var render = function() {
                                           disabled: _vm.mode == 1
                                         },
                                         domProps: {
-                                          value: _vm.user.apellido_paterno
+                                          value: _vm.user.apellido_1
                                         },
                                         on: {
                                           input: function($event) {
@@ -85267,7 +86857,7 @@ var render = function() {
                                             }
                                             _vm.$set(
                                               _vm.user,
-                                              "apellido_paterno",
+                                              "apellido_1",
                                               $event.target.value
                                             )
                                           }
@@ -85298,8 +86888,8 @@ var render = function() {
                                           {
                                             name: "model",
                                             rawName: "v-model",
-                                            value: _vm.user.apellido_materno,
-                                            expression: "user.apellido_materno"
+                                            value: _vm.user.apellido_2,
+                                            expression: "user.apellido_2"
                                           }
                                         ],
                                         staticClass:
@@ -85311,7 +86901,7 @@ var render = function() {
                                           disabled: _vm.mode == 1
                                         },
                                         domProps: {
-                                          value: _vm.user.apellido_materno
+                                          value: _vm.user.apellido_2
                                         },
                                         on: {
                                           input: function($event) {
@@ -85320,7 +86910,7 @@ var render = function() {
                                             }
                                             _vm.$set(
                                               _vm.user,
-                                              "apellido_materno",
+                                              "apellido_2",
                                               $event.target.value
                                             )
                                           }
